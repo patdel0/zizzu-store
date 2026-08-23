@@ -6,14 +6,21 @@ services:
     environment:
       POSTGRES_USER: zizzu
       POSTGRES_PASSWORD: zizzu
+      POSTGRES_DB: zizzu
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql
 
   app:
     build:
       context: .
     ports:
       - "3000:3000"
-    environment:
-      - WATCHPACK_POLLING=true
+    env_file:
+      - .env
+    depends_on:
+      - db
     develop:
       watch:
         - action: sync
@@ -24,3 +31,6 @@ services:
             - .next/
         - action: rebuild
           path: package.json
+
+volumes:
+  db-data:
