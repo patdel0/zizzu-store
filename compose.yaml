@@ -1,6 +1,12 @@
 name: zizzu
 
 services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: zizzu
+      POSTGRES_PASSWORD: zizzu
+
   app:
     build:
       context: .
