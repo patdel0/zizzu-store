@@ -83,6 +83,53 @@ Some checks are less obvious than they look:
 - The `tdd-green` check compares commit ancestry to confirm the test was
   committed *before* the code that makes it pass.
 
+## Written answers, and the optional AI comment
+
+Four steps ask the trainee to explain something in their own words —
+`two-machines`, `decomposition`, `tdd`, `prep`, the four that teach method
+rather than syntax. Articulating an idea is what makes it stick, and that works
+whether or not anything reads the answer afterwards.
+
+So the answer is **recorded the moment it is submitted**, and the author's model
+answer is always revealed to compare against. If a Groq key is present, the
+answer also gets a sentence of feedback. If it is not, nothing is lost and
+nothing is mentioned.
+
+**The AI verdict never gates anything.** The card unlocks on having written a
+substantive answer — checked server-side, offline, deterministically. A trainee
+with no key, no wifi, an expired key, a rate limit, or a retired model id
+progresses exactly as anyone else does. There is no path where a third party
+can stop somebody on their first morning.
+
+### Setting it up
+
+Optional. Put a key in `~/.zizzu-onboarding/env` — the same directory the
+progress file uses:
+
+```
+GROQ_API_KEY=gsk_...
+GROQ_MODEL=openai/gpt-oss-20b
+```
+
+Outside the repository on purpose. `onboarding/.env` would be deleted from disk
+the moment the trainee switches off this branch, which happens within a few
+steps — it would appear to work until the next restart, then break somewhere
+else entirely.
+
+`ONBOARDING_LLM=off` disables the feature without removing the key.
+
+### What is sent
+
+The question, the rubric and model answer written by the step author, and the
+trainee's typed answer. **Nothing from disk and nothing from git, ever** — not
+their code, not their commits, not their name or email. The repository is
+private and the deterministic checks grade the code better than a model would.
+Answers are not stored; progress records only that a question was answered.
+
+Say this to the trainee before they type. On day one they will write things like
+"I don't really understand why this works" into that box, and they deserve to
+know where it goes.
+
 ## Layout
 
 ```

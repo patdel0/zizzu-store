@@ -130,7 +130,7 @@ every bit as good as the same thing said in jargon you have not been taught yet.
 Nobody is marking the vocabulary.
 :::
 
-=== quiz=too-big,why-decompose
+=== quiz=too-big,why-decompose ask=why-storage-first
 ## Compare
 
 One reasonable version:

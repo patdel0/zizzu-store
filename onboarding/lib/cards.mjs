@@ -12,6 +12,7 @@
  *     === check=heading,tagline
  *     === quiz=where-endpoint
  *     === attest=saw-split
+ *     === ask=why-red-first
  *     ===
  *
  * A card with no gate is a read — `Next` is always available. A card with one
@@ -23,7 +24,7 @@ const DELIMITER = /^===[ \t]*(.*)$/;
 
 /** `check=a,b quiz=c` → `{ check: ['a','b'], quiz: ['c'], attest: [] }` */
 function parseGate(attributes) {
-  const gate = { check: [], quiz: [], attest: [] };
+  const gate = { check: [], quiz: [], attest: [], ask: [] };
 
   for (const pair of attributes.trim().split(/\s+/).filter(Boolean)) {
     const [key, value] = pair.split('=');

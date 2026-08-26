@@ -68,14 +68,21 @@ darkMode.addEventListener('change', () => {
   if (currentId) show(currentId);
 });
 
-async function api(path, body) {
-  const response = await fetch(path, {
-    method: body ? 'POST' : 'GET',
-    headers: body ? { 'Content-Type': 'application/json' } : undefined,
-    body: body ? JSON.stringify(body) : undefined,
-  });
+async function api(path, body, { timeout = 15_000 } = {}) {
+  // A hung request used to hang the card with no error path. Anything that can
+  // wait on a network has to be able to give up.
+  try {
+    const response = await fetch(path, {
+      method: body ? 'POST' : 'GET',
+      signal: AbortSignal.timeout(timeout),
+      headers: body ? { 'Content-Type': 'application/json' } : undefined,
+      body: body ? JSON.stringify(body) : undefined,
+    });
 
-  return response.json();
+    return await response.json();
+  } catch {
+    return { error: 'unreachable' };
+  }
 }
 
 async function loadState() {
@@ -194,6 +201,12 @@ async function show(id, cardIndex) {
     if (question) contentEl.append(drawQuestion(step, question));
   }
 
+  for (const questionId of card.gate.ask) {
+    const question = step.ask?.find((entry) => entry.id === questionId);
+
+    if (question) contentEl.append(drawAsk(step, question));
+  }
+
   if (card.gate.check.length > 0 || card.gate.attest.length > 0) {
     contentEl.append(drawPanel(step, card));
   }
@@ -206,6 +219,131 @@ async function show(id, cardIndex) {
   // A card whose checks are unmet is worth verifying on arrival: the reader may
   // have already done it, and being told so immediately beats a stale prompt.
   if (card.gate.check.length > 0) verifyCard({ silent: true });
+}
+
+// ------------------------------------------------------ written answers
+
+const ASK_REASONS = {
+  'no-key': 'Compare your answer with this one.',
+  offline: 'No connection, so no comment on yours — compare it with this instead.',
+  busy: 'The feedback service is busy. Compare your answer with this one.',
+  timeout: 'The feedback service did not answer in time. Compare yours with this.',
+  'bad-response': 'The feedback did not come back usable. Compare yours with this.',
+};
+
+const VERDICT_LABEL = {
+  'on-track': 'On track',
+  partly: 'Partly there',
+  'off-track': 'Not quite',
+};
+
+/**
+ * A question the reader answers in their own words.
+ *
+ * Writing the answer is the point — articulating something is what makes it
+ * stick, and that works whether or not anything comments on it afterwards. So
+ * the answer is recorded the moment it is submitted, and the model answer is
+ * always revealed to compare against. Any feedback is a bonus on top.
+ */
+function drawAsk(step, question) {
+  const key = `${step.id}.${question.id}`;
+  const answered = state.progress.ask?.[key] === true;
+  const box = document.createElement('section');
+
+  box.className = 'ask';
+  box.innerHTML =
+    `<p class="ask__prompt">${renderInlineSafe(question.prompt)}</p>` +
+    '<p class="ask__hint">A few sentences, in your own words. There is no wrong wording.</p>';
+
+  const field = document.createElement('textarea');
+
+  field.className = 'ask__input';
+  field.rows = 4;
+  field.spellcheck = true;
+  field.placeholder = 'Write your answer…';
+
+  const submit = document.createElement('button');
+
+  submit.type = 'button';
+  submit.className = 'button';
+  submit.textContent = 'Submit answer';
+
+  const status = document.createElement('p');
+
+  status.className = 'ask__status';
+
+  const result = document.createElement('div');
+
+  result.className = 'ask__result';
+  result.hidden = true;
+
+  submit.addEventListener('click', async () => {
+    const answer = field.value.trim();
+
+    if (answer.length < (state.llm?.minAnswer ?? 40)) {
+      status.textContent = `A bit more than that — ${state.llm?.minAnswer ?? 40} characters at least.`;
+
+      return;
+    }
+
+    submit.disabled = true;
+    status.textContent = 'Reading it…';
+
+    const reply = await api('/api/ask', { step: step.id, question: question.id, answer });
+
+    submit.disabled = false;
+
+    if (!reply?.recorded) {
+      status.textContent = 'Could not record that. Try again.';
+
+      return;
+    }
+
+    // Recorded regardless of what came back, so Next unlocks either way.
+    state.progress.ask = { ...(state.progress.ask ?? {}), [key]: true };
+    status.textContent = '';
+    field.disabled = true;
+    submit.hidden = true;
+    result.hidden = false;
+    result.innerHTML = renderAskResult(reply);
+    drawSidebar();
+    refreshCardNav();
+  });
+
+  box.append(field, submit, status, result);
+
+  if (answered) {
+    field.disabled = true;
+    submit.hidden = true;
+    status.textContent = 'Answered.';
+  }
+
+  return box;
+}
+
+function renderAskResult(reply) {
+  const parts = [];
+
+  if (reply.feedback) {
+    const { verdict, quote, missing, note } = reply.feedback;
+
+    parts.push(
+      `<p class="ask__verdict ask__verdict--${verdict}">${VERDICT_LABEL[verdict] ?? verdict}</p>`,
+      `<p class="ask__note">${escapeHtml(note)}</p>`,
+    );
+
+    if (quote) parts.push(`<p class="ask__quote">You wrote: “${escapeHtml(quote)}”</p>`);
+    if (missing) parts.push(`<p class="ask__missing">Worth adding: ${escapeHtml(missing)}</p>`);
+  } else {
+    parts.push(`<p class="ask__note">${escapeHtml(ASK_REASONS[reply.reason] ?? ASK_REASONS.offline)}</p>`);
+  }
+
+  parts.push(
+    '<p class="ask__model-label">One good answer</p>',
+    `<p class="ask__model">${escapeHtml(reply.modelAnswer)}</p>`,
+  );
+
+  return parts.join('');
 }
 
 // ------------------------------------------------------------- exercises
@@ -317,7 +455,8 @@ function cardSatisfied(step, card) {
   return (
     card.gate.check.every((id) => results.find((r) => r.id === id)?.pass === true) &&
     card.gate.quiz.every((id) => state.progress.quiz[`${step.id}.${id}`] === true) &&
-    card.gate.attest.every((id) => state.progress.attest[`${step.id}.${id}`] === true)
+    card.gate.attest.every((id) => state.progress.attest[`${step.id}.${id}`] === true) &&
+    card.gate.ask.every((id) => state.progress.ask?.[`${step.id}.${id}`] === true)
   );
 }
 

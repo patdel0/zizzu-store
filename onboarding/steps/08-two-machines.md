@@ -56,7 +56,7 @@ Reload [localhost:3000/posts](http://localhost:3000/posts) and watch both.
 - `[browser]` appears **in the browser console**.
 - Neither one appears in the other.
 
-=== attest=found-source quiz=why-secret
+=== attest=found-source quiz=why-secret ask=why-two-places
 ## What you just proved
 
 `console.log` prints wherever it runs. These two lines are in the same folder,

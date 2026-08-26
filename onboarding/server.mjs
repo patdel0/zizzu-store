@@ -2,7 +2,8 @@ import { createServer } from 'node:http';
 import { readFile, readdir, writeFile, mkdir } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join, extname } from 'node:path';
-import { gradeQuiz, publicSteps, runChecks, stepsById } from './checks.mjs';
+import { askQuestion, gradeQuiz, publicSteps, runChecks, stepsById } from './checks.mjs';
+import * as llm from './lib/llm.mjs';
 import { splitCards } from './lib/cards.mjs';
 import { currentBranch, repoRoot } from './lib/shell.mjs';
 import { watchRepo } from './lib/watch.mjs';
@@ -24,6 +25,21 @@ import { watchRepo } from './lib/watch.mjs';
  * The server binds to localhost and only ever *reads* the repository — the
  * browser posts a step id, never a path or a command.
  */
+
+/**
+ * The Groq key, if there is one, lives outside the repository — in the same
+ * directory as the progress file.
+ *
+ * Not in `onboarding/.env`: the trainee switches off this branch within a few
+ * steps, which would delete that file from disk. It would appear to work until
+ * the next restart and then break, on a different branch, looking like
+ * something else entirely.
+ */
+try {
+  process.loadEnvFile(join(homedir(), '.zizzu-onboarding', 'env'));
+} catch {
+  // No file, no key, no feature. That is a supported way to run this.
+}
 
 const PORT = Number(process.env['ONBOARDING_PORT'] ?? 4000);
 
@@ -90,7 +106,7 @@ if (missing.length > 0) {
 // Progress
 // ---------------------------------------------------------------------------
 
-const emptyProgress = { steps: {}, quiz: {}, attest: {} };
+const emptyProgress = { steps: {}, quiz: {}, attest: {}, ask: {} };
 
 async function loadProgress() {
   try {
@@ -132,7 +148,13 @@ function isStepComplete(stepId, checkResults) {
     (item) => progress.attest[`${stepId}.${item.id}`] === true,
   );
 
-  return checksPass && quizPass && attestPass;
+  // Satisfied by having written an answer. Never by what the model said about
+  // it — that call can fail, and nobody should be stuck behind a third party.
+  const askPass = (step.ask ?? []).every(
+    (item) => progress.ask[`${stepId}.${item.id}`] === true,
+  );
+
+  return checksPass && quizPass && attestPass && askPass;
 }
 
 function progressSnapshot() {
@@ -146,7 +168,7 @@ function progressSnapshot() {
     };
   }
 
-  return { steps: done, quiz: progress.quiz, attest: progress.attest };
+  return { steps: done, quiz: progress.quiz, attest: progress.attest, ask: progress.ask };
 }
 
 // ---------------------------------------------------------------------------
@@ -206,6 +228,7 @@ const routes = {
       progress: progressSnapshot(),
       branch: await currentBranch(),
       repoRoot,
+      llm: { available: llm.available(), minAnswer: llm.MIN_ANSWER },
     };
   },
 
@@ -262,6 +285,43 @@ const routes = {
     await saveProgress();
 
     return { ok: true, complete: isStepComplete(stepId) };
+  },
+
+  async 'POST /api/ask'(body) {
+    const stepId = String(body.step ?? '');
+    const questionId = String(body.question ?? '');
+    const question = askQuestion(stepId, questionId);
+
+    if (!question) return { error: 'Unknown question' };
+
+    const answer = String(body.answer ?? '').slice(0, llm.MAX_ANSWER);
+
+    if (answer.trim().length < llm.MIN_ANSWER) {
+      return { recorded: false, reason: 'too-short', minAnswer: llm.MIN_ANSWER };
+    }
+
+    // Recorded first, and saved, before anything is asked of the network. If
+    // the call below fails — no key, no wifi, rate limit, retired model — the
+    // reader has still answered and still moves on.
+    progress.ask[`${stepId}.${questionId}`] = true;
+    await saveProgress();
+
+    const feedback = await llm.grade({
+      prompt: question.prompt,
+      lookFor: question.lookFor,
+      modelAnswer: question.modelAnswer,
+      answer,
+    });
+
+    return {
+      recorded: true,
+      complete: isStepComplete(stepId),
+      // Always returned, whatever the model said or failed to say. Comparing
+      // your answer to a good one is the part that does the teaching.
+      modelAnswer: question.modelAnswer,
+      feedback: feedback.ok ? feedback : null,
+      reason: feedback.ok ? null : feedback.reason,
+    };
   },
 
   async 'POST /api/reset'() {

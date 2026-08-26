@@ -113,7 +113,7 @@ otherwise it is fine
 Four lines, and every one of them traces back to a row in the examples table.
 Notice how short it turned out. That is normal: the thinking was the work.
 
-=== check=sandbox-branch,prep-notes,exported,examples-are-tests,passes
+=== check=sandbox-branch,prep-notes,exported,examples-are-tests,passes ask=why-examples-first
 ## Write it
 
 **1. Create `lib/products.ts`** with your PREP as the comment, then the

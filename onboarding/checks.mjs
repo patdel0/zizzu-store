@@ -706,6 +706,20 @@ export const steps = [
     phase: 'Seeing how it works',
     title: 'Which machine is this running on?',
     minutes: 25,
+    ask: [
+      {
+        id: 'why-two-places',
+        prompt:
+          'In your own words: why did one `console.log` print in the terminal and the other in the browser?',
+        lookFor: [
+          'the two files ran on different machines',
+          'a console.log prints wherever its code is running',
+          "the page ran on the server; the component was sent to the browser",
+        ],
+        modelAnswer:
+          'They ran in different places. `page.tsx` ran on the server, so its output went to the server log. `posts-board.tsx` was sent to my browser as code and ran there, so its output went to the browser console. A `console.log` prints wherever the code containing it happens to be running.',
+      },
+    ],
     checks: [
       {
         id: 'server-log',
@@ -918,6 +932,20 @@ export const steps = [
     phase: 'Building a feature',
     title: 'Break the problem down',
     minutes: 30,
+    ask: [
+      {
+        id: 'why-storage-first',
+        prompt:
+          'Why does the storage go first, and the page last? What would go wrong the other way round?',
+        lookFor: [
+          'each layer needs the one below it to exist',
+          'building the page first means nothing real to read from',
+          'you cannot check that it works until the thing underneath exists',
+        ],
+        modelAnswer:
+          'Each layer needs the one below it. The page reads from an address, and that address reads from somewhere the data is kept. If I built the page first there would be nothing real behind it, so I could not tell whether any of it worked — I would be guessing until the very end.',
+      },
+    ],
     checks: [
       onSandboxBranch,
       {
@@ -1155,6 +1183,20 @@ export const steps = [
     phase: 'Building a feature',
     title: 'Write a test, then make it pass',
     minutes: 60,
+    ask: [
+      {
+        id: 'why-red-first',
+        prompt:
+          'You just watched the whole suite pass while the app was broken. In your own words: why is it not enough for a test to pass?',
+        lookFor: [
+          'a passing suite only covers behaviour somebody wrote a test for',
+          'nothing was watching the title limit',
+          'a test that has only ever passed might not be connected to the code',
+        ],
+        modelAnswer:
+          'A passing suite only tells me that the things somebody wrote tests for still work. Nobody had written a test for the title limit, so nothing noticed when I broke it. And a test I have only ever seen pass might not be testing anything at all — watching it fail first is how I know it is really connected.',
+      },
+    ],
     attest: [
       {
         id: 'green-but-broken',
@@ -1414,6 +1456,20 @@ export const steps = [
     phase: 'Building a feature',
     title: 'PREP — think before you type',
     minutes: 50,
+    ask: [
+      {
+        id: 'why-examples-first',
+        prompt:
+          'You wrote the examples before the function. What did that change about writing the code itself?',
+        lookFor: [
+          'the decisions were already made before coding started',
+          'the examples became the tests',
+          'the function was short because the thinking was done',
+        ],
+        modelAnswer:
+          'Writing the examples forced me to decide what counts as a valid price before I wrote any code — text, decimals, zero, negatives. By the time I got to the function the decisions were already made, so it was short, and I did not have to invent test cases afterwards because the examples were already the tests.',
+      },
+    ],
     checks: [
       onSandboxBranch,
       {
@@ -2052,6 +2108,8 @@ export function publicSteps() {
     })),
     attest: step.attest ?? [],
     quiz: (step.quiz ?? []).map(({ id, prompt, options }) => ({ id, prompt, options })),
+    // `lookFor` and `modelAnswer` stay on the server, like quiz answers do.
+    ask: (step.ask ?? []).map(({ id, prompt }) => ({ id, prompt })),
   }));
 }
 
@@ -2085,6 +2143,11 @@ export async function runChecks(stepId, only = null) {
   }
 
   return results;
+}
+
+/** One written question, with the rubric its author wrote for it. */
+export function askQuestion(stepId, questionId) {
+  return stepsById.get(stepId)?.ask?.find((entry) => entry.id === questionId) ?? null;
 }
 
 /** Grades one quiz answer. The answers live here, on the server, not in the page. */

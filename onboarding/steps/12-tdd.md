@@ -259,7 +259,7 @@ explains the reasoning: some branches cost more to test than they are worth, and
 saying so out loud is better than pretending the gap is not there.
 :::
 
-=== check=order quiz=envelope
+=== check=order quiz=envelope ask=why-red-first
 ## Now commit — separately
 
 The test is already committed. Commit the route as its own change, so the
