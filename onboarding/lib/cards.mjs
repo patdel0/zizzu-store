@@ -39,9 +39,15 @@ function parseGate(attributes) {
 export function splitCards(markdown) {
   const cards = [];
   let current = { gate: parseGate(''), lines: [] };
+  let inFence = false;
 
   for (const line of String(markdown).replace(/\r\n/g, '\n').split('\n')) {
-    const match = DELIMITER.exec(line);
+    // A fenced block can legitimately contain a line starting with `===` — a
+    // markdown example, a shell heredoc — and splitting there would tear the
+    // block in half.
+    if (line.startsWith('```')) inFence = !inFence;
+
+    const match = inFence ? null : DELIMITER.exec(line);
 
     if (match) {
       cards.push(current);

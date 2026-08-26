@@ -39,14 +39,13 @@ layer needs the one below it:
 
 ```mermaid
 flowchart TD
-    P[Page — what a person sees] --> A[Endpoint — how code gets the data]
-    A --> M[Model — where the data lives]
-    M --> D[(Database table)]
+    P[Page — what a person looks at] --> A[Endpoint — how code fetches the data]
+    A --> M[Table — where the data lives]
 ```
 
-**3. Work bottom-up.** Build the model, then the endpoint, then the page. Do it
-the other way and you spend the day building against things that do not exist
-yet, unable to check that any of it works.
+**3. Work bottom-up.** Build the table first, then the thing that reads it, then
+the page a person looks at. Do it the other way and you spend the day building
+against things that do not exist yet, unable to check that any of it works.
 
 **4. Split each layer until each piece is one sitting's work.** A task is the
 right size when you could finish it, test it, and commit it — and describe it in
@@ -74,12 +73,20 @@ in an issue:
 
 **Done when:** anyone can see the products list at /products and add a new one.
 
-===
 ## Tasks
 
 - [ ] Add a `Product` model to the contract and regenerate
 - [ ] ...
 ```
+
+:::note Words you have not met yet
+The example above says "add a `Product` model to the contract". You have not
+been told what either of those is, and that is normal when planning — you can
+name a job before you know how to do it. Loosely: it means *make the database
+able to store products*. Step 12 does it properly.
+
+Write your plan in whatever words you have. Nobody is marking the vocabulary.
+:::
 
 Write your own list before reading any further. Aim for at least five tasks, in
 the order you would do them. Think about:
@@ -105,7 +112,6 @@ between the two lists.
 
 **Done when:** anyone can see the products list at /products and add a new one.
 
-===
 ## Tasks
 
 - [ ] Add a `Product` model to the contract, regenerate, create the table

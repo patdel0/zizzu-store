@@ -66,18 +66,15 @@ The description is the first thing a reviewer reads and it decides how good your
 review is. Three things:
 
 ```markdown
-===
 ## What
 
 Adds `GET` and `POST /api/products`, a `Product` model, and a page at
 `/products`.
 
-===
 ## Why
 
 Closes #12. The store needs products before anything can be sold.
 
-===
 ## How to check it
 
 1. `./script/server`

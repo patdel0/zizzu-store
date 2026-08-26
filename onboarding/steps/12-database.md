@@ -3,14 +3,29 @@ and you will build it the same way the `posts` feature is built, one layer at a
 time, starting with the database.
 
 ===
-## Tables, and where they come from
+## What a database actually holds
 
-A database holds **tables**. A table has **columns** with types, and each row is
-one record. `Post` has a `title` column that holds text, a `createdAt` that
-holds a timestamp, and so on.
+A database holds **tables**. If you have used a spreadsheet you already have the
+picture:
+
+| id | title | content |
+|---|---|---|
+| `0199…a1` | Hello | World |
+| `0199…b2` | Second post | *(nothing)* |
+
+Each **column** is one kind of information every row has. Each **row** is one
+actual thing — here, one post.
+
+Every column has a type, and the database enforces it. `title` holds text;
+`createdAt` holds a timestamp. Try to save the word "banana" where a number
+belongs and it refuses. That refusal is a feature: a whole class of bad data
+simply cannot get in.
+
+===
+## Where the tables come from
 
 In many projects you would create tables by writing SQL by hand. Here, one file
-describes them: `lib/prisma/contract.ts`. Open it.
+describes them all: `lib/prisma/contract.ts`. Open it and find this:
 
 ```typescript
 const Post = model('Post', {
@@ -25,7 +40,15 @@ const Post = model('Post', {
 });
 ```
 
-That is the whole definition of a post. From it, [Prisma](https://www.prisma.io/docs) produces the real
+That block is a **model**. It is a word you will hear constantly, and it means
+something simple: *the description of one table* — its name, and what each of
+its columns is called and holds.
+
+So the `Post` model above says: there is a table called `Post`, and every row in
+it has an `id`, a `title`, some optional `content`, an `authorId`, and two
+timestamps. That is all a model is. Not the data — the shape of it.
+
+From that description, [Prisma](https://www.prisma.io/docs) produces the real
 [Postgres](https://www.postgresql.org/docs/) table *and* the TypeScript types — so when you type
 `db.orm.public.Post.` your editor knows every field, and misspelling one is an
 error before you run anything.
