@@ -81,7 +81,7 @@ stops and a real question starts.
 Each one is introduced where you first need it, not before.
 
 ===
-## Two things worth knowing up front
+## Three things worth knowing up front
 
 **Being stuck is the job.** Not a phase you get through. People with twenty
 years of experience are stuck several times a week; they have just got faster at
@@ -90,5 +90,10 @@ recognising it and asking. There is a whole step on how to ask well.
 **You are not expected to remember this.** Nobody holds a codebase in their
 head. They know roughly where to look, and they look. This tutorial is trying to
 give you the "roughly where", not a memorised map.
+
+**You will not feel ready.** Not today, and not in a year — the feeling arrives
+late or not at all, and it is not information about whether you can do the work.
+Use the evidence instead: the tests pass, the check went green, someone reviewed
+it and said yes. That is what "ready" actually looks like from the inside.
 
 That is the mindset. Next, get the thing running.
