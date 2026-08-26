@@ -1139,6 +1139,29 @@ export const steps = [
     minutes: 35,
     ask: [
       {
+        id: 'plan-review',
+        // The rubric below describes the shape of a task list, not phrases to
+        // find in prose, so the offline word match cannot score it.
+        structural: true,
+        prompt:
+          'Paste your task list, then add one sentence: which task did you have the most trouble placing, and what decided it?',
+        // Unusually, the rubric here is about the *shape* of what they wrote
+        // rather than facts they should have recalled. Whether a breakdown is
+        // any good is the one judgement in this course that a check cannot
+        // make: `plan-tasks` can count items and `plan-ordered` can catch a
+        // page built before its storage, and neither can tell whether a task
+        // is one task.
+        lookFor: [
+          'every item is one piece of work, small enough to finish in a sitting',
+          'nothing appears before the thing it needs to exist',
+          'reading products and creating one are separate tasks',
+          'something in the list says how you would know it works',
+          'the sentence names a real ordering decision rather than restating the list',
+        ],
+        modelAnswer:
+          'A good list reads something like: somewhere to keep a product; an address that hands products back; an address that accepts a new one; refusing a bad price; a page that shows them; a form that adds one; a browser test for the whole path. Each is finishable on its own, nothing sits above something that does not exist yet, and reading and writing are separate because they can be finished and checked separately. The hardest to place is usually validation \u2014 it is not obviously its own task until you ask who would notice if it were missing.',
+      },
+      {
         id: 'why-storage-first',
         prompt:
           'Why does the storage go first, and the page last? What would go wrong the other way round?',

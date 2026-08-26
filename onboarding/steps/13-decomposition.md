@@ -44,17 +44,6 @@ the post to exist, and needs to be told which one.
 Nothing about time yet. This diagram would be identical if you built it over a
 year or an afternoon.
 
-:::why Two different diagrams that look the same
-This one is about **dependency** — arrows mean "needs".
-
-You will also see diagrams where arrows mean "and then" — a sequence. Same
-shapes, completely different meaning, and it is worth knowing which one you are
-looking at. In research on how beginners plan, mixing the two in a single
-diagram was one of the most common mistakes.
-
-Label your arrows if there is any doubt. "Needs" and "then" are short words.
-:::
-
 ===
 ## Then turn it into an order
 
@@ -185,4 +174,26 @@ Five or more tasks. Questions worth asking while you trace:
 Write it in whatever language you have. "Make somewhere to keep products" is
 every bit as good as the same thing in jargon you have not been taught. Nobody
 is marking the vocabulary.
+:::
+
+=== ask=plan-review
+## Get a second opinion on it
+
+The checks above can count your tasks and catch a page built before the thing it
+reads from. What they cannot tell you is whether a task is really *one* task, or
+whether you have missed a piece — and that is most of what makes a breakdown
+good or bad.
+
+So paste your list below and get a read on it.
+
+This will not stop you continuing whatever it says, and it is not marking you.
+It is doing what you would get from leaning over to the person next to you and
+asking "does this look about right?" — which, on a real team, is what you should
+do with your first few plans anyway.
+
+:::note If it disagrees with you
+It is a second opinion, not a verdict, and it has not seen the codebase. Where
+it and your list differ, the interesting move is to work out which of you is
+right — and if it is you, you have just discovered you can defend your plan,
+which is the more useful outcome.
 :::

@@ -68,6 +68,13 @@ export function model() {
  *
  * Deliberately generous. Each `lookFor` bullet is reduced to its content words
  * and counts as covered if a third of them appear.
+ *
+ * This only works when the rubric describes *things to say*. A question whose
+ * rubric describes the shape of an artifact — "every item is small enough to
+ * finish in a sitting" — cannot be graded this way, because a good answer is a
+ * task list that never uses those words. Those questions set `structural: true`
+ * and skip this entirely; showing a perfect answer nought out of five would be
+ * worse than showing nothing.
  */
 const STOP = new Set([
   'the', 'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been', 'it', 'its', 'to',

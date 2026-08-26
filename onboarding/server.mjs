@@ -347,8 +347,12 @@ const routes = {
     });
 
     // Decided locally, so a reader with no key still learns which idea they
-    // missed rather than only seeing a model answer to compare against.
-    const covered = llm.conceptsCovered(question.lookFor, answer);
+    // missed rather than only seeing a model answer to compare against. Skipped
+    // where the rubric describes an artifact's shape rather than things to say
+    // — see `conceptsCovered`.
+    const covered = question.structural
+      ? null
+      : llm.conceptsCovered(question.lookFor, answer);
 
     return {
       recorded: true,

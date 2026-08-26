@@ -91,15 +91,30 @@ Some checks are less obvious than they look:
 
 ## Written answers, and the optional AI comment
 
-Four steps ask the trainee to explain something in their own words —
-`two-machines`, `decomposition`, `tdd`, `prep`, the four that teach method
-rather than syntax. Articulating an idea is what makes it stick, and that works
-whether or not anything reads the answer afterwards.
+Sixteen questions across the course ask the trainee to produce an answer rather
+than pick one — free recall rather than recognition, which is the stronger
+instrument by some distance (Rowland's meta-analysis puts recall at g=0.81
+against recognition at g=0.36). Three of them are deliberately spaced: they ask
+for something learned hours earlier, at the moment it comes up again.
 
-So the answer is **recorded the moment it is submitted**, and the author's model
-answer is always revealed to compare against. If a Groq key is present, the
-answer also gets a sentence of feedback. If it is not, nothing is lost and
-nothing is mentioned.
+The answer is **recorded the moment it is submitted**, and the author's model
+answer is always revealed to compare against. Two things then comment on it,
+and neither can stop anybody:
+
+- **Offline, always.** `conceptsCovered` marks which of the author's points the
+  answer touched, by generous word overlap. So a trainee with no key still
+  learns which idea they missed rather than only seeing a model answer.
+- **Via Groq, if a key is present.** A sentence of feedback on their actual
+  wording.
+
+One question, `decomposition.plan-review`, is the exception that motivated the
+whole feature: the trainee pastes their own task list and the model comments on
+the breakdown. Whether a task is really *one* task is the single judgement in
+this course that no check can make — `plan-tasks` can count items and
+`plan-ordered` can catch a page built before its storage, and that is the limit
+of what reading a file can tell you. That question sets `structural: true`,
+which turns the offline word match off: its rubric describes the shape of a task
+list, and a good answer is a list that never uses those words.
 
 **The AI verdict never gates anything.** The card unlocks on having written a
 substantive answer — checked server-side, offline, deterministically. A trainee
