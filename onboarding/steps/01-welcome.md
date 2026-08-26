@@ -44,8 +44,8 @@ commits, your tests.
 Nothing is simulated. When a check goes green, the thing really works. When it
 goes red, it tells you what it looked for and what to do next.
 
-Some steps ask questions instead. Those are not a test you can fail; you can
-answer as many times as you like. They exist because reading something and
+Some steps ask questions instead. Those are not an exam; you can answer as many
+times as you like. They exist because reading something and
 having understood it are different, and it is better to find out now.
 
 :::warn Leave this running

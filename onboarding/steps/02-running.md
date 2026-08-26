@@ -46,6 +46,13 @@ together.
 npm test
 ```
 
+A **test** is a small piece of code that runs part of this project and checks
+the answer is what somebody said it would be. There are a few dozen of them
+here, and `npm test` runs the lot.
+
+That is all you need for now — {{step:what-tests-are}} takes them apart properly,
+and you will write your own shortly after.
+
 The first run is slow: it creates a separate `zizzu_test` database and its
 tables. Every run after that is quicker.
 

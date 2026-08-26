@@ -1,177 +1,188 @@
-Before you build anything bigger, one skill: **taking a job that is too big to
-start and cutting it into pieces that are obvious.**
+Here is a job somebody might hand you on a Monday:
 
-You already did this once without noticing. Start there.
+> Let people delete their own posts.
+
+One sentence. Small, even. And there is still no obvious first line to type.
+
+This step is the skill that fixes that — and it is a skill, not a personality
+trait. People who are good at it are running a procedure you can learn in half
+an hour.
 
 ===
-## The one you already did
+## Two questions, not one
 
-In {{step:first-change}} you added a tagline to the home page. Written out, that job was:
+"Break it down" gets used for two different things, and mixing them up is the
+commonest way a plan goes wrong.
 
-1. Switch to your branch
-2. Open `app/page.tsx`
-3. Add the paragraph
-4. Look at the browser to check it worked
-5. Commit it
+**What needs what?** The page cannot read from an endpoint that does not exist.
+The endpoint cannot read from a table that does not exist. That is a *fact about
+the code* — you do not get a say in it.
 
-Five small things, each one you could finish and be sure about. You did not plan
-it, because it was small enough to hold in your head.
+**What order will I work in?** That is a *choice about your week*.
 
-The whole skill is doing that deliberately when the job is *not* small enough to
-hold in your head.
+They are related — what needs what rules out some orders — but they are not the
+same, and the first one has to be settled before the second is even a question.
 
-:::why Why bother writing it down
-Three things it buys you, and only the first is obvious:
+So: dependencies first, always. Order second.
 
-- **You always know what to do next.** Sitting down tomorrow, the list tells you
-  where you were.
-- **You find out what you misunderstood while it is still cheap.** Writing down
-  "stop two products having the same name" makes you ask whether names have to
-  be unique — thirty seconds now, half a day after the code exists.
-- **You get to finish things.** Ticking off six small tasks feels completely
-  different from being 30% through one big one, and it shows in how much you get
-  done.
+=== quiz=two-questions
+## What needs what
+
+Take the delete job. Ask of each piece: *what has to already exist for this to
+work at all?*
+
+```mermaid
+flowchart TD
+    B["A delete button on the page"] --> E["An endpoint that deletes one post"]
+    E --> D[("The post in the database")]
+    E --> C["A way to know which post"]
+```
+
+Read every arrow as **needs**. The button needs the endpoint. The endpoint needs
+the post to exist, and needs to be told which one.
+
+Nothing about time yet. This diagram would be identical if you built it over a
+year or an afternoon.
+
+:::why Two different diagrams that look the same
+This one is about **dependency** — arrows mean "needs".
+
+You will also see diagrams where arrows mean "and then" — a sequence. Same
+shapes, completely different meaning, and it is worth knowing which one you are
+looking at. In research on how beginners plan, mixing the two in a single
+diagram was one of the most common mistakes.
+
+Label your arrows if there is any doubt. "Needs" and "then" are short words.
 :::
 
 ===
-## What order?
+## Then turn it into an order
 
-Some tasks have to come before others. Here are those five, jumbled. Put them
-back.
+Now the arrows have something to say about time: **build the bottom before the
+top.** Anything with an arrow pointing at it has to exist first.
 
-:::order Put these back in a sensible order
-Switch to your branch
-Open app/page.tsx
-Add the paragraph
-Look at the browser to check it worked
-Commit it
-:::
+For the delete job that gives:
 
-You cannot check it in the browser before you have written it, and you should
-not commit before you have checked.
+1. The endpoint that deletes one post
+2. Something that proves it works
+3. The button on the page that calls it
 
-**That is all ordering is: each task needs the ones above it to be done already.**
+Note what dependency did *not* decide: whether you write the test before or
+after the endpoint, or whether the button gets styled today or tomorrow. Those
+are yours. Dependency narrows the possible orders; it does not pick one.
 
 ===
-## Now a bigger one
+## Trace it before you trust it
 
-Here is the next job:
+Here is the part almost nobody does, and it takes two minutes.
+
+**Walk your list in order and ask, after each line: what actually exists now?**
+
+Try it on this plan for the delete job. Somebody wrote it in a hurry.
+
+```markdown
+- [ ] Add a delete button to the post
+- [ ] Add the DELETE endpoint
+- [ ] Test it
+```
+
+Line 1: a button exists. Clicking it does nothing, because there is nothing to
+call. **The project now looks finished and is not** — the worst state to leave
+anything in, because the next person believes the button.
+
+Line 2: the endpoint exists. Nothing about "which post", so it either deletes
+the wrong one or cannot run at all.
+
+Line 3: "test it" — test what? This is one line covering three behaviours, and
+it will get done last, badly, or not at all.
+
+And one thing the trace finds that reading never does: **what happens when the
+post is not there?** Nobody wrote it down, so nobody will build it, and it will
+be found by a reviewer or a user.
+
+=== quiz=trace-it
+## The two things tracing catches
+
+**A step that needs something not built yet.** The button before the endpoint.
+Obvious in hindsight, invisible while you are writing the list.
+
+**A piece nobody remembered.** The missing case, the error state, the empty
+list. These are not oversights of skill — they are things that only occur to you
+when you walk the path rather than describe it.
+
+Here is the same plan after a trace:
+
+```markdown
+- [ ] Add a DELETE endpoint that removes one post by id
+- [ ] Prove it deletes the right one
+- [ ] Answer 404 when the post does not exist
+- [ ] Add the button, wired to the endpoint
+- [ ] Remove the post from the list on screen once it succeeds
+```
+
+Five lines instead of three, and every one of them can be finished, proved, and
+committed on its own.
+
+===
+## How small is small enough
+
+One task is one thing you could finish, prove, and commit — and describe in a
+sentence without the word "and".
+
+:::note How to tell a task is the right size
+Ask: after I finish it, is the project still working?
+
+"Add a DELETE endpoint" passes — the endpoint exists, nothing is broken, the
+button is not there yet and nothing pretends it is. "Add half the validation"
+does not. A task that leaves the project broken in the middle was cut in the
+wrong place.
+:::
+
+Two failure modes, and you will have one of them:
+
+**Too big.** "Build the delete feature." You cannot start it and you cannot
+finish it, so you work for a day and have nothing to tick.
+
+**Too small.** "Import the db client." That is not a unit of anything. If your
+list has thirty items and none of them is worth a commit, you are writing
+instructions to yourself, not a plan.
+
+=== check=sandbox-branch,plan-exists,plan-tasks,plan-ordered ask=why-storage-first
+## Your turn, on the real job
+
+Now the one you are actually about to build:
 
 > Zizzu needs products. People should be able to see what is for sale and add
 > new items.
 
-Too big to start. But the cut is easier than it looks, because almost every web
-feature is the same three layers:
+Make sure you are on your sandbox branch, then create `PLAN.md` at the top of
+the project.
 
-```mermaid
-flowchart TD
-    P[The page a person looks at] --> A[An address that hands over the data]
-    A --> T[Somewhere to keep the data]
-```
+**Do it in the order this step gave you.**
 
-Read each arrow as "needs". The page needs the address. The address needs
-somewhere to read from.
-
-So you build them **bottom to top**: storage first, then the address, then the
-page. Do it the other way and you spend the day building against things that do
-not exist yet, with no way to tell whether any of it works.
-
-===
-## Cut each layer up
-
-One task should be one thing you could finish, check, and commit — and describe
-in a sentence without using the word "and".
-
-Take the middle layer, "an address that hands over the data". That is really two
-jobs, because reading and writing are different:
-
-- getting the list of products *out*
-- putting a new product *in*
-
-And each of those needs somebody to check it works, which is another task each.
-
-:::note The test for a good task
-After you finish it, is the project still working?
-
-"Make the database able to store a product" passes: the table exists, nothing is
-broken. "Do half the checking" does not. A task that leaves the project broken
-in the middle was cut in the wrong place.
-:::
-
-=== check=sandbox-branch,plan-exists,plan-tasks,plan-ordered
-## Write your list
-
-Make sure you are on your sandbox branch, then create a file called `PLAN.md` at
-the top of the project.
-
-Here is the start of it. **Copy this in, then add your own tasks underneath** —
-five or more in total.
+1. **What needs what?** Sketch it — on paper is fine. What has to exist before a
+   person can see a product? Before they can add one?
+2. **Turn it into a list**, bottom of the stack first.
+3. **Trace it.** Walk your own list and ask after each line what exists now.
+   Fix what that finds — it will find something.
 
 ```markdown
 # Products
 
 **Done when:** anyone can see the products at /products and can add a new one.
 
-- [ ] Make the database able to store a product
-- [ ] Make an address that hands back the list of products
-- [ ] Check that it really does
+- [ ] ...
 ```
 
-To keep going, ask yourself:
+Five or more tasks. Questions worth asking while you trace:
 
-- What is still missing before someone can *add* a product?
-- What should happen if someone types a price of `-5`? Is dealing with that a task?
-- What about the page itself?
-- How does anyone know each piece works?
+- Where does a product live before anyone can read one back?
+- Reading and writing are different jobs. Are they one task or two?
+- What should happen if someone types a price of `-5`? Whose task is that?
+- How would anyone know each piece works?
 
-:::note You do not need the right words
+:::note Words you have not met yet
 Write it in whatever language you have. "Make somewhere to keep products" is
-every bit as good as the same thing said in jargon you have not been taught yet.
-Nobody is marking the vocabulary.
-:::
-
-=== quiz=too-big,why-decompose ask=why-storage-first
-## Compare
-
-One reasonable version:
-
-```markdown
-# Products
-
-**Done when:** anyone can see the products at /products and can add a new one.
-
-- [ ] Make the database able to store a product
-- [ ] Make an address that hands back the list of products
-- [ ] Check that it really does
-- [ ] Make an address that accepts a new product
-- [ ] Check that it really saves one
-- [ ] Refuse bad input — no name, silly price
-- [ ] Refuse a product whose name is already taken
-- [ ] Build the /products page showing the list
-- [ ] Add the form for adding one
-- [ ] Check the whole thing in a browser
-```
-
-Yours will not match, and does not need to. What is worth noticing:
-
-- **Storage is first.** Everything else needs it.
-- **Reading and writing are separate.** Different jobs, different checks.
-- **Refusing bad input is its own task.** Because it is on the list, it will get
-  done. Things not on the list get found by somebody else, later.
-- **Checking is half the lines**, sitting next to the thing being checked —
-  not saved up for the end.
-
-Compare the two and ask what each of you spotted that the other did not. That
-comparison *is* the exercise.
-
-:::try
-Commit your plan:
-
-```bash
-git add PLAN.md
-git commit -m "Add a plan for products"
-```
-
-You will tick these off as you go. In real work this list lives in the issue,
-where the team can see it — that comes in {{step:issues}}.
+every bit as good as the same thing in jargon you have not been taught. Nobody
+is marking the vocabulary.
 :::

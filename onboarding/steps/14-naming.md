@@ -95,7 +95,7 @@ createPost          resetDatabase         getRequest
 ```
 
 Every one of those is `verb` + `what it acts on`. You can guess what it does
-without opening it, which is the entire test of a name.
+without opening it, which is the whole job of a name.
 
 Three verbs to avoid:
 

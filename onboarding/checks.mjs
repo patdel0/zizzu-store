@@ -1026,7 +1026,7 @@ export const steps = [
     id: 'decomposition',
     phase: 'Building a feature',
     title: 'Break the problem down',
-    minutes: 30,
+    minutes: 35,
     ask: [
       {
         id: 'why-storage-first',
@@ -1035,7 +1035,7 @@ export const steps = [
         lookFor: [
           'each layer needs the one below it to exist',
           'building the page first means nothing real to read from',
-          'you cannot check that it works until the thing underneath exists',
+          'you cannot tell whether it works until the thing underneath exists',
         ],
         modelAnswer:
           'Each layer needs the one below it. The page reads from an address, and that address reads from somewhere the data is kept. If I built the page first there would be nothing real behind it, so I could not tell whether any of it worked — I would be guessing until the very end.',
@@ -1071,7 +1071,7 @@ export const steps = [
           if (tasks < 5) {
             return {
               pass: false,
-              detail: `Found ${tasks} checklist item${tasks === 1 ? '' : 's'}, and this job has more parts than that.\n\nWrite them as markdown checkboxes — \`- [ ] Add the Product model\` — one line per piece you could finish and commit on its own. Aim for at least five.`,
+              detail: `Found ${tasks} checklist item${tasks === 1 ? '' : 's'}, and this job has more parts than that.\n\nWrite them as markdown checkboxes — \`- [ ] Add somewhere to keep a product\` — one line per piece you could finish on its own. Aim for at least five.`,
             };
           }
 
@@ -1083,70 +1083,72 @@ export const steps = [
       },
       {
         id: 'plan-ordered',
-        label: 'Your plan starts at the bottom of the stack',
+        label: 'Nothing is built before the thing it needs',
         async run() {
           const source = (await read('PLAN.md')) ?? '';
           const lower = source.toLowerCase();
-          // "table" and "model" both count — the reader has not been taught the
-          // second word yet, and either one shows they got the ordering right.
-          const model = Math.min(
-            ...[lower.indexOf('model'), lower.indexOf('table'), lower.indexOf('database')]
+          const storage = Math.min(
+            ...[lower.indexOf('model'), lower.indexOf('table'), lower.indexOf('database'), lower.indexOf('store')]
               .filter((at) => at !== -1),
             Infinity,
           );
           const page = Math.max(lower.indexOf('page'), lower.indexOf('form'));
 
-          if (model === Infinity) {
+          if (storage === Infinity) {
             return {
               pass: false,
               detail:
-                'Nothing in your plan mentions the database, a table or a model. Somewhere to *put* a product has to exist before anything can read one back — that is the first task.',
+                'Nothing in your plan mentions the database, a table or storing a product. Somewhere to *put* a product has to exist before anything can read one back — that is the bottom of the stack, so it is the first task.',
             };
           }
 
-          if (page !== -1 && page < model) {
+          if (page !== -1 && page < storage) {
             return {
               pass: false,
               detail:
-                'Your plan builds the page before the thing it reads from. Work upwards: the page needs an address to fetch from, and that address needs a table to read. Build it the other way round and you spend the day guessing whether any of it works.',
+                'Your plan builds the page before the thing it reads from. Trace it: on the day you finish the page, what does it show? Work upwards instead — storage, then the address that hands the data over, then the page.',
             };
           }
 
-          return { pass: true, detail: 'Storage first, then what sits on top of it.' };
+          return { pass: true, detail: 'Every task has what it needs underneath it.' };
         },
       },
     ],
     quiz: [
       {
-        id: 'too-big',
+        id: 'two-questions',
         prompt:
-          'Which of these is the right size for one task on your list?',
+          '"The page needs the endpoint" and "I will build the endpoint on Tuesday" are answers to two different questions. Which pair?',
         options: [
-          { id: 'a', label: 'Build the products feature.' },
-          { id: 'b', label: 'Add a `Product` model to the contract and regenerate.' },
-          { id: 'c', label: 'Type the word `Product`.' },
-          { id: 'd', label: 'Finish the sprint.' },
-        ],
-        answer: 'b',
-        explain:
-          'A good task is one you could finish, test, and commit in a sitting — and describe in a sentence without the word "and". "Build the feature" is a week and cannot be started; "type a word" is not a unit of anything. The test is whether finishing it leaves the project working.',
-      },
-      {
-        id: 'why-decompose',
-        prompt: 'What is the main practical benefit of writing the list before you start?',
-        options: [
-          { id: 'a', label: 'It looks organised to your manager.' },
+          { id: 'a', label: 'What is hard, and what is easy.' },
           {
             id: 'b',
             label:
-              'You find out what you have misunderstood while it is still cheap, and you always know what to do next.',
+              'What needs what to exist (dependency), and what order I will work in (sequence).',
           },
-          { id: 'c', label: 'It makes the code shorter.' },
-          { id: 'd', label: 'It is required before opening a pull request.' },
+          { id: 'c', label: 'What the user sees, and what the developer sees.' },
+          { id: 'd', label: 'They are the same question said two ways.' },
         ],
         answer: 'b',
         explain:
-          'Two things. Writing "check the author exists" forces you to notice that authors are a thing you have to handle — better now than three hours in. And when you sit down tomorrow, the list tells you where you were, which is worth more than it sounds.',
+          'Dependency is a fact about the code — the page cannot read from an endpoint that does not exist. Sequence is a choice about your week. They are related, because dependency limits which sequences work, but they are not the same and mixing them up is the commonest way a plan goes wrong.',
+      },
+      {
+        id: 'trace-it',
+        prompt: 'What is plan tracing, and why bother?',
+        options: [
+          { id: 'a', label: 'Running the code to see if it works.' },
+          {
+            id: 'b',
+            label:
+              'Walking through your list in order and asking what actually exists after each line — so you find the gaps before you write anything.',
+          },
+          { id: 'c', label: 'Drawing a diagram of the finished feature.' },
+          { id: 'd', label: 'Asking a senior developer to check your plan.' },
+        ],
+        answer: 'b',
+        explain:
+          'It costs two minutes and finds the two things a plan is usually missing: a step that depends on something not built yet, and a piece nobody remembered at all. Both are far cheaper to find now than on the afternoon you hit them.',
       },
     ],
   },
