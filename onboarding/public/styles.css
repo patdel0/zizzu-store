@@ -239,6 +239,12 @@ kbd {
   color: var(--text);
 }
 
+.link-button--armed {
+  color: var(--fail);
+  font-weight: 600;
+  text-decoration: none;
+}
+
 /* --------------------------------------------------------------- content */
 
 .eyebrow {

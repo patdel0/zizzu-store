@@ -1179,6 +1179,84 @@ export const steps = [
   },
 
   {
+    id: 'typescript',
+    phase: 'Building a feature',
+    title: 'TypeScript, the parts you need',
+    minutes: 35,
+    attest: [
+      {
+        id: 'saw-editor-error',
+        label: 'I saw my editor mark the mistake before I ran anything',
+      },
+    ],
+    checks: [
+      {
+        id: 'tsc-clean',
+        label: 'The project type-checks, and your experiment is cleaned up',
+        slow: SLOW,
+        async run() {
+          const dirty = await gitOut('status', '--porcelain', '--', '__tests__/api/posts.test.ts');
+
+          if (dirty !== '') {
+            return {
+              pass: false,
+              detail:
+                'You still have the deliberate mistake in `__tests__/api/posts.test.ts`. Take that line out again:\n\n```\ngit restore __tests__/api/posts.test.ts\n```',
+            };
+          }
+
+          const result = await run('npx', ['tsc', '--noEmit'], { timeout: 180_000 });
+
+          if (result.ok) {
+            return {
+              pass: true,
+              detail: 'No type errors. Nothing was run to find that out.',
+            };
+          }
+
+          return {
+            pass: false,
+            detail: `\`npx tsc --noEmit\` is reporting errors:\n\n\`\`\`\n${tail(result.stdout || result.stderr, 10)}\n\`\`\``,
+          };
+        },
+      },
+    ],
+    quiz: [
+      {
+        id: 'why-annotations',
+        prompt:
+          'Your editor underlined the mistake before you ran anything. How did it know?',
+        options: [
+          { id: 'a', label: 'It ran the test in the background.' },
+          {
+            id: 'b',
+            label:
+              'The function says what type it takes, so passing something else is a contradiction it can see by reading.',
+          },
+          { id: 'c', label: 'It guessed from the variable name.' },
+          { id: 'd', label: 'It asked the database.' },
+        ],
+        answer: 'b',
+        explain:
+          'Nothing ran. `createPost` declares that `title` is a string, so handing it a number contradicts something already written down — and a contradiction can be found by reading the code, which is fast and needs no database, no server and no test run.',
+      },
+      {
+        id: 'union-meaning',
+        prompt: 'What does `string | null` mean when you see it on a field?',
+        options: [
+          { id: 'a', label: 'The field is a string that might be empty.' },
+          { id: 'b', label: 'Either a string or nothing — and you must handle both.' },
+          { id: 'c', label: 'The field is optional and can be left out.' },
+          { id: 'd', label: 'It is a string that will be converted to null.' },
+        ],
+        answer: 'b',
+        explain:
+          'The `|` means "one or the other". `content: string | null` says a post may genuinely have no content, and TypeScript will not let you call `.length` on it until you have checked which one you have. That check is the thing it is forcing you to remember.',
+      },
+    ],
+  },
+
+  {
     id: 'tdd',
     phase: 'Building a feature',
     title: 'Write a test, then make it pass',
@@ -1568,6 +1646,83 @@ export const steps = [
             detail: `Not passing yet.${databaseHint(output)}\n\n\`\`\`\n${tail(output)}\n\`\`\``,
           };
         },
+      },
+    ],
+  },
+
+  {
+    id: 'docblock',
+    phase: 'Building a feature',
+    title: 'Write it down for the next person',
+    minutes: 25,
+    checks: [
+      onSandboxBranch,
+      {
+        id: 'has-docblock',
+        label: '`parsePriceCents` has a docblock above it',
+        async run() {
+          const source = await read('lib/products.ts');
+
+          if (source === null) {
+            return { pass: false, detail: 'Could not read `lib/products.ts`.' };
+          }
+
+          // A `/** … */` immediately above the export, with only blank lines
+          // between — a comment three functions away is not documenting this one.
+          const pattern =
+            /\/\*\*[\s\S]*?\*\/\s*export\s+function\s+parsePriceCents/;
+
+          if (!pattern.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'No `/** … */` block directly above `export function parsePriceCents`.\n\nIt has to be `/**` with two stars — `/*` or `//` are ordinary comments and your editor will not show them on hover.',
+            };
+          }
+
+          return { pass: true, detail: 'Found it.' };
+        },
+      },
+      {
+        id: 'docblock-useful',
+        label: 'It says what goes in and what comes out',
+        async run() {
+          const source = (await read('lib/products.ts')) ?? '';
+          const block = source.match(
+            /(\/\*\*[\s\S]*?\*\/)\s*export\s+function\s+parsePriceCents/,
+          );
+
+          if (!block) return { pass: false, detail: 'Write the docblock first.' };
+
+          const text = block[1];
+          const missing = [];
+
+          if (!/@param\b/.test(text)) missing.push('`@param` — what goes in');
+          if (!/@returns?\b/.test(text)) missing.push('`@returns` — what comes out');
+
+          if (missing.length > 0) {
+            return {
+              pass: false,
+              detail: `Your docblock is missing: ${missing.join(', ')}.\n\nThose two tags are what your editor reads to show the description beside each argument while somebody is typing a call.`,
+            };
+          }
+
+          if (text.replace(/[\s*/]/g, '').length < 80) {
+            return {
+              pass: false,
+              detail:
+                'The tags are there but there is almost nothing in them. Say what the function is for and what a caller gets back — a sentence each is plenty.',
+            };
+          }
+
+          return { pass: true, detail: 'It documents its inputs and its output.' };
+        },
+      },
+    ],
+    attest: [
+      {
+        id: 'saw-hover',
+        label: 'I hovered over `parsePriceCents` somewhere it is called and saw my own words',
       },
     ],
   },

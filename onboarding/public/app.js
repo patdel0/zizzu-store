@@ -814,14 +814,50 @@ function pendingFastChecks() {
   return checks.length > 0 && !checks.some((c) => c.slow);
 }
 
-document.getElementById('reset').addEventListener('click', async () => {
-  if (!confirm('Clear all your tutorial progress and start from step 1?')) return;
+/**
+ * "Start over", confirmed in the page rather than with `confirm()`.
+ *
+ * A native dialog is silently suppressed inside a sandboxed iframe and blocked
+ * outright cross-origin, so the button did nothing at all in some browsers —
+ * the handler saw `false` and returned. Two clicks on the button itself work
+ * everywhere, and are easier to back out of.
+ */
+const resetButton = document.getElementById('reset');
+let resetArmed = null;
 
-  await api('/api/reset', {});
+resetButton.addEventListener('click', async () => {
+  if (resetArmed === null) {
+    resetButton.textContent = 'Really? This clears everything';
+    resetButton.classList.add('link-button--armed');
+    resetArmed = setTimeout(disarmReset, 5000);
+
+    return;
+  }
+
+  disarmReset();
+  resetButton.textContent = 'Starting over…';
+
+  const result = await api('/api/reset', {});
+
+  if (result?.error) {
+    resetButton.textContent = 'Could not reset — try again';
+
+    return;
+  }
+
+  resetButton.textContent = 'Start over';
   cardPosition.clear();
   await loadState();
   show(state.steps[0].id, 0);
 });
+
+function disarmReset() {
+  if (resetArmed !== null) clearTimeout(resetArmed);
+
+  resetArmed = null;
+  resetButton.textContent = 'Start over';
+  resetButton.classList.remove('link-button--armed');
+}
 
 /** `#step` or `#step/3` — the card number in the URL is 1-based. */
 function fromHash() {
