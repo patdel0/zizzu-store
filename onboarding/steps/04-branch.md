@@ -24,6 +24,47 @@ gitGraph
 Nothing you commit on your branch can affect anyone else until it is merged.
 That is the whole reason branches exist: you get to be wrong in private.
 
+===
+## The four places your work can be
+
+This is the picture worth carrying. A change you make travels through four
+places, and one command moves it between each pair.
+
+```mermaid
+flowchart LR
+    W["<b>Working tree</b><br/>the files you edit"]
+    S["<b>Staging area</b><br/>picked for the next commit"]
+    L["<b>Your branch</b><br/>history on your machine"]
+    R["<b>origin</b><br/>the copy on GitHub"]
+
+    W -->|git add| S
+    S -->|git commit| L
+    L -->|git push| R
+    R -->|git pull| W
+```
+
+Almost every confusing moment with git is really the question **which of those
+four is my work in right now** — and there is one command that always answers
+it:
+
+```bash
+git status
+```
+
+Run it constantly. It is free, it changes nothing, and it tells you what is in
+the working tree, what is staged, and whether your branch is ahead of or behind
+`origin`.
+
+:::why Why `origin` is a separate place, and not just a backup
+`origin` is the name of the copy on GitHub. Your branch and `origin/main` are
+two different histories that happen to be related.
+
+That is why a commit is not on GitHub until you push, why other people's work is
+not on your machine until you pull, and why `git log` can look completely
+different on two laptops. Nothing is shared automatically. Every move across
+that last arrow is one you make on purpose.
+:::
+
 === check=sandbox-branch,from-main
 ## Make yours
 

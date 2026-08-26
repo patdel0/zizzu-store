@@ -641,6 +641,95 @@ export const steps = [
   },
 
   {
+    id: 'conflicts',
+    phase: 'Your first change',
+    title: 'When two changes collide',
+    minutes: 30,
+    attest: [
+      {
+        id: 'saw-markers',
+        label: 'I saw the `<<<<<<<` markers in my own file and read them',
+      },
+    ],
+    checks: [
+      onSandboxBranch,
+      {
+        id: 'no-markers',
+        label: 'No conflict markers left in your files',
+        async run() {
+          const changed = await gitOut('diff', '--name-only', 'main...HEAD');
+          const files = changed.split('\n').filter(Boolean);
+          const dirty = [];
+
+          for (const path of files) {
+            const source = await read(path);
+
+            if (source && /^<{7} |^={7}$|^>{7} /m.test(source)) dirty.push(path);
+          }
+
+          if (dirty.length > 0) {
+            return {
+              pass: false,
+              detail: `These still contain conflict markers:\n\n\`\`\`\n${dirty.join('\n')}\n\`\`\`\n\nOpen each one and delete the \`<<<<<<<\`, \`=======\` and \`>>>>>>>\` lines, leaving the text you want to keep.`,
+            };
+          }
+
+          return { pass: true, detail: 'Nothing left behind.' };
+        },
+      },
+      {
+        id: 'merged',
+        label: 'You resolved a merge on this branch',
+        async run() {
+          const merges = await gitOut('log', 'main..HEAD', '--merges', '--format=%H');
+
+          if (merges === '') {
+            return {
+              pass: false,
+              detail:
+                'No merge commit on your branch yet. Follow the steps above — the merge is what creates the conflict, and finishing it is what creates the commit this looks for.',
+            };
+          }
+
+          const state = await gitOut('status', '--porcelain');
+
+          if (/^(UU|AA|DU|UD)/m.test(state)) {
+            return {
+              pass: false,
+              detail:
+                'You are still in the middle of a merge. Once the file looks right: `git add <file>` then `git commit` to finish it.',
+            };
+          }
+
+          return {
+            pass: true,
+            detail: `Merged and resolved — commit \`${merges.split('\n')[0].slice(0, 7)}\`.`,
+          };
+        },
+      },
+    ],
+    quiz: [
+      {
+        id: 'what-conflict-is',
+        prompt: 'What has actually gone wrong when git reports a conflict?',
+        options: [
+          { id: 'a', label: 'Something is broken in the repository.' },
+          {
+            id: 'b',
+            label:
+              'Two branches changed the same lines, and git will not guess which version you meant.',
+          },
+          { id: 'c', label: 'You ran the commands in the wrong order.' },
+          { id: 'd', label: 'Your branch is too far behind `main`.' },
+        ],
+        answer: 'b',
+        explain:
+          'Nothing is broken and you did nothing wrong. Git merges different parts of a file happily; it stops only when two branches edited the same lines, because picking one would mean throwing away somebody\u2019s work on a guess. It is a question, not an error.',
+      },
+    ],
+  },
+
+  {
     id: 'requests',
     phase: 'Seeing how it works',
     title: 'Watch the conversation',

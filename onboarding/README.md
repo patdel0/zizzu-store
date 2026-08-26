@@ -24,7 +24,7 @@ trainee can start it before `npm install` has ever finished.
 
 ## What it covers
 
-Twenty-four steps, around thirteen hours of focused work — so two days for most
+Twenty-five steps, around thirteen hours of focused work — so two days for most
 people, and longer is normal. It assumes no prior knowledge, and
 introduces each idea **at the point it is needed, attached to something the
 trainee runs** — there is no theory phase to sit through.
