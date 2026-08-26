@@ -54,6 +54,30 @@ export function renderMarkdown(source) {
       continue;
     }
 
+    // Interactive blocks: fill-in-the-blank and line-ordering exercises.
+    const exercise = line.match(/^:::(blank|order)\s*(.*)$/);
+
+    if (exercise) {
+      const [, kind, heading] = exercise;
+      const inner = [];
+
+      index += 1;
+
+      while (index < lines.length && !/^:::\s*$/.test(lines[index])) {
+        inner.push(lines[index]);
+        index += 1;
+      }
+
+      index += 1;
+      out.push(
+        kind === 'blank'
+          ? renderBlank(inner, heading)
+          : renderOrder(inner, heading),
+      );
+
+      continue;
+    }
+
     // Callouts
     const callout = line.match(/^:::(note|warn|try|why)\s*(.*)$/);
 
@@ -69,11 +93,22 @@ export function renderMarkdown(source) {
       }
 
       index += 1;
+
+      // Explanation is not part of the lesson. It stays available, folded away,
+      // so the path through the step is only the doing.
       out.push(
-        `<aside class="callout callout--${kind}">` +
-          `<p class="callout__title">${renderInline(heading || CALLOUT_TITLES[kind])}</p>` +
-          renderMarkdown(inner.join('\n')) +
-          '</aside>',
+        kind === 'why'
+          ? `<details class="why"><summary>${renderInline(
+              heading || CALLOUT_TITLES[kind],
+            )}</summary><div class="why__body">${renderMarkdown(
+              inner.join('\n'),
+            )}</div></details>`
+          : `<aside class="callout callout--${kind}">` +
+              `<p class="callout__title">${renderInline(
+                heading || CALLOUT_TITLES[kind],
+              )}</p>` +
+              renderMarkdown(inner.join('\n')) +
+              '</aside>',
       );
 
       continue;
@@ -178,6 +213,71 @@ export function renderMarkdown(source) {
   }
 
   return out.join('\n');
+}
+
+/**
+ * A fill-in-the-blank exercise. `{{answer}}` in the source becomes an input.
+ *
+ * Grading is client-side and deliberately does not gate anything. These are
+ * practice with instant feedback, not a test — the gates are the checks that
+ * read the real repository, which cannot be guessed at.
+ */
+function renderBlank(lines, heading) {
+  let n = 0;
+  const body = escapeHtml(lines.join('\n')).replace(
+    /\{\{([^}]+)\}\}/g,
+    (_, answer) => {
+      n += 1;
+
+      return (
+        `<input class="blank" type="text" spellcheck="false" autocomplete="off"` +
+        ` aria-label="Blank ${n}" data-answer="${escapeHtml(answer)}"` +
+        ` style="width:${Math.max(answer.length + 1, 4)}ch">`
+      );
+    },
+  );
+
+  return (
+    '<div class="exercise exercise--blank">' +
+    `<p class="exercise__title">${renderInline(heading || 'Fill in the blanks')}</p>` +
+    `<pre class="code"><code>${body}</code></pre>` +
+    '<p class="exercise__status" aria-live="polite"></p>' +
+    '</div>'
+  );
+}
+
+/**
+ * A Parsons problem: the right lines, in the wrong order.
+ *
+ * Reordering given lines costs far less than writing them, and teaches the
+ * shape of the solution without syntax getting in the way — which is why it
+ * sits between "read the worked example" and "write it yourself".
+ */
+function renderOrder(lines, heading) {
+  const steps = lines.filter((line) => line.trim() !== '');
+  // Shuffled deterministically, so the puzzle does not change under the reader
+  // when the page re-renders.
+  const shuffled = steps
+    .map((line, i) => ({ line, i, key: (i * 7919 + 104729) % steps.length }))
+    .sort((a, b) => a.key - b.key || a.i - b.i);
+
+  const items = shuffled
+    .map(
+      ({ line, i }) =>
+        `<li class="order__item" data-position="${i}" draggable="true">` +
+        `<button type="button" class="order__move" data-dir="-1" aria-label="Move up">↑</button>` +
+        `<button type="button" class="order__move" data-dir="1" aria-label="Move down">↓</button>` +
+        `<code>${escapeHtml(line)}</code></li>`,
+    )
+    .join('');
+
+  return (
+    '<div class="exercise exercise--order">' +
+    `<p class="exercise__title">${renderInline(heading || 'Put these in the right order')}</p>` +
+    `<ol class="order">${items}</ol>` +
+    '<p class="exercise__status" aria-live="polite"></p>' +
+    '</div>'
+  );
 }
 
 function renderTable(rows) {

@@ -1,31 +1,12 @@
-Now you build. The feature is **products** — a store needs something to sell —
-and you will build it the same way the `posts` feature is built, one layer at a
-time, starting with the database.
+Your plan starts with the table. This step makes the database able to store a
+product.
+
+Four things to do, one per card. Nothing to memorise.
 
 ===
-## What a database actually holds
+## Look at one that already exists
 
-A database holds **tables**. If you have used a spreadsheet you already have the
-picture:
-
-| id | title | content |
-|---|---|---|
-| `0199…a1` | Hello | World |
-| `0199…b2` | Second post | *(nothing)* |
-
-Each **column** is one kind of information every row has. Each **row** is one
-actual thing — here, one post.
-
-Every column has a type, and the database enforces it. `title` holds text;
-`createdAt` holds a timestamp. Try to save the word "banana" where a number
-belongs and it refuses. That refusal is a feature: a whole class of bad data
-simply cannot get in.
-
-===
-## Where the tables come from
-
-In many projects you would create tables by writing SQL by hand. Here, one file
-describes them all: `lib/prisma/contract.ts`. Open it and find this:
+Open `lib/prisma/contract.ts` in your editor and find this near the top:
 
 ```typescript
 const Post = model('Post', {
@@ -40,67 +21,61 @@ const Post = model('Post', {
 });
 ```
 
-That block is a **model**. It is a word you will hear constantly, and it means
-something simple: *the description of one table* — its name, and what each of
-its columns is called and holds.
+Read it as a sentence: *there is a table called `Post`, and every row in it has
+an id, a title, some content, an author, and two timestamps.*
 
-So the `Post` model above says: there is a table called `Post`, and every row in
-it has an `id`, a `title`, some optional `content`, an `authorId`, and two
-timestamps. That is all a model is. Not the data — the shape of it.
+That block is called a **model** — the description of one table. Not the data in
+it; the shape of it.
 
-From that description, [Prisma](https://www.prisma.io/docs) produces the real
-[Postgres](https://www.postgresql.org/docs/) table *and* the TypeScript types — so when you type
-`db.orm.public.Post.` your editor knows every field, and misspelling one is an
-error before you run anything.
+:::why What a table is, if you have not met one
+A database holds **tables**. A table is a grid, like a spreadsheet:
 
-Reading the field types:
+| id | title | content |
+|---|---|---|
+| `0199…a1` | Hello | World |
+| `0199…b2` | Second post | *(nothing)* |
 
-| Declaration | What you get |
-|---|---|
-| `field.id.uuidv7String()` | The primary key — a unique id, generated for you. |
-| `field.text()` | Text. Required: a row cannot exist without it. |
-| `field.text().optional()` | Text, or nothing. In TypeScript: `string \| null`. |
-| `field.int()` | A whole number. |
-| `field.temporal.createdAt()` | Set automatically when the row is created. |
-| `field.temporal.updatedAt()` | Updated automatically on every write. |
+Each **column** is one kind of information every row has. Each **row** is one
+actual thing — here, one post.
 
-`.optional()` is the one to think about. It is a decision, not a formality:
-required means every row must have it forever, including the ones already there.
+Every column has a type, and the database enforces it. `title` holds text,
+`createdAt` holds a timestamp. Try to save the word "banana" where a number
+belongs and it refuses. A whole class of bad data simply cannot get in.
+:::
 
-=== check=sandbox-branch,model,exported
-## Add the Product model
+:::why Why a file describes the tables
+In many projects you would create tables by writing SQL by hand. Here, this one
+file describes them, and [Prisma](https://www.prisma.io/docs) builds both the
+real [Postgres](https://www.postgresql.org/docs/) tables *and* the TypeScript
+types from it.
 
-In `lib/prisma/contract.ts`, next to `Post`, add:
+That is why your editor autocompletes every column name, and why a typo is an
+error before you ever run the code.
+:::
 
-```typescript
-const Product = model('Product', {
+===
+## Try the shape before you write it
+
+A product needs a name, an optional description, and a price. Fill these in —
+the answers are all visible in the `Post` model above.
+
+:::blank Complete the Product model
+const Product = {{model}}('Product', {
   fields: {
     id: field.id.uuidv7String(),
-    name: field.text(),
-    description: field.text().optional(),
-    priceCents: field.int(),
+    name: field.{{text}}(),
+    description: field.text().{{optional}}(),
+    priceCents: field.{{int}}(),
     createdAt: field.temporal.createdAt(),
     updatedAt: field.temporal.updatedAt(),
   },
 });
-```
+:::
 
-Then add it to the object the contract returns, alongside `User` and `Post`:
+Two of those are worth a second look: `description` is `.optional()`, so a
+product may have none. `priceCents` is `field.int()` — a whole number.
 
-```typescript
-return {
-  models: {
-    User: User.relations({ … }),
-    Post: Post.relations({ … }),
-    Product,
-  },
-};
-```
-
-Declaring the model is not enough — only models listed under `models` can be
-queried.
-
-:::note Why `priceCents` and not `price`
+:::why Why the price is in cents
 Money is stored as a whole number of cents, everywhere, always. £9.99 is `999`.
 
 Decimal numbers in computers are approximations: `0.1 + 0.2` really does come to
@@ -109,94 +84,109 @@ lands in someone's invoice. Store cents as an integer, divide by 100 when you
 show it, and the problem never exists.
 :::
 
+=== check=sandbox-branch,model,exported
+## Now write it for real
+
+In `lib/prisma/contract.ts`, add the `Product` model next to `Post` — the block
+you just completed.
+
+Then add it to the list the file returns at the bottom, next to `User` and
+`Post`:
+
+```typescript
+return {
+  models: {
+    User: User.relations({
+      posts: rel.hasMany(Post, { by: 'authorId' }),
+    }),
+    Post: Post.relations({
+      author: rel.belongsTo(User, { from: 'authorId', to: 'id' }),
+    }),
+    Product,
+  },
+};
+```
+
+Declaring the model is not enough on its own — only models in that list can be
+queried.
+
 === check=emitted
-## Regenerate
+## Rebuild the generated files
 
 ```bash
 npx prisma-cli contract emit
 ```
 
-This reads `contract.ts` and rewrites its two companion files —
-`contract.json`, which the running app reads, and `contract.d.ts`, which your
-editor reads. Both are committed, because the app needs them at runtime.
+:::why What that command just did
+It read `contract.ts` and rewrote two files next to it: `contract.json`, which
+the running app reads, and `contract.d.ts`, which your editor reads. Both are
+committed, because the app needs them to run.
 
 Run it every time you change the contract. Forgetting is the most common way to
-produce an error that makes no sense: your editor insists `Product` does not
-exist, while you are looking straight at it.
+get an error that makes no sense — your editor insisting `Product` does not
+exist while you are looking straight at it.
+:::
 
 === check=reset
-## One more file knows about your models
+## Tell the tests about it
 
-Open `test/helpers.ts` and look at `resetDatabase`:
-
-```typescript
-export async function resetDatabase() {
-  // Posts reference users, so children go first.
-  await db.orm.public.Post.where((post) => post.id.isNotNull()).deleteAll();
-  await db.orm.public.User.where((user) => user.id.isNotNull()).deleteAll();
-}
-```
-
-That runs before **every single test**, and it is what lets tests run in any
-order without tripping over rows another test left behind. It lists the models
-by hand — so a model you add is a model it does not know about.
-
-Add yours at the top:
+Open `test/helpers.ts` and find `resetDatabase`. Add one line at the top of it:
 
 ```typescript
 await db.orm.public.Product.where((product) => product.id.isNotNull()).deleteAll();
 ```
 
-:::warn Skip this and you will lose an hour
-Nothing breaks now. It breaks in three steps' time, when a test asserts there is
-one product and finds two — because the previous test's product is still there.
-The failure appears in a test you did not touch, in a file that looks correct,
-and points at your handler rather than at this line.
+:::warn Skip this and you lose an hour
+That function empties the tables before every test, and it lists them by hand —
+so a table it does not know about keeps its rows between tests.
 
-That is worth noticing as a general shape: **the bug and its cause are often in
-different files.** When something fails in code you did not change, ask what you
-*did* change that it depends on.
+Nothing breaks now. It breaks three steps from now, when a test says there is
+one product and finds two. The failure shows up in a test you did not write, in
+a file that looks correct, and points at your handler instead of at this line.
+
+**The bug and its cause are often in different files.** When something fails in
+code you did not change, ask what you *did* change that it depends on.
 :::
 
 ===
-## And the real tables?
+## Create the actual table
 
-Describing a table is not the same as creating one. There are two databases, and
-they get theirs differently:
+Describing a table is not the same as making one. There are two databases:
 
-- **The test database** — handled for you. `npm test` runs
-  `prisma-cli db init` before the suite and creates whatever the contract
-  declares and the database lacks. You do nothing.
-- **The development database**, which the app in the container uses. Create the
-  table there with:
+**The test database** — nothing to do. `npm test` creates whatever the contract
+declares and the database lacks, before the suite runs.
+
+**The development database**, which the app in the container uses:
 
 ```bash
 docker compose exec app npx prisma-cli db init --no-interactive --yes
 ```
 
-That runs *inside* the container, which is the only place the database's
-hostname resolves — `.env` points the app at `db:5432`, a name that only exists
-on the container network.
-
-Then restart the app so it reloads the contract:
-
 ```bash
 docker compose restart app
 ```
 
-:::note Not how real schema changes work
+:::why Why that one runs inside the container
+`.env` points the app at `db:5432` — a hostname that only exists on the
+container network, so the command has to run where that name resolves.
+:::
+
+:::why This is not how schema changes usually work
 `db init` only adds what is missing. It will not rename a column or change a
-type on a table that already has data — for that a project uses *migrations*,
-ordered scripts that move a database from one shape to the next without losing
+type on a table that already holds data — that needs *migrations*, ordered
+scripts that move a database from one shape to the next without losing
 anything. You will meet them the first time you change an existing model. For a
 brand new table, `db init` is enough.
 :::
 
 :::try
-Make the changes, run both commands, then commit. `git add` the contract and
-both generated files together — they belong in the same commit, because a
-`contract.ts` without its regenerated `contract.json` is a broken checkout for
-whoever pulls it.
+Commit the contract and both generated files together — a `contract.ts` without
+its regenerated `contract.json` is a broken checkout for whoever pulls it.
 
-Something like: `Add a Product model to the contract`
+```bash
+git add lib/prisma test/helpers.ts
+git commit -m "Add a Product model"
+```
+
+Then tick the line off your `PLAN.md`.
 :::

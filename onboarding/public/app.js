@@ -184,6 +184,7 @@ async function show(id, cardIndex) {
   body.innerHTML = renderMarkdown(card.markdown);
   contentEl.append(body);
   drawDiagrams(body);
+  wireExercises(body);
 
   // Only this card's gates are shown, so a failure points at the instruction
   // immediately above it.
@@ -205,6 +206,92 @@ async function show(id, cardIndex) {
   // A card whose checks are unmet is worth verifying on arrival: the reader may
   // have already done it, and being told so immediately beats a stale prompt.
   if (card.gate.check.length > 0) verifyCard({ silent: true });
+}
+
+// ------------------------------------------------------------- exercises
+
+/**
+ * Wires up the practice widgets inside a card.
+ *
+ * Neither of these gates anything. They are for the reader to find out whether
+ * they followed, at the moment they read it, instead of discovering it later
+ * when a check goes red.
+ */
+function wireExercises(container) {
+  for (const box of container.querySelectorAll('.exercise--blank')) {
+    const inputs = [...box.querySelectorAll('.blank')];
+    const status = box.querySelector('.exercise__status');
+
+    const grade = () => {
+      let filled = 0;
+      let right = 0;
+
+      for (const input of inputs) {
+        const value = input.value.trim();
+
+        if (value === '') {
+          input.dataset.state = '';
+
+          continue;
+        }
+
+        filled += 1;
+
+        const ok = value === input.dataset.answer;
+
+        input.dataset.state = ok ? 'right' : 'wrong';
+
+        if (ok) right += 1;
+      }
+
+      status.textContent =
+        right === inputs.length
+          ? 'That is it.'
+          : filled === 0
+            ? ''
+            : `${right} of ${inputs.length}.`;
+      status.dataset.state = right === inputs.length ? 'right' : '';
+    };
+
+    for (const input of inputs) input.addEventListener('input', grade);
+  }
+
+  for (const box of container.querySelectorAll('.exercise--order')) {
+    const list = box.querySelector('.order');
+    const status = box.querySelector('.exercise__status');
+
+    const grade = () => {
+      const items = [...list.children];
+      const ordered = items.every(
+        (item, i) => Number(item.dataset.position) === i,
+      );
+
+      items.forEach((item, i) => {
+        item.dataset.state =
+          Number(item.dataset.position) === i ? 'right' : 'wrong';
+      });
+      status.textContent = ordered ? 'That is the order.' : '';
+      status.dataset.state = ordered ? 'right' : '';
+    };
+
+    list.addEventListener('click', (event) => {
+      const button = event.target.closest('.order__move');
+
+      if (!button) return;
+
+      const item = button.closest('.order__item');
+      const direction = Number(button.dataset.dir);
+      const sibling =
+        direction < 0 ? item.previousElementSibling : item.nextElementSibling;
+
+      if (!sibling) return;
+
+      if (direction < 0) list.insertBefore(item, sibling);
+      else list.insertBefore(sibling, item);
+
+      grade();
+    });
+  }
 }
 
 /** True when everything this card gates on has passed. */
