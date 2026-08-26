@@ -6,7 +6,18 @@ the cheat sheet with you.
 1. **Close your pull request without merging it.** On the PR page: "Close pull
    request", below the comment box.
 2. **Move your issue to Done** on the board.
-3. **Go back to `main`:**
+3. **Delete the scratch files you made along the way.** `PLAN.md` was your
+   working notes — on a real branch that list lives in the issue, not in the
+   repository:
+
+```bash
+git rm PLAN.md
+git commit -m "Remove the working plan"
+```
+
+   `lib/products.ts` and its tests you keep. That is real, tested code.
+
+4. **Go back to `main`:**
 
 ```bash
 git switch main
@@ -71,6 +82,16 @@ git push -u origin <branch>      # first push of a branch
 
 **Database**
 
+**Thinking**
+
+```
+Decompose  →  small tasks, each leaving the project working
+PREP       →  Parameters, Returns, Examples, Pseudocode
+TDD        →  red, green, refactor
+```
+
+**Database**
+
 ```bash
 npx prisma-cli contract emit                                   # after editing contract.ts
 docker compose exec app npx prisma-cli db init --no-interactive --yes
@@ -82,9 +103,14 @@ docker compose restart app                                     # reload the cont
 | Question | Where |
 |---|---|
 | How do I add an endpoint? | `docs/api-routes.md`, and `app/api/posts/route.ts` |
+| How does Next.js routing work? | [Next.js docs](https://nextjs.org/docs/app/api-reference/file-conventions/route) |
 | How do I write a test? | `docs/testing.md`, and `__tests__/api/posts.test.ts` |
-| How do I query the database? | `docs/prisma-next.md` |
+| What can `expect` do? | [Vitest](https://vitest.dev/api/expect.html) · [Playwright](https://playwright.dev/docs/locators) |
+| How do I query the database? | `docs/prisma-next.md`, and [Prisma docs](https://www.prisma.io/docs) |
 | How does a page work? | `app/posts/page.tsx` and `app/posts/posts-board.tsx` |
+| Server or client component? | [Next.js docs](https://nextjs.org/docs/app/getting-started/server-and-client-components) |
+| What does this git command do? | [git-scm.com/docs](https://git-scm.com/docs), or [the Pro Git book](https://git-scm.com/book/en/v2) |
+| What does this status code mean? | [MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status) |
 
 When those do not answer it, ask. Two hours is enough.
 
@@ -92,6 +118,12 @@ When those do not answer it, ask. Two hours is enough.
 
 Most of what you did today was mechanics, and mechanics you will absorb without
 trying. Four things are worth carrying deliberately:
+
+**Break it down before you start.** A list of small tasks turns a frightening
+job into an obvious one, and tells you tomorrow where you were today.
+
+**PREP before you type.** Parameters, returns, examples, pseudocode. Two minutes
+of deciding what a function *is* saves an hour of discovering it by crashing.
 
 **Write the test first.** Not because it is virtuous — because a test you have
 watched fail is the only kind you have any reason to trust.

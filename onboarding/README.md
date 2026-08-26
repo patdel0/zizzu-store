@@ -24,21 +24,41 @@ trainee can start it before `npm install` has ever finished.
 
 ## What it covers
 
-Twenty steps, roughly a day's work, in six phases. It assumes no prior
-knowledge — the first third is concepts, before the repository is touched at
-all.
+Twenty-one steps, roughly a day and a half. It assumes no prior knowledge, and
+introduces each idea **at the point it is needed, attached to something the
+trainee runs** — there is no theory phase to sit through.
 
 | Phase | Steps |
 |---|---|
-| What all this is | Client and server; HTTP methods and status codes; what an API is; what a database is for; this project's file map |
-| Getting set up | Docker, Node, the containers, a green test suite |
+| Getting started | The app running in Docker; configuring git so `git commit` works |
 | Your first change | Branching; a JSX and Tailwind edit; the first commit |
-| How this app works | Server vs. client components, the request lifecycle |
-| Building a feature | A `Product` model, TDD red/green, `POST`, validation, a page and a browser test |
+| Seeing how it works | HTTP by `curl`; proving server and browser are different machines; `'use client'`; the request lifecycle |
+| Building a feature | Decomposition; PREP; a `Product` model; TDD red/green; `POST`; validation; a page and a browser test |
 | Working with the team | Issues and the board, pull requests, review, cleanup |
+
+Concepts are taught by experiment rather than assertion. "Code in the browser
+cannot keep a secret" is a paragraph anyone can skim past; finding your own
+component in the browser's Sources tab is not. Two examples:
+
+- **Server vs. browser** — the trainee adds a `console.log` to a page and
+  another to a component, then watches one appear in the container log and the
+  other in the browser console.
+- **`'use client'`** — they build a working counter with `useState`, then delete
+  the marker and read the error, then try `useState` in a Server Component and
+  read that error too.
+
+Two steps teach method rather than syntax. **Decomposition** has them write a
+real `PLAN.md` task list before touching the feature, checked for being ordered
+bottom-up. **PREP** — parameters, returns, examples, pseudocode — is applied to
+one small function, `parsePriceCents`, which they then import and use for real
+five steps later.
 
 The trainee works on a `sandbox/<name>` branch and **closes their pull request
 without merging it**. Nothing they do reaches `main`.
+
+Every technology mentioned links to its own documentation, on the assumption
+that the tutorial's job is to make the real docs approachable rather than to
+replace them.
 
 ## How the checking works
 

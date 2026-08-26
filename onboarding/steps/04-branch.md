@@ -2,7 +2,7 @@ Everything from here happens on a branch of your own.
 
 ## What git is actually doing
 
-Git records your project's history as a series of snapshots called **commits**.
+[Git](https://git-scm.com/docs) records your project's history as a series of snapshots called **commits**.
 Each one says: here is what changed, who changed it, and why.
 
 A **branch** is a movable label pointing at one of those commits. `main` is the

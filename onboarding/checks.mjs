@@ -49,7 +49,7 @@ const onSandboxBranch = {
       pass: false,
       detail:
         branch === 'main'
-          ? 'You are on `main`. Go back to step 8 and switch to your `sandbox/…` branch — nothing in this tutorial should ever be committed to `main`.'
+          ? 'You are on `main`. Go back to step 4 and switch to your `sandbox/…` branch — nothing in this tutorial should ever be committed to `main`.'
           : `You are on \`${branch}\`, which is not a \`sandbox/…\` branch. Run \`git switch sandbox/your-name\`.`,
     };
   },
@@ -95,254 +95,32 @@ function databaseHint(output) {
 export const steps = [
   {
     id: 'welcome',
-    phase: 'What all this is',
+    phase: 'Getting started',
     title: 'Start here',
     minutes: 10,
     quiz: [
       {
         id: 'sandbox',
-        prompt:
-          'What happens to the code you write during this tutorial?',
+        prompt: 'What happens to the code you write during this tutorial?',
         options: [
           { id: 'a', label: 'It gets merged into the project once you finish.' },
-          { id: 'b', label: 'Nothing — you close it without merging, and the project is unchanged.' },
+          {
+            id: 'b',
+            label: 'Nothing — you close it without merging, and the project is unchanged.',
+          },
           { id: 'c', label: 'A senior developer decides whether to keep it.' },
           { id: 'd', label: 'It is deleted the moment you make a mistake.' },
         ],
         answer: 'b',
         explain:
-          'This is a sandbox. You will do every step for real — real branch, real tests, real pull request — and then close it unmerged. Nothing you do here can damage the project, which means there is no reason to be careful in the wrong way. Try things.',
-      },
-    ],
-  },
-
-  {
-    id: 'web-basics',
-    phase: 'What all this is',
-    title: 'What happens when you open a website',
-    minutes: 20,
-    quiz: [
-      {
-        id: 'who-runs-what',
-        prompt:
-          'You open a shop\u2019s website on your phone. Where does the code that decides which products to show actually run?',
-        options: [
-          { id: 'a', label: 'On your phone.' },
-          { id: 'b', label: 'On the shop\u2019s server.' },
-          { id: 'c', label: 'On both at once, in sync.' },
-          { id: 'd', label: 'In the internet.' },
-        ],
-        answer: 'b',
-        explain:
-          'Your phone runs the *browser*. The browser asks a server for a page, and the server is the machine that holds the products and decides what to send. That split — one machine asks, another answers — is the shape of nearly everything you will build.',
-      },
-      {
-        id: 'what-arrives',
-        prompt: 'What does the server actually send back to your browser?',
-        options: [
-          { id: 'a', label: 'A picture of the page.' },
-          { id: 'b', label: 'The whole website.' },
-          { id: 'c', label: 'Text — HTML describing the page, which the browser then draws.' },
-          { id: 'd', label: 'The database.' },
-        ],
-        answer: 'c',
-        explain:
-          'It is all text. HTML says what is on the page, CSS says what it looks like, and the browser turns that into the thing you see. "View source" in any browser shows you the actual text that arrived.',
-      },
-    ],
-  },
-
-  {
-    id: 'http',
-    phase: 'What all this is',
-    title: 'Requests, methods, and status codes',
-    minutes: 25,
-    quiz: [
-      {
-        id: 'method-choice',
-        prompt:
-          'You are adding a form that creates a new customer account. Which method should the request use?',
-        options: [
-          { id: 'a', label: 'GET, because it is simpler.' },
-          { id: 'b', label: 'POST, because it creates something.' },
-          { id: 'c', label: 'Either — they do the same thing.' },
-          { id: 'd', label: 'DELETE, because the form is submitted.' },
-        ],
-        answer: 'b',
-        explain:
-          'GET means "give me something" and should change nothing. POST means "here is some data, do something with it". The distinction is not cosmetic: browsers and caches are allowed to repeat a GET whenever they like, so a GET that creates an account could create several.',
-      },
-      {
-        id: 'status-meaning',
-        prompt:
-          'Your app asks a server for a page and gets back a **404**. What does that tell you?',
-        options: [
-          { id: 'a', label: 'The server is broken.' },
-          { id: 'b', label: 'Your internet connection dropped.' },
-          { id: 'c', label: 'The server answered fine — there is just nothing at that address.' },
-          { id: 'd', label: 'You are not allowed to see it.' },
-        ],
-        answer: 'c',
-        explain:
-          'A 404 is a successful conversation with a disappointing answer. The server heard you and replied. That is the difference between a 4xx — "the problem is with what you asked for" — and a 5xx, which means the server itself fell over.',
-      },
-      {
-        id: 'who-is-at-fault',
-        prompt:
-          'Which of these means **the server** broke, rather than the request being wrong?',
-        options: [
-          { id: 'a', label: '400' },
-          { id: 'b', label: '404' },
-          { id: 'c', label: '422' },
-          { id: 'd', label: '500' },
-        ],
-        answer: 'd',
-        explain:
-          'Anything starting with 4 blames the request; anything starting with 5 blames the server. It matters because it tells you where to look: a 400 means fix the caller, a 500 means read the server log.',
-      },
-    ],
-  },
-
-  {
-    id: 'apis',
-    phase: 'What all this is',
-    title: 'What an API is',
-    minutes: 20,
-    quiz: [
-      {
-        id: 'api-vs-page',
-        prompt:
-          'What is the difference between `/products` and `/api/products` in an app like this one?',
-        options: [
-          { id: 'a', label: 'One is faster than the other.' },
-          {
-            id: 'b',
-            label:
-              '`/products` returns a page for a person to look at; `/api/products` returns data for code to use.',
-          },
-          { id: 'c', label: 'They are the same thing with different names.' },
-          { id: 'd', label: '`/api/products` is only for other companies.' },
-        ],
-        answer: 'b',
-        explain:
-          'Same information, two audiences. A page is HTML dressed up for a human. An API answers with plain data — no colours, no layout — because the thing reading it is a program that will decide what to do with it.',
-      },
-      {
-        id: 'why-json',
-        prompt: 'Why do APIs answer with JSON rather than HTML?',
-        options: [
-          { id: 'a', label: 'JSON is smaller.' },
-          { id: 'b', label: 'HTML is out of date.' },
-          {
-            id: 'c',
-            label:
-              'A program needs the values themselves, not a description of how to display them.',
-          },
-          { id: 'd', label: 'Browsers cannot read HTML from an API.' },
-        ],
-        answer: 'c',
-        explain:
-          'If your code wants a price it wants `899`, not `<p class="price">\u00a38.99</p>` to pick apart. JSON is just a text format for values — numbers, text, lists, and nested objects — that every language can read.',
-      },
-    ],
-  },
-
-  {
-    id: 'databases',
-    phase: 'What all this is',
-    title: 'Where the data actually lives',
-    minutes: 20,
-    quiz: [
-      {
-        id: 'why-database',
-        prompt:
-          'Why keep products in a database instead of a file the app reads and writes?',
-        options: [
-          { id: 'a', label: 'Files are not allowed on servers.' },
-          {
-            id: 'b',
-            label:
-              'A database handles many people reading and writing at once, and finds things without reading everything.',
-          },
-          { id: 'c', label: 'Databases are newer.' },
-          { id: 'd', label: 'Files cannot hold enough data.' },
-        ],
-        answer: 'b',
-        explain:
-          'Two customers buying the last item at the same moment is the whole problem. A database is built for exactly that — simultaneous access without corruption — and it can find one row among millions without reading the rest.',
-      },
-      {
-        id: 'row-column',
-        prompt: 'In a `Product` table, what is a **row**?',
-        options: [
-          { id: 'a', label: 'One kind of information, like "price".' },
-          { id: 'b', label: 'One product.' },
-          { id: 'c', label: 'The whole table.' },
-          { id: 'd', label: 'A database query.' },
-        ],
-        answer: 'b',
-        explain:
-          'A table is a grid. Each **column** is a kind of information every product has — name, price. Each **row** is one actual product, with a value in each column. A spreadsheet is the same idea, which is not a coincidence.',
-      },
-    ],
-  },
-
-  {
-    id: 'the-map',
-    phase: 'What all this is',
-    title: 'Where things are in this project',
-    minutes: 20,
-    quiz: [
-      {
-        id: 'where-endpoint',
-        prompt:
-          'You need to add an endpoint that answers `GET /api/orders`. Which file do you create?',
-        options: [
-          { id: 'a', label: 'app/orders.ts' },
-          { id: 'b', label: 'app/api/orders/route.ts' },
-          { id: 'c', label: 'lib/prisma/orders.ts' },
-          { id: 'd', label: 'app/api/orders.tsx' },
-        ],
-        answer: 'b',
-        explain:
-          'Next.js maps folders to URLs. A folder under `app/api/` becomes the path, and the file inside it must be called `route.ts` \u2014 that is what tells Next.js "this answers HTTP requests" rather than "this renders a page".',
-      },
-      {
-        id: 'where-page',
-        prompt: 'And which file renders the page at `/orders`?',
-        options: [
-          { id: 'a', label: 'app/orders/page.tsx' },
-          { id: 'b', label: 'app/orders/route.ts' },
-          { id: 'c', label: 'pages/orders.tsx' },
-          { id: 'd', label: 'app/orders.tsx' },
-        ],
-        answer: 'a',
-        explain:
-          'Same rule, different filename. `page.tsx` renders a page, `route.ts` answers an API request. The folder is the URL either way.',
-      },
-      {
-        id: 'where-to-copy',
-        prompt:
-          'You are asked to add a `reviews` feature. What is the first thing to do?',
-        options: [
-          { id: 'a', label: 'Search the internet for a Next.js reviews tutorial.' },
-          { id: 'b', label: 'Design it from scratch so it is not constrained by old code.' },
-          {
-            id: 'c',
-            label: 'Read how `posts` is built, and follow the same shape.',
-          },
-          { id: 'd', label: 'Ask someone to build the first version for you.' },
-        ],
-        answer: 'c',
-        explain:
-          '`posts` exists to be copied. A codebase where every feature is built the same way is one you can find your way around \u2014 and matching the existing pattern is a thing reviewers actively want, not a lack of ambition.',
+          'This is a sandbox. You will do every step for real — real branch, real tests, real pull request — and then close it unmerged. Nothing here can damage the project, which means there is no reason to be careful in the wrong way. Try things.',
       },
     ],
   },
 
   {
     id: 'running',
-    phase: 'Getting set up',
+    phase: 'Getting started',
     title: 'Get it running',
     minutes: 20,
     checks: [
@@ -455,6 +233,109 @@ export const steps = [
           return {
             pass: false,
             detail: `\`npm test\` failed before you have changed anything, so this is an environment problem rather than your code.${databaseHint(output)}\n\n\`\`\`\n${tail(output)}\n\`\`\``,
+          };
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'git-setup',
+    phase: 'Getting started',
+    title: 'Tell git who you are',
+    minutes: 20,
+    checks: [
+      {
+        id: 'name',
+        label: 'Your name is configured',
+        async run() {
+          const name = await gitOut('config', '--get', 'user.name');
+
+          if (name === '') {
+            return {
+              pass: false,
+              detail:
+                'No `user.name` set, so git cannot record who made a commit — and `git commit` will refuse to run at all.\n\n```\ngit config --global user.name "Your Name"\n```',
+            };
+          }
+
+          if (/^(your name|name|test|user|admin)$/i.test(name.trim())) {
+            return {
+              pass: false,
+              detail: `Your name is set to "${name}", which looks like the placeholder rather than you. Every commit you make will carry it, so use your real name.`,
+            };
+          }
+
+          return { pass: true, detail: `Commits will be authored by **${name}**.` };
+        },
+      },
+      {
+        id: 'email',
+        label: 'Your email is configured',
+        async run() {
+          const email = await gitOut('config', '--get', 'user.email');
+
+          if (email === '') {
+            return {
+              pass: false,
+              detail:
+                'No `user.email` set.\n\n```\ngit config --global user.email "you@example.com"\n```\n\nUse the address on your GitHub account, or GitHub will not connect your commits to you.',
+            };
+          }
+
+          if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim())) {
+            return {
+              pass: false,
+              detail: `\`${email}\` does not look like an email address. Set it again with \`git config --global user.email "you@example.com"\`.`,
+            };
+          }
+
+          if (/@example\.com$/i.test(email.trim())) {
+            return {
+              pass: false,
+              detail:
+                'That is the example address from the instructions, not yours. Use the one on your GitHub account.',
+            };
+          }
+
+          return { pass: true, detail: `Commits will be attributed to \`${email}\`.` };
+        },
+      },
+      {
+        id: 'editor',
+        label: 'An editor you can get out of is configured',
+        async run() {
+          const editor = await gitOut('config', '--get', 'core.editor');
+
+          if (editor === '') {
+            return {
+              pass: false,
+              detail:
+                'No `core.editor` set, so `git commit` will open whatever your system defaults to — which on many machines is `vim`. Being trapped in vim on your first commit is a genuinely bad twenty minutes.\n\nPick one from the list above and set it.',
+            };
+          }
+
+          return { pass: true, detail: `\`git commit\` will open \`${editor}\`.` };
+        },
+      },
+      {
+        id: 'identity-check',
+        label: 'git agrees you are ready to commit',
+        async run() {
+          // The same lookup git itself does when composing a commit, so this
+          // fails in exactly the cases `git commit` would.
+          const result = await run('git', ['var', 'GIT_AUTHOR_IDENT'], { timeout: 10_000 });
+
+          if (result.ok && result.stdout.trim() !== '') {
+            return {
+              pass: true,
+              detail: `git will sign your commits as:\n\n\`\`\`\n${result.stdout.trim()}\n\`\`\``,
+            };
+          }
+
+          return {
+            pass: false,
+            detail: `git cannot work out who you are, so \`git commit\` will fail.\n\n\`\`\`\n${tail(result.stderr, 4)}\n\`\`\``,
           };
         },
       },
@@ -695,8 +576,311 @@ export const steps = [
   },
 
   {
+    id: 'requests',
+    phase: 'Seeing how it works',
+    title: 'Watch the conversation',
+    minutes: 35,
+    checks: [
+      {
+        id: 'app-up',
+        label: 'The app is running, so you can make requests to it',
+        async run() {
+          const response = await fetchLocal(APP, { timeout: 8_000 });
+
+          if (response === null) {
+            return {
+              pass: false,
+              detail:
+                'Nothing is listening on port 3000. You need the app running for this step — `./script/server`.',
+            };
+          }
+
+          return { pass: true, detail: `The app answered ${response.status}.` };
+        },
+      },
+    ],
+    quiz: [
+      {
+        id: 'html-vs-json',
+        prompt:
+          'You asked for `/posts` and then `/api/posts`. What was different about what came back?',
+        options: [
+          { id: 'a', label: 'Nothing — they returned the same thing.' },
+          {
+            id: 'b',
+            label:
+              '`/posts` returned HTML for a browser to draw; `/api/posts` returned JSON data.',
+          },
+          { id: 'c', label: '`/api/posts` was faster.' },
+          { id: 'd', label: '`/posts` returned an error.' },
+        ],
+        answer: 'b',
+        explain:
+          'Same information, two audiences. A page is dressed up for a person — headings, layout, styling. An API answers with the values themselves, because the thing reading it is a program. That is the entire difference, and you just watched it.',
+      },
+      {
+        id: 'empty-post',
+        prompt:
+          'You sent a `POST` to `/api/posts` with an empty body. What status code came back?',
+        options: [
+          { id: 'a', label: '200' },
+          { id: 'b', label: '201' },
+          { id: 'c', label: '400' },
+          { id: 'd', label: '500' },
+        ],
+        answer: 'c',
+        explain:
+          '400 — "I cannot make sense of what you sent". The handler checked the body before touching the database and refused it politely. Note what it did *not* do: crash, or claim success. You will write that check yourself in a few steps.',
+      },
+      {
+        id: 'missing-path',
+        prompt: 'And `curl -i http://localhost:3000/api/nope` gave you which status?',
+        options: [
+          { id: 'a', label: '400' },
+          { id: 'b', label: '404' },
+          { id: 'c', label: '500' },
+          { id: 'd', label: 'No response at all' },
+        ],
+        answer: 'b',
+        explain:
+          '404 — the server answered perfectly well, there is just nothing at that address. That is worth separating in your head from "the server is down", which gives you no response at all, and from 500, which means it broke while trying.',
+      },
+      {
+        id: 'get-repeat',
+        prompt:
+          'You ran the same `GET` three times and got the same answer, having changed nothing. Why does that property matter?',
+        options: [
+          { id: 'a', label: 'It makes GET requests faster.' },
+          {
+            id: 'b',
+            label:
+              'Browsers, caches and crawlers repeat GETs on their own — so a GET that changed things would change them unpredictably.',
+          },
+          { id: 'c', label: 'It is required by the HTTP specification.' },
+          { id: 'd', label: 'It does not matter; POST behaves the same way.' },
+        ],
+        answer: 'b',
+        explain:
+          'Press back, press refresh, let a search engine crawl a link — all of those re-issue a GET without asking anyone. That is safe only because a GET is supposed to read and not change. It is why the create form on `/posts` sends a POST, and why yours will too.',
+      },
+    ],
+  },
+
+  {
+    id: 'two-machines',
+    phase: 'Seeing how it works',
+    title: 'Which machine is this running on?',
+    minutes: 25,
+    checks: [
+      {
+        id: 'server-log',
+        label: 'You added a log to the page',
+        async run() {
+          const source = await read('app/posts/page.tsx');
+
+          if (source === null) {
+            return { pass: false, detail: 'Could not read `app/posts/page.tsx`.' };
+          }
+
+          if (/console\.log\(\s*['"`]\[server\]/.test(source)) {
+            return { pass: true, detail: 'Found the `[server]` log.' };
+          }
+
+          return {
+            pass: false,
+            detail:
+              "No `console.log('[server] …')` in `app/posts/page.tsx`. Add it as the first line inside the `PostsPage` function.",
+          };
+        },
+      },
+      {
+        id: 'browser-log',
+        label: 'You added a log to the component',
+        async run() {
+          const source = await read('app/posts/posts-board.tsx');
+
+          if (source === null) {
+            return { pass: false, detail: 'Could not read `app/posts/posts-board.tsx`.' };
+          }
+
+          if (/console\.log\(\s*['"`]\[browser\]/.test(source)) {
+            return { pass: true, detail: 'Found the `[browser]` log.' };
+          }
+
+          return {
+            pass: false,
+            detail:
+              "No `console.log('[browser] …')` in `app/posts/posts-board.tsx`. Add it as the first line inside the `useEffect`.",
+          };
+        },
+      },
+    ],
+    attest: [
+      {
+        id: 'saw-split',
+        label: 'I saw `[server]` in the container log and `[browser]` in the browser console',
+        hint: 'Two different places, and neither message appeared in the other.',
+      },
+      {
+        id: 'found-source',
+        label: 'I found `posts-board.tsx` in the browser\u2019s Sources tab',
+      },
+    ],
+    quiz: [
+      {
+        id: 'where-logged',
+        prompt:
+          'Why did `[server]` appear in the container log and `[browser]` in the browser console?',
+        options: [
+          { id: 'a', label: 'Next.js routes server logs to the terminal for tidiness.' },
+          {
+            id: 'b',
+            label:
+              'They ran on two different computers — one on the server, one on the machine in front of you.',
+          },
+          { id: 'c', label: 'The browser console hides some messages.' },
+          { id: 'd', label: 'One of them ran twice.' },
+        ],
+        answer: 'b',
+        explain:
+          'A `console.log` prints wherever it runs. Nothing was routed or hidden — the two files genuinely executed on two machines.',
+      },
+      {
+        id: 'why-secret',
+        prompt: 'You found your component\u2019s source in the browser. What follows from that?',
+        options: [
+          { id: 'a', label: 'Nothing — only developers can see it.' },
+          {
+            id: 'b',
+            label:
+              'That file cannot hold a password or an API key, because everyone using the app has a copy.',
+          },
+          { id: 'c', label: 'You should minify it before shipping.' },
+          { id: 'd', label: 'The browser copied it by mistake.' },
+        ],
+        answer: 'b',
+        explain:
+          'Anything sent to a browser belongs to whoever owns that browser. Minifying changes nothing. So secrets stay in server code — and a component in the browser that needs data has to ask the server for it.',
+      },
+    ],
+  },
+
+  {
+    id: 'use-client',
+    phase: 'Seeing how it works',
+    title: 'The line that decides',
+    minutes: 30,
+    checks: [
+      {
+        id: 'counter',
+        label: 'You added a working counter to the component',
+        async run() {
+          const source = await read('app/posts/posts-board.tsx');
+
+          if (source === null) {
+            return { pass: false, detail: 'Could not read `app/posts/posts-board.tsx`.' };
+          }
+
+          const hasState = /useState\s*\(\s*0\s*\)/.test(source);
+          const hasClick = /onClick=/.test(source);
+
+          if (hasState && hasClick) {
+            return { pass: true, detail: 'Found a `useState(0)` and an `onClick`.' };
+          }
+
+          return {
+            pass: false,
+            detail: hasState
+              ? 'You have the `useState(0)`, but no `onClick` — nothing changes the number yet. Add the button.'
+              : 'No `useState(0)` in the component yet. Add the counter described above.',
+          };
+        },
+      },
+      {
+        id: 'use-client-intact',
+        label: "`'use client'` is back on the first line",
+        async run() {
+          const source = await read('app/posts/posts-board.tsx');
+
+          if (source === null) return { pass: false, detail: 'Could not read the component.' };
+
+          if (/^\s*['"]use client['"]/m.test(source)) {
+            return { pass: true, detail: 'The marker is there.' };
+          }
+
+          return {
+            pass: false,
+            detail:
+              "`'use client'` is missing from `app/posts/posts-board.tsx`. If you took it out for the experiment, put it back — the page does not work without it, which was the point.",
+          };
+        },
+      },
+      {
+        id: 'page-clean',
+        label: '`app/posts/page.tsx` has no `useState` left in it',
+        async run() {
+          const source = await read('app/posts/page.tsx');
+
+          if (source === null) return { pass: false, detail: 'Could not read the page.' };
+
+          if (/useState/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'There is still a `useState` in `app/posts/page.tsx`. That was the experiment that was *supposed* to fail — take it back out so the page works again.',
+            };
+          }
+
+          return { pass: true, detail: 'The page is a Server Component again.' };
+        },
+      },
+    ],
+    attest: [
+      {
+        id: 'removed-marker',
+        label: "I removed `'use client'`, read the error, and put it back",
+      },
+      {
+        id: 'state-on-server',
+        label: 'I tried `useState` in `page.tsx` and read the error that gave me too',
+      },
+    ],
+    quiz: [
+      {
+        id: 'what-marker-does',
+        prompt: "What does `'use client'` actually do?",
+        options: [
+          { id: 'a', label: 'It makes the component load faster.' },
+          {
+            id: 'b',
+            label: 'It sends that component to the browser, so it runs there as well.',
+          },
+          { id: 'c', label: 'It marks the file as belonging to the front end team.' },
+          { id: 'd', label: 'It stops the component being rendered on the server.' },
+        ],
+        answer: 'b',
+        explain:
+          'It is an instruction about *where the code goes*. Without it, the component runs on the server and only its HTML is sent. With it, the code itself is shipped to the browser — which is what lets it hold state and respond to clicks, and what stops it holding secrets.',
+      },
+      {
+        id: 'which-to-use',
+        prompt: 'Which of these actually needs to be a Client Component?',
+        options: [
+          { id: 'a', label: 'A page that lists yesterday\u2019s orders.' },
+          { id: 'b', label: 'A footer with links in it.' },
+          { id: 'c', label: 'A filter box that narrows a list as you type.' },
+          { id: 'd', label: 'A page showing one product\u2019s details.' },
+        ],
+        answer: 'c',
+        explain:
+          'Only the filter changes *after* the page has loaded, in response to the user. The other three are rendered once and sit there, so a Server Component does the job with less code and one round trip instead of two. Default to the server; reach for the client when something has to react.',
+      },
+    ],
+  },
+
+  {
     id: 'how-it-works',
-    phase: 'How this app works',
+    phase: 'Seeing how it works',
     title: 'How a request travels through the app',
     minutes: 25,
     quiz: [
@@ -770,6 +954,222 @@ export const steps = [
         answer: 'c',
         explain:
           'The database would reject it anyway — the foreign key sees to that. But the error would arrive as a constraint violation, get caught by the `catch`, and reach the caller as a generic 500. Checking first turns "something broke" into "this author does not exist".',
+      },
+    ],
+  },
+
+  {
+    id: 'decomposition',
+    phase: 'Building a feature',
+    title: 'Break the problem down',
+    minutes: 30,
+    checks: [
+      onSandboxBranch,
+      {
+        id: 'plan-exists',
+        label: 'You wrote your plan down in `PLAN.md`',
+        async run() {
+          if (await exists('PLAN.md')) {
+            return { pass: true, detail: 'Found `PLAN.md`.' };
+          }
+
+          return {
+            pass: false,
+            detail:
+              'No `PLAN.md` at the top of the project. Create it and write out your task list — the shape is described above.',
+          };
+        },
+      },
+      {
+        id: 'plan-tasks',
+        label: 'It is a task list, not a paragraph',
+        async run() {
+          const source = await read('PLAN.md');
+
+          if (source === null) return { pass: false, detail: 'No `PLAN.md` yet.' };
+
+          const tasks = (source.match(/^\s*[-*]\s*\[[ xX]\]/gm) ?? []).length;
+
+          if (tasks < 5) {
+            return {
+              pass: false,
+              detail: `Found ${tasks} checklist item${tasks === 1 ? '' : 's'}, and this job has more parts than that.\n\nWrite them as markdown checkboxes — \`- [ ] Add the Product model\` — one line per piece you could finish and commit on its own. Aim for at least five.`,
+            };
+          }
+
+          return {
+            pass: true,
+            detail: `${tasks} tasks. Each one should be small enough to finish in a sitting.`,
+          };
+        },
+      },
+      {
+        id: 'plan-ordered',
+        label: 'Your plan starts at the bottom of the stack',
+        async run() {
+          const source = (await read('PLAN.md')) ?? '';
+          const lower = source.toLowerCase();
+          const model = lower.indexOf('model');
+          const page = Math.max(lower.indexOf('page'), lower.indexOf('form'));
+
+          if (model === -1) {
+            return {
+              pass: false,
+              detail:
+                'Nothing in your plan mentions the model. The database table has to exist before anything can read from it — that is the first task.',
+            };
+          }
+
+          if (page !== -1 && page < model) {
+            return {
+              pass: false,
+              detail:
+                'Your plan puts the page before the model. Work upwards: the page needs the endpoint, and the endpoint needs the table. Building in that order means every piece has something real underneath it when you test it.',
+            };
+          }
+
+          return { pass: true, detail: 'Model first, then what sits on top of it.' };
+        },
+      },
+    ],
+    quiz: [
+      {
+        id: 'too-big',
+        prompt:
+          'Which of these is the right size for one task on your list?',
+        options: [
+          { id: 'a', label: 'Build the products feature.' },
+          { id: 'b', label: 'Add a `Product` model to the contract and regenerate.' },
+          { id: 'c', label: 'Type the word `Product`.' },
+          { id: 'd', label: 'Finish the sprint.' },
+        ],
+        answer: 'b',
+        explain:
+          'A good task is one you could finish, test, and commit in a sitting — and describe in a sentence without the word "and". "Build the feature" is a week and cannot be started; "type a word" is not a unit of anything. The test is whether finishing it leaves the project working.',
+      },
+      {
+        id: 'why-decompose',
+        prompt: 'What is the main practical benefit of writing the list before you start?',
+        options: [
+          { id: 'a', label: 'It looks organised to your manager.' },
+          {
+            id: 'b',
+            label:
+              'You find out what you have misunderstood while it is still cheap, and you always know what to do next.',
+          },
+          { id: 'c', label: 'It makes the code shorter.' },
+          { id: 'd', label: 'It is required before opening a pull request.' },
+        ],
+        answer: 'b',
+        explain:
+          'Two things. Writing "check the author exists" forces you to notice that authors are a thing you have to handle — better now than three hours in. And when you sit down tomorrow, the list tells you where you were, which is worth more than it sounds.',
+      },
+    ],
+  },
+
+  {
+    id: 'prep',
+    phase: 'Building a feature',
+    title: 'PREP — think before you type',
+    minutes: 50,
+    checks: [
+      onSandboxBranch,
+      {
+        id: 'prep-notes',
+        label: 'You wrote the PREP out, above the function',
+        async run() {
+          const source = await read('lib/products.ts');
+
+          if (source === null) {
+            return {
+              pass: false,
+              detail: 'No `lib/products.ts` yet. Create it — the shape is described above.',
+            };
+          }
+
+          const wanted = ['parameters', 'returns', 'examples', 'pseudocode'];
+          const lower = source.toLowerCase();
+          const missing = wanted.filter((word) => !lower.includes(word));
+
+          if (missing.length > 0) {
+            return {
+              pass: false,
+              detail: `Your comment block is missing: **${missing.join(', ')}**.\n\nAll four, written out before the code. It takes two minutes and it is the whole exercise.`,
+            };
+          }
+
+          return { pass: true, detail: 'All four parts are there.' };
+        },
+      },
+      {
+        id: 'exported',
+        label: '`parsePriceCents` is exported',
+        async run() {
+          const source = await read('lib/products.ts');
+
+          if (source === null) return { pass: false, detail: 'No `lib/products.ts` yet.' };
+
+          if (/export\s+function\s+parsePriceCents/.test(source)) {
+            return { pass: true, detail: 'Found the function.' };
+          }
+
+          return {
+            pass: false,
+            detail:
+              'No `export function parsePriceCents(...)` in `lib/products.ts`. It has to be exported, or the test cannot import it.',
+          };
+        },
+      },
+      {
+        id: 'examples-are-tests',
+        label: 'Every example became a test',
+        async run() {
+          const source = await read('__tests__/products.test.ts');
+
+          if (source === null) {
+            return {
+              pass: false,
+              detail:
+                'No `__tests__/products.test.ts`. Your examples go here — one `it` per case.',
+            };
+          }
+
+          const cases = (source.match(/\bit\(/g) ?? []).length;
+
+          if (cases < 5) {
+            return {
+              pass: false,
+              detail: `Only ${cases} test${cases === 1 ? '' : 's'}. The examples above list more cases than that, and each one deserves its own \`it\` — when a test fails, its name should tell you what broke.`,
+            };
+          }
+
+          return { pass: true, detail: `${cases} tests, one per example.` };
+        },
+      },
+      {
+        id: 'passes',
+        label: 'They pass',
+        slow: SLOW,
+        async run() {
+          const { passed, output, timedOut } = await runVitest('__tests__/products.test.ts');
+
+          if (timedOut) {
+            return { pass: false, detail: 'Timed out. Is Postgres up? `./script/server`.' };
+          }
+
+          if (passed) {
+            return {
+              pass: true,
+              detail:
+                'Green — and you wrote the examples before the code, which is the habit the rest of this tutorial is built on.',
+            };
+          }
+
+          return {
+            pass: false,
+            detail: `Not passing yet.${databaseHint(output)}\n\n\`\`\`\n${tail(output)}\n\`\`\``,
+          };
+        },
       },
     ],
   },

@@ -1,6 +1,38 @@
 Your work is on your branch, on your machine. Two things have to happen: it has
 to reach GitHub, and someone has to read it.
 
+## First: let GitHub know it is you
+
+In step 3 you told git *who you are*, which is what stamps your name on a
+commit. Sending commits to GitHub needs something different: proof that you are
+allowed to. Identity is not permission.
+
+If you have never pushed from this machine, set that up now. Pick one:
+
+**GitHub CLI — easiest.** Install [`gh`](https://cli.github.com/manual/), then:
+
+```bash
+gh auth login
+```
+
+Answer the prompts and it handles everything, including configuring git.
+
+**SSH keys — the usual choice for daily work.** You generate a key, give GitHub
+the public half, and never type a password again. GitHub's
+[step-by-step guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
+is genuinely good; follow it start to finish.
+
+**A personal access token over HTTPS.** Create a token in GitHub's settings and
+use it in place of your password when git asks. [The
+instructions](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+cover which scopes it needs.
+
+:::warn Your GitHub password will not work
+Git asking for a "password" and rejecting the right one is a confusing five
+minutes that most people have once. Password authentication for git was turned
+off years ago — that prompt wants a **token**.
+:::
+
 ## Push
 
 ```bash
@@ -8,12 +40,16 @@ git push -u origin sandbox/your-name
 ```
 
 `origin` is the name for the copy of the repository on GitHub. `-u` links your
-local branch to the remote one, so from now on plain `git push` and `git pull`
-know where to go.
+local branch to the remote one, so from now on plain
+[`git push`](https://git-scm.com/docs/git-push) and `git pull` know where to go.
+
+If it fails, read the error before trying again. "Permission denied
+(publickey)" means the authentication above is not set up yet, not that you did
+the push wrong.
 
 ## Open the pull request
 
-A **pull request** is a request to merge your branch into `main`. It is where
+A **[pull request](https://docs.github.com/en/pull-requests)** is a request to merge your branch into `main`. It is where
 the review happens: the diff, line-by-line comments, and the conversation, all
 in one place.
 

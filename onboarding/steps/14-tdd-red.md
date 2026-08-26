@@ -57,6 +57,9 @@ it('does the thing', async () => {
 Arrange, act, assert. In that order, every time. When a test is hard to read, it
 is usually because those three have been shuffled together.
 
+The test runner is [Vitest](https://vitest.dev/), and `describe`, `it` and
+`expect` are available without importing them.
+
 Two things are given to you:
 
 - **`test/helpers.ts`** — `createUser()`, `createPost()`. They put rows in the

@@ -24,8 +24,8 @@ const Post = model('Post', {
 });
 ```
 
-That is the whole definition of a post. From it, Prisma produces the real
-Postgres table *and* the TypeScript types — so when you type
+That is the whole definition of a post. From it, [Prisma](https://www.prisma.io/docs) produces the real
+[Postgres](https://www.postgresql.org/docs/) table *and* the TypeScript types — so when you type
 `db.orm.public.Post.` your editor knows every field, and misspelling one is an
 error before you run anything.
 

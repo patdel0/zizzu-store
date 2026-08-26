@@ -22,7 +22,7 @@ clearly when it is not.
 | `priceCents` not a positive whole number | **400** | `{ error: … }` |
 | A product with that name already exists | **422** | `{ error: … }` |
 
-Remember the distinction from step 3: **400** means "I cannot make sense of
+Remember the distinction from step 7 — and [MDN has the full list](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status): **400** means "I cannot make sense of
 this"; **422** means "I understood you perfectly and it still cannot be done".
 
 ## How this project does it
@@ -48,8 +48,8 @@ Borrow that shape. It keeps the handler readable, and the parsing ends up in a
 plain function you can test on its own, with no request and no database.
 
 :::note `unknown` versus `any`
-`request.json()` could return literally anything, so the result is typed
-`unknown`. TypeScript then refuses to let you touch it until you have checked
+[`request.json()`](https://nextjs.org/docs/app/api-reference/functions/next-request) could return literally anything, so the result is typed
+[`unknown`](https://www.typescriptlang.org/docs/handbook/2/functions.html). TypeScript then refuses to let you touch it until you have checked
 what it is — which is the point. `any` would switch those checks off and let the
 bug through silently.
 :::
@@ -72,17 +72,35 @@ try {
 **2. A missing name.** `typeof name !== 'string' || name.trim() === ''`. Trim it
 before saving, so `"  Mug  "` and `"Mug"` do not become two products.
 
-**3. A bad price.** Think about what you are refusing and why:
+**3. A bad price.** You already wrote this one.
 
-| Input | Why it is refused |
-|---|---|
-| `"899"` | Text, not a number. |
-| `9.99` | Not a whole number of cents. |
-| `-100` | A price someone gets paid to take. |
-| `1e400` | Larger than JavaScript can hold — it becomes `Infinity`. |
+In step 12 you PREP'd and tested `parsePriceCents`. This is what it was for —
+import it rather than writing the checks a second time:
 
-`Number.isInteger(priceCents) && priceCents > 0` covers all four. Every one of
-them is a bug report somebody would otherwise file.
+```typescript
+import { parsePriceCents } from '@/lib/products';
+
+const price = parsePriceCents(body.priceCents);
+
+if (!price.ok) {
+  return Response.json({ error: price.error }, { status: 400 });
+}
+```
+
+Note what you get for free: it is already tested, in `__tests__/products.test.ts`,
+against all eight of your examples. The handler test only has to prove the
+handler *uses* it — one case is enough, because the edge cases are covered where
+they belong.
+
+:::note This is what "a plain function" buys you
+`parsePriceCents` needs no request, no database and no server. That makes it
+trivial to test exhaustively, which is why the tricky decisions live there
+rather than in the middle of the handler.
+
+When you find yourself wanting to mock a database to reach some branch, it is
+usually a sign that the logic in that branch should move into a function like
+this one.
+:::
 
 **4. A duplicate name.** Look before you write:
 

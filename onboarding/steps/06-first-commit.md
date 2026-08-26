@@ -30,7 +30,7 @@ a typo while building a feature, you can commit the typo fix on its own instead
 of burying it in an unrelated change.
 
 `git commit` opens an editor for the message. If you get dropped into an
-unfamiliar one, that is `vim`: type your message after pressing `i`, then press
+unfamiliar one, that is [vim](https://www.vim.org/docs.php) and you skipped step 3: type your message after pressing `i`, then press
 `Esc` and type `:wq` and Enter. For short messages you can skip the editor:
 
 ```bash

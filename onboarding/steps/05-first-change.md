@@ -3,10 +3,43 @@ Time to change something and watch it appear in the browser.
 Open `app/page.tsx`. That is the home page — the thing at
 [localhost:3000](http://localhost:3000).
 
+## Why *that* file is the home page
+
+Before you edit it, one rule that will save you a lot of hunting. In
+[Next.js](https://nextjs.org/docs), **a folder is a URL**. There is no routing
+configuration anywhere; the folders under `app/` are the site's addresses.
+
+```
+app/
+  page.tsx              →  /
+  posts/
+    page.tsx            →  /posts
+  api/
+    posts/
+      route.ts          →  /api/posts
+```
+
+Two filenames carry all the meaning:
+
+- **[`page.tsx`](https://nextjs.org/docs/app/api-reference/file-conventions/page)**
+  renders something a person looks at.
+- **[`route.ts`](https://nextjs.org/docs/app/api-reference/file-conventions/route)**
+  answers a request from code.
+
+Put either one in a folder, and that folder's path becomes its URL. So
+`app/page.tsx` is the page at `/`, which is why it is the file you are about to
+edit.
+
+:::note Working backwards
+This works in reverse too, and that is how you will use it most. Something is
+wrong on `/posts`? The file is `app/posts/page.tsx`. It is the fastest way to
+get from a URL to the code behind it.
+:::
+
 ## This is not quite HTML
 
 What you see inside the `return (...)` looks like HTML, and mostly behaves like
-it. It is **JSX**: HTML-shaped syntax inside a JavaScript file, which React turns
+it. It is **[JSX](https://react.dev/learn/writing-markup-with-jsx)**: [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML)-shaped syntax inside a JavaScript file, which React turns
 into real elements. Three differences will trip you up:
 
 - `class` is written **`className`**, because `class` is already a JavaScript
@@ -26,7 +59,7 @@ thing, and you combine them on the element:
 ```
 
 `mt-2` is a top margin, `text-lg` a larger font, `font-medium` a heavier weight,
-`text-zinc-600` a grey. That is **Tailwind**.
+`text-zinc-600` a grey. That is **[Tailwind](https://tailwindcss.com/docs/styling-with-utility-classes)** — and it is [CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) underneath, written a particular way.
 
 It looks noisy at first. The trade is that you never invent a class name, never
 hunt through a stylesheet to find what a name does, and never break another page

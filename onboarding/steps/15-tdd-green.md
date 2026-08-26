@@ -50,7 +50,7 @@ down "Edge" environment that has no Node APIs. The Postgres driver needs them,
 so the runtime is pinned. Leave it out and this works on your machine and fails
 in production, which is the worst way to find a bug.
 
-**`db.orm.public.Product`** — the query builder Prisma generated from your
+**`db.orm.public.Product`** — the query builder [Prisma](https://www.prisma.io/docs) generated from your
 contract. Type `db.orm.public.Product.` in your editor and let autocomplete show
 you what is there. A few you will use:
 
@@ -64,7 +64,7 @@ await db.orm.public.Product.create({ name, priceCents });   // insert, returns t
 `.first()` returns `null` when there is no match. It does not throw — so
 anything you get back from it has to be checked before it is used.
 
-**`Response.json({ data: products })`** — 200 by default. The `{ data }` wrapper
+**[`Response.json({ data: products })`](https://developer.mozilla.org/en-US/docs/Web/API/Response)** — 200 by default. The `{ data }` wrapper
 is the project's convention, and now your endpoint keeps it too.
 
 **The `try`/`catch`** — if the database is down, the caller gets a flat 500 and
@@ -103,7 +103,7 @@ curl http://localhost:3000/api/products
 ```
 
 You should get `{"data":[]}`. If you get a 500, the app container has not run
-`db init` for the development database — go back to step 12.
+`db init` for the development database — go back to step 13.
 
 :::try Prove your test can still fail
 Change `{ data: products }` to `{ data: [] }` in the handler, and run the test

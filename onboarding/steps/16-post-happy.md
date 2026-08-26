@@ -32,7 +32,7 @@ describe('POST /api/products', () => {
 });
 ```
 
-Note `toMatchObject` rather than `toEqual`. The saved product also has an `id`,
+Note [`toMatchObject`](https://vitest.dev/api/expect.html#tomatchobject) rather than `toEqual`. The saved product also has an `id`,
 a `createdAt` and an `updatedAt` that you cannot predict, and `toMatchObject`
 checks the fields you named while ignoring the rest.
 

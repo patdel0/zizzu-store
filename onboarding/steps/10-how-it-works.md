@@ -6,29 +6,68 @@ Everything below is really happening on your machine right now, at
 [localhost:3000/posts](http://localhost:3000/posts). Open it in one tab and read
 this in the other.
 
-## The trip
+## The trip, in three parts
+
+The whole journey is a lot at once, so here it is in the three things that
+actually happen. Watch which side of the line each participant sits on — that
+is the distinction you proved for yourself in the last step.
+
+### 1. The page arrives
 
 ```mermaid
 sequenceDiagram
     autonumber
+    box Your machine
     participant B as Browser
-    participant P as page.tsx
-    participant C as posts-board.tsx<br/>(in the browser)
-    participant R as route.ts
-    participant D as Postgres
+    end
+    box The server
+    participant P as app/posts/page.tsx
+    end
 
-    B->>P: you visit /posts
-    P-->>B: HTML for the page
-    Note over C: the page appears,<br/>then the component wakes up
+    B->>P: GET /posts
+    Note over P: renders on the server
+    P-->>B: HTML
+    Note over B: the page appears —<br/>but the list is empty
+```
+
+### 2. The list fills in
+
+`posts-board.tsx` is now running **in your browser**, so it has to ask the
+server for data.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    box Your machine
+    participant C as posts-board.tsx
+    end
+    box The server
+    participant R as app/api/posts/route.ts
+    participant D as Postgres
+    end
+
     C->>R: GET /api/posts
     R->>D: SELECT * FROM "Post"
     D-->>R: rows
     R-->>C: { data: [ ... ] }
     Note over C: the list renders
+```
 
-    Note over B,D: you submit the form
+### 3. You create a post
+
+```mermaid
+sequenceDiagram
+    autonumber
+    box Your machine
+    participant C as posts-board.tsx
+    end
+    box The server
+    participant R as app/api/posts/route.ts
+    participant D as Postgres
+    end
+
     C->>R: POST /api/posts
-    R->>R: validate the body
+    Note over R: is the body valid?
     R->>D: does that author exist?
     D-->>R: yes
     R->>D: INSERT INTO "Post"
@@ -37,13 +76,17 @@ sequenceDiagram
     Note over C: the new post joins the list
 ```
 
+Two round trips to show a list, and a third to add to it. Every arrow crossing
+the line between the boxes is an HTTP request — the same kind you made by hand
+with `curl` two steps ago.
+
 Four files, and each has one job:
 
 | File | Job |
 |---|---|
 | `app/posts/page.tsx` | The page's structure. Runs on the server. |
 | `app/posts/posts-board.tsx` | The interactive part. Runs in the browser. |
-| `app/api/posts/route.ts` | Answers HTTP requests. Runs on the server. |
+| [`app/api/posts/route.ts`](https://nextjs.org/docs/app/api-reference/file-conventions/route) | Answers HTTP requests. Runs on the server. |
 | `lib/prisma/contract.ts` | Says what a `Post` is. |
 
 ## Server and browser are different worlds
@@ -88,7 +131,7 @@ notice the shape:
 Five outcomes, and only one of them is the happy path. That ratio is normal, and
 it is most of why endpoints are longer than you would expect.
 
-Those are the status codes from step 3, doing their job: the 422 is "I
+Those are the status codes from step 7, doing their job: the 422 is "I
 understood you, but that author does not exist", which is a different problem
 from the 400s above it and deserves a different answer.
 

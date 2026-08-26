@@ -3,7 +3,7 @@ work was written down and claimed, so let us do that part properly now.
 
 ## Issues
 
-An **issue** is one piece of work: a bug, a feature, a question. It has a title,
+An **[issue](https://docs.github.com/en/issues)** is one piece of work: a bug, a feature, a question. It has a title,
 a description, and a conversation attached to it.
 
 The reason issues exist is not bureaucracy. It is that the alternative — work
@@ -15,7 +15,7 @@ The issue is where the *why* lives. The code only ever shows the *what*.
 
 ## The board
 
-The **project board** is every issue as a card in a column:
+The **[project board](https://docs.github.com/en/issues/planning-and-tracking-with-projects)** is every issue as a card in a column:
 
 ```mermaid
 flowchart LR
