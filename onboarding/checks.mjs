@@ -381,7 +381,37 @@ export const steps = [
     id: 'branch',
     phase: 'Your first change',
     title: 'Make yourself a branch',
-    minutes: 15,
+    minutes: 25,
+    quiz: [
+      {
+        id: 'name-it',
+        prompt:
+          'Issue #204 says: "The total on the cart page is wrong when a discount is applied." Which branch name is best?',
+        options: [
+          { id: 'a', label: '`patch-1`' },
+          { id: 'b', label: '`fix/204-cart-total-with-discount`' },
+          { id: 'c', label: '`Fix Cart Total Bug (URGENT)`' },
+          { id: 'd', label: '`maria-work`' },
+        ],
+        answer: 'b',
+        explain:
+          'It says what kind of change it is, which issue it belongs to, and what it touches — all readable in a list of thirty branches without opening anything. `patch-1` and `maria-work` say nothing. The third has capitals and spaces, which git allows and every command-line tool then makes you quote.',
+      },
+      {
+        id: 'which-prefix',
+        prompt:
+          'You are rewriting a messy function. Same behaviour, tidier code, no bug being fixed. What prefix?',
+        options: [
+          { id: 'a', label: '`feature/` — you are changing the code' },
+          { id: 'b', label: '`fix/` — messy code is a kind of bug' },
+          { id: 'c', label: '`refactor/` — the behaviour is unchanged' },
+          { id: 'd', label: '`chore/` — nobody asked for it' },
+        ],
+        answer: 'c',
+        explain:
+          'The prefix tells a reviewer what to look for. `refactor/` says "the behaviour should be identical" — so their job is to check that nothing changed, and the existing tests should pass untouched. Calling it `feature/` would send them looking for new behaviour that is not there.',
+      },
+    ],
     checks: [
       onSandboxBranch,
       {

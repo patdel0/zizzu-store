@@ -63,16 +63,19 @@ alternative is finding out in review, after two days of work.
 ===
 ## Branch names
 
-Name your branch after the work, and mention the issue number:
+Now the naming convention from {{step:branch}} has something real to attach to.
+The issue you just claimed gives you the number and the words:
 
 ```
-feature/12-product-api
-fix/31-empty-cart-crash
+feature/204-product-search
+fix/187-cart-total-with-discount
 ```
 
-Then anyone looking at your branch knows what it is for and where the discussion
-is. (For this tutorial you are on `sandbox/your-name` — real work gets a real
-name.)
+Claim the issue, then name the branch after it. Anyone looking at your branch
+knows what it is for and where the discussion is.
+
+(For this tutorial you stay on `sandbox/your-name` — the work is not real, so it
+does not get a real name.)
 
 === quiz=stuck
 ## Asking for help
