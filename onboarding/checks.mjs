@@ -2985,6 +2985,16 @@ export const steps = [
       },
     ],
     attest: [
+      {
+        id: 'reviewed-one',
+        label: 'I read someone else\u2019s pull request and left a real comment',
+        hint: 'A teammate\u2019s, or one on any public repository you use \u2014 open source pull requests are public and readable. Read the description, then the tests, then the code, and ask one genuine question. Reviewing is half the job and it arrives in your first fortnight.',
+      },
+      {
+        id: 'green-before-push',
+        label: '`npm test` and `npm run lint` both pass',
+        hint: 'Run them before you push, not after somebody asks. Anything a machine can tell you in thirty seconds should never cost a reviewer a round trip. `npm run lint -- --fix` handles most of what the linter finds.',
+      },
       { id: 'opened', label: 'I opened a pull request against `main`' },
       {
         id: 'description',

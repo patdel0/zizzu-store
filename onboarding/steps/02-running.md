@@ -21,6 +21,44 @@ settings that differ per machine — database passwords, that sort of thing. It 
 deliberately never committed, which is why there is an `.env.example` to copy
 from.
 
+While that runs, here is what the second half of it is doing.
+
+===
+## The code you did not write
+
+`npm install` just downloaded around three hundred folders into
+`node_modules/`. Two files decide what lands there.
+
+**`package.json`** is the list you maintain. Open it — `dependencies` are what
+the app needs to run, `devDependencies` are what only you need while working
+(the test runner, the linter, the TypeScript compiler). Versions are written as
+ranges: `^15.5.4` means "15.5.4 or any later 15.x".
+
+**`package-lock.json`** is generated, enormous, and the one that actually
+matters. It records the exact version of every package, and every package those
+packages needed. It is committed on purpose — without it, a range like `^15.5.4`
+could resolve differently on your machine than on your colleague's, and you
+would spend an afternoon on a bug that only exists for one of you.
+
+| Command | What it does | When |
+| --- | --- | --- |
+| `npm install` | Resolves the ranges, may update the lockfile | Adding or changing a dependency |
+| `npm install <name>` | Adds one package and records it | New dependency |
+| `npm ci` | Installs exactly the lockfile, ignoring the ranges | Automated builds, and when yours is a mess |
+
+:::warn `node_modules` is never committed
+It is enormous, machine-specific, and completely reconstructible from the two
+files above. It is in `.gitignore` for those reasons. Committing it is a
+memorable first-week mistake.
+:::
+
+:::note Adding a dependency is a decision, not a detail
+Every package is code you now ship and have to keep updated, and it usually
+brings others with it. Before adding one, ask whether it is worth it and whether
+the team already uses something for this. It is a normal thing to raise on the
+issue before you do it.
+:::
+
 === check=app-up
 ## Start it
 
