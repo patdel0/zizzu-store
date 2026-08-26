@@ -263,9 +263,15 @@ function drawSidebar() {
 
 // --------------------------------------------------------------------- step
 
+/** Steps whose content came back in English because they are not translated. */
+const untranslatedSteps = new Set();
+
 async function cardsFor(id) {
   if (!markdownCache.has(id)) {
-    const { cards } = await api(`/api/content/${id}`);
+    const { cards, translated } = await api(`/api/content/${id}`);
+
+    // A card that is suddenly English needs to say why, or it reads as a bug.
+    if (translated === false && state.locale !== 'en') untranslatedSteps.add(id);
 
     markdownCache.set(id, cards);
   }
@@ -300,6 +306,9 @@ async function show(id, cardIndex) {
     `<p class="eyebrow">${escapeHtml(step.phase)} · ${escapeHtml(
       ui('ui.step', { number: step.number, total: state.steps.length }),
     )}</p>` +
+    (untranslatedSteps.has(step.id)
+      ? `<p class="untranslated">${escapeHtml(ui('ui.untranslated'))}</p>`
+      : '') +
     `<h1>${escapeHtml(step.title)}</h1>` +
     `<div class="pips" role="img" aria-label="Card ${index + 1} of ${cards.length}">` +
     cards

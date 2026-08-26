@@ -36,7 +36,7 @@ exact version.
 
 **`package-lock.json`** is generated, enormous, and the one that actually
 matters. It records the exact version of every package, and every package those
-packages needed. It is committed on purpose — without it, a range like `^15.5.4`
+packages needed. It is committed on purpose — without it, a range like `^4.1.0`
 could resolve differently on your machine than on your colleague's, and you
 would spend an afternoon on a bug that only exists for one of you.
 
