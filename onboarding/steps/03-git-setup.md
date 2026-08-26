@@ -102,7 +102,7 @@ run the same `git config` command again — the last one wins.
 
 :::warn Not covered yet: pushing to GitHub
 Sending your work *to* GitHub needs authentication as well as identity, and it
-is a separate job with its own choices. That comes in step 20, at the point you
+is a separate job with its own choices. That comes in {{step:pull-request}}, at the point you
 actually need it — there is no sense setting up credentials for a push you are
 not making for another few hours.
 :::

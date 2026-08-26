@@ -102,7 +102,7 @@ would not.
 :::note Why every test starts with an empty database
 `expect(data).toHaveLength(1)` only works because no other test's products are
 lying around. `test/setup.ts` calls `resetDatabase` before each test — including
-the `Product` line you added in step 13 — which is
+the `Product` line you added in {{step:database}} — which is
 what lets tests run in any order and not interfere.
 :::
 

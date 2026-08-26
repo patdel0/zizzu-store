@@ -20,7 +20,7 @@ flowchart LR
 
 The step people skip is the first one, and it is the one that does the work.
 
-:::why
+:::why Why write the test first, when you could just write the code?
 A test you have never seen fail proves nothing. If you write the code first and
 then a test that passes, you have learned exactly one thing: the test passed
 once. You do not know whether it would notice if the code broke — and a test

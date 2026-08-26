@@ -1,7 +1,7 @@
 Your plan starts with the table. This step makes the database able to store a
 product.
 
-Four things to do, one per card. Nothing to memorise.
+Six short cards, one thing each. Nothing to memorise.
 
 ===
 ## Look at one that already exists
@@ -56,8 +56,11 @@ error before you ever run the code.
 ===
 ## Try the shape before you write it
 
-A product needs a name, an optional description, and a price. Fill these in —
-the answers are all visible in the `Post` model above.
+A product needs a name, an optional description, and a price.
+
+Three of the four answers are in the `Post` model above. The fourth is `int` —
+there is no whole-number column in `Post`, so you could not have got that one by
+looking.
 
 :::blank Complete the Product model
 const Product = {{model}}('Product', {

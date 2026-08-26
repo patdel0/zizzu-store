@@ -6,7 +6,7 @@ You already did this once without noticing. Start there.
 ===
 ## The one you already did
 
-In step 5 you added a tagline to the home page. Written out, that job was:
+In {{step:first-change}} you added a tagline to the home page. Written out, that job was:
 
 1. Switch to your branch
 2. Open `app/page.tsx`
@@ -173,5 +173,5 @@ git commit -m "Add a plan for products"
 ```
 
 You will tick these off as you go. In real work this list lives in the issue,
-where the team can see it — that comes in step 18.
+where the team can see it — that comes in {{step:issues}}.
 :::

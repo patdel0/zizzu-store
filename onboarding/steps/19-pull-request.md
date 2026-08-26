@@ -4,7 +4,7 @@ to reach GitHub, and someone has to read it.
 ===
 ## First: let GitHub know it is you
 
-In step 3 you told git *who you are*, which is what stamps your name on a
+In {{step:git-setup}} you told git *who you are*, which is what stamps your name on a
 commit. Sending commits to GitHub needs something different: proof that you are
 allowed to. Identity is not permission.
 

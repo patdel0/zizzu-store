@@ -24,7 +24,7 @@ clearly when it is not.
 | `priceCents` not a positive whole number | **400** | `{ error: … }` |
 | A product with that name already exists | **422** | `{ error: … }` |
 
-Remember the distinction from step 7 — and [MDN has the full list](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status): **400** means "I cannot make sense of
+Remember the distinction from {{step:requests}} — and [MDN has the full list](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status): **400** means "I cannot make sense of
 this"; **422** means "I understood you perfectly and it still cannot be done".
 
 ===
@@ -78,7 +78,7 @@ before saving, so `"  Mug  "` and `"Mug"` do not become two products.
 
 **3. A bad price.** You already wrote this one.
 
-In step 12 you PREP'd and tested `parsePriceCents`. This is what it was for —
+In {{step:prep}} you PREP'd and tested `parsePriceCents`. This is what it was for —
 import it rather than writing the checks a second time:
 
 ```typescript

@@ -181,7 +181,7 @@ async function show(id, cardIndex) {
 
   const body = document.createElement('div');
 
-  body.innerHTML = renderMarkdown(card.markdown);
+  body.innerHTML = renderMarkdown(resolveStepRefs(card.markdown));
   contentEl.append(body);
   drawDiagrams(body);
   wireExercises(body);
@@ -292,6 +292,22 @@ function wireExercises(container) {
       grade();
     });
   }
+}
+
+/**
+ * Turns `{{step:database}}` into "step 12", using the live step list.
+ *
+ * Prose used to carry the numbers literally, and they went stale twice — once
+ * when steps were split, once when one was deleted. A reference that resolves
+ * at render time cannot drift, and an id that no longer exists shows up as
+ * `[unknown step: x]` rather than quietly pointing somewhere wrong.
+ */
+function resolveStepRefs(markdown) {
+  return markdown.replace(/\{\{step:([a-z-]+)\}\}/g, (_, id) => {
+    const step = stepById(id);
+
+    return step ? `step ${step.number}` : `[unknown step: ${id}]`;
+  });
 }
 
 /** True when everything this card gates on has passed. */

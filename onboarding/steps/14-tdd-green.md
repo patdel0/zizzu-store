@@ -107,7 +107,7 @@ curl http://localhost:3000/api/products
 ```
 
 You should get `{"data":[]}`. If you get a 500, the app container has not run
-`db init` for the development database — go back to step 13.
+`db init` for the development database — go back to {{step:database}}.
 
 :::try Prove your test can still fail
 Change `{ data: products }` to `{ data: [] }` in the handler, and run the test
