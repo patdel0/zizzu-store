@@ -1279,6 +1279,99 @@ export const steps = [
     title: 'Add a model to the database',
     minutes: 40,
     checks: [
+      {
+        id: 'seller-field',
+        label: '`Product` has an optional `sellerId`',
+        async run() {
+          const source = await read('lib/prisma/contract.ts');
+
+          if (source === null) {
+            return { pass: false, detail: 'Could not read `lib/prisma/contract.ts`.' };
+          }
+
+          const model = source.match(/model\('Product',[\s\S]*?\n  \}\);/);
+
+          if (!model) {
+            return { pass: false, detail: 'No `Product` model found yet.' };
+          }
+
+          if (!/sellerId:/.test(model[0])) {
+            return {
+              pass: false,
+              detail: '`Product` has no `sellerId` field yet.',
+            };
+          }
+
+          // Required is the interesting failure: it is what a live database
+          // would refuse, and the card is about why.
+          if (!/sellerId:\s*field\.uuidString\(\)\.optional\(\)/.test(model[0])) {
+            return {
+              pass: false,
+              detail:
+                '`sellerId` is there but not optional. `Product` may already have rows, and nobody can say who sold those \u2014 so a required column would be rejected. Make it `field.uuidString().optional()`.',
+            };
+          }
+
+          return { pass: true, detail: '`sellerId` is there, and optional.' };
+        },
+      },
+      {
+        id: 'seller-relation',
+        label: '`Product` declares what `sellerId` points at',
+        async run() {
+          const source = await read('lib/prisma/contract.ts');
+
+          if (source === null) {
+            return { pass: false, detail: 'Could not read `lib/prisma/contract.ts`.' };
+          }
+
+          if (!/seller:\s*rel\.belongsTo\(\s*User/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'The column is there but nothing says what it points at. Add `seller: rel.belongsTo(User, { from: \'sellerId\', to: \'id\' })` to `Product.relations` in the `models` block.',
+            };
+          }
+
+          if (!/from:\s*'sellerId'/.test(source) || !/to:\s*'id'/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'The relation is there but its ends look wrong \u2014 it should go `from: \'sellerId\'` `to: \'id\'`.',
+            };
+          }
+
+          return { pass: true, detail: 'The relation is declared both ends.' };
+        },
+      },
+      {
+        id: 'emitted-again',
+        label: 'The generated contract includes the relation',
+        async run() {
+          const generated = await read('lib/prisma/contract.json');
+
+          if (generated === null) {
+            return {
+              pass: false,
+              detail:
+                'No generated contract. Run `npx prisma-cli contract emit`.',
+            };
+          }
+
+          if (!/sellerId/.test(generated)) {
+            const source = await read('lib/prisma/contract.ts');
+
+            return {
+              pass: false,
+              detail: /sellerId/.test(source ?? '')
+                ? 'Your `contract.ts` has the change but the generated file does not \u2014 they have drifted apart. Run `npx prisma-cli contract emit`.'
+                : 'Nothing to regenerate yet \u2014 make the change in `contract.ts` first.',
+            };
+          }
+
+          return { pass: true, detail: 'Contract and generated file agree.' };
+        },
+      },
       onSandboxBranch,
       {
         id: 'model',

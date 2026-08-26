@@ -193,3 +193,119 @@ git commit -m "Add a Product model"
 
 Then tick the line off your `PLAN.md`.
 :::
+
+=== check=seller-field,seller-relation,emitted-again
+## Changing a table that already exists
+
+`db init` made the table. It will not change it — it only ever adds what is
+missing, and it will not touch a table that already exists.
+
+That matters, because almost every schema change you make from now on will be to
+a table that is already there, often with rows in it. So do one now.
+
+Products need a seller. Open `lib/prisma/contract.ts` and change your `Product`
+model:
+
+```typescript
+const Product = model('Product', {
+  fields: {
+    id: field.id.uuidv7String(),
+    name: field.text(),
+    priceCents: field.int(),
+    sellerId: field.uuidString().optional(),
+    createdAt: field.temporal.createdAt(),
+    updatedAt: field.temporal.updatedAt(),
+  },
+});
+```
+
+And in the `models` block at the bottom, give it the other half:
+
+```typescript
+Product: Product.relations({
+  seller: rel.belongsTo(User, { from: 'sellerId', to: 'id' }),
+}),
+```
+
+Then regenerate, as always:
+
+```bash
+npx prisma-cli contract emit
+```
+
+=== attest=dry-run-read
+## Look before you leap
+
+Do not apply it yet. Ask what it *would* do:
+
+```bash
+docker compose exec app npx prisma-cli db update --dry-run
+```
+
+`--dry-run` prints the operations and changes nothing. Read them. This is a
+habit worth building now: on a database with real customers in it, the dry run
+is the difference between a change and an incident.
+
+When you are happy:
+
+```bash
+docker compose exec app npx prisma-cli db update
+```
+
+:::note If it asks you to type the database name
+That is the safety catch. `db update` applies an operation that could destroy
+data only after you confirm it by typing the name — so a careless `--yes` cannot
+drop a column. Read what it is about to do before you type anything.
+:::
+
+===
+## Two things just happened
+
+**One: you added a foreign key.** `sellerId` holds the `id` of a row in `User`,
+and `rel.belongsTo` is what tells the database and the query builder that those
+two columns are connected. That is all a relation is — a column holding another
+table's key, plus a written-down statement of what it points at.
+
+Now the query builder can follow it, and you never write the join yourself:
+
+```typescript
+const products = await db.orm.public.Product.include({ seller: true }).all();
+
+products[0].seller?.name;
+```
+
+**Two: you made it optional, and you had no choice.** `Product` may already have
+rows. A required column has to have a value in every row, and nobody can say
+what the seller of an existing product should be — so the database would refuse,
+and it would be right to.
+
+That is the shape of most schema changes on a live table:
+
+| You want | What actually happens |
+| --- | --- |
+| Add an optional column | Fine. Existing rows get `null`. |
+| Add a required column | Rejected, unless you supply a default |
+| Rename a column | Two steps — add the new, backfill, drop the old |
+| Drop a column | Data is gone. Confirm carefully. |
+
+:::why Where migrations come in
+On your machine, `db update` compares and applies. A production database cannot
+work that way: the change has to be reviewed before it runs, and it has to run
+the same way everywhere, in the same order. That is what a *migration* is — the
+change written to a file and committed, so it can be read in review and replayed
+on every environment.
+
+`npx prisma-cli migration plan` writes one, and `npx prisma-cli migrate` applies
+the pending ones. You will use them the first time you change a table that has
+real data behind it. Today, on a database only you can see, the direct route is
+fine — and knowing that it is the direct route is the point.
+:::
+
+:::try
+Commit the change and the regenerated files together, as before.
+
+```bash
+git add lib/prisma
+git commit -m "Add a seller relation to Product"
+```
+:::

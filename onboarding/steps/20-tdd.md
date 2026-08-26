@@ -66,12 +66,7 @@ There is one way to find out, and it takes a second: **watch it fail first.**
 ===
 ## Red, green, refactor
 
-That is the whole of test-driven development. Three steps, repeated:
-
-1. **Red.** Write a test for something that does not exist yet. Run it. Watch
-   it fail.
-2. **Green.** Write the simplest code that makes it pass.
-3. **Refactor.** Tidy up, with the test there to catch you.
+The loop you will hear named constantly:
 
 ```mermaid
 flowchart LR
@@ -80,16 +75,47 @@ flowchart LR
     F --> R
 ```
 
-Step one is the one people skip, and it is the one that does the work. Seeing
-red is how you learn the test is real. Everything after that is easier.
+1. **Red.** Write a test for something that does not exist yet. Run it. Watch
+   it fail.
+2. **Green.** Write the simplest code that makes it pass.
+3. **Refactor.** Tidy up, with the test there to catch you.
 
-:::why There is a second benefit, and you will feel it within the hour
-Writing the test first makes you decide what the endpoint should *do* before you
-start thinking about how it works.
+Two different things are bundled in there, and they are not equally well
+supported. Worth separating them, because you will be told to do both.
 
-You end up describing it from the outside — the way it will actually be used —
-instead of from the inside, where it is easy to build something awkward and not
-notice.
+**Watching it fail is not optional.** That is the part you just proved to
+yourself: a test you have only ever seen pass might be watching nothing. Red
+first is how you find out, it takes one second, and there is no substitute.
+
+**Writing the test *before* the code is a preference, not a law.** The largest
+careful study of this — [Fucci et al., 2017](https://arxiv.org/abs/1611.05994) —
+took developers doing test-first and test-last and found the ordering "had no
+important influence" on how much they got done or how correct it was. What
+*did* predict better results was something else in the same data: working in
+**small, even steps**, whichever order the test came in.
+
+So the thing to actually copy from TDD is the size of the steps.
+
+| | |
+| --- | --- |
+| Two hours of code, then find out | Slow to debug, painful to review, easy to get lost |
+| Twenty minutes, then find out | You know what broke it, because you only did one thing |
+
+You can get there test-first or test-last. What you cannot do is write it all
+and find out at the end.
+
+:::why Why test-first still helps, even without the evidence backing the order
+It forces you to say what the thing should *do* before you think about how it
+works — so you describe it from the outside, the way it will be used, instead of
+from the inside where it is easy to build something awkward and not notice.
+
+It also makes small steps the path of least resistance: a test you have to write
+first is a step you have to define first. That may be the whole of the effect —
+the order gets you the granularity, and the granularity does the work.
+
+The course teaches it test-first for that reason. If you find yourself writing
+the code first and then the test, you are not doing it wrong, as long as the
+steps stay small and the test is watched failing before you trust it.
 :::
 
 ===
