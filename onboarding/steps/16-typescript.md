@@ -65,8 +65,6 @@ almost never see it in this project.
 === attest=saw-editor-error
 ## See it catch something
 
-This is the part worth doing rather than reading.
-
 **1.** Open `__tests__/api/posts.test.ts`. Find a line like this one:
 
 ```typescript
@@ -116,7 +114,7 @@ anything runs, and what executes is ordinary JavaScript.
 
 So types cost nothing at runtime, and they cannot protect you at runtime either.
 A JSON body arriving from outside can still be anything at all, whatever your
-types claim — which is precisely why the endpoint you are about to write checks
+types claim — which is why the endpoint you are about to write checks
 its input by hand.
 :::
 
@@ -129,7 +127,7 @@ Make sure the quotes are back, then:
 npx tsc --noEmit
 ```
 
-Silence is success — it prints nothing when there is nothing wrong.
+It prints nothing when there is nothing wrong.
 
 :::note If you left the mistake in
 ```bash

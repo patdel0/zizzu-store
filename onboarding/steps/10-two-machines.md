@@ -2,8 +2,7 @@ Two files sit next to each other in `app/posts/`. One runs on the server, one
 runs in your browser. Nothing about their names or their location tells you
 which is which.
 
-Rather than take that on trust, prove it. This step is one experiment, and it
-has a result you can see.
+Rather than take that on trust, prove it. This step is one experiment.
 
 === check=server-log,browser-log
 ## Add two log lines
@@ -74,11 +73,11 @@ was never sent anywhere — your browser only received the HTML it produced.
 In developer tools, open the **Sources** tab — **Debugger** in Firefox. Find
 `posts-board.tsx` in the file tree on the left.
 
-It is really there. You are reading a file from this project inside a browser
+You are reading a file from this project inside a browser
 that never had the project on it.
 :::
 
-That last experiment has a consequence worth stating plainly:
+That has a consequence:
 
 :::warn Code in the browser cannot keep a secret
 Everyone using your app has a copy of `posts-board.tsx`. Minifying it does not

@@ -116,6 +116,6 @@ rather than working around — you will be editing files all day.
 
 :::note When you break the page
 You will, shortly — a missing `}` or an unclosed tag. Next.js will show you a
-red error page with the file and line number. That page is help, not judgement.
+red error page with the file and line number.
 Read the first line, go to that line, look one line above it too.
 :::

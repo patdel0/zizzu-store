@@ -198,7 +198,7 @@ Then tick the line off your `PLAN.md`.
 ## Changing a table that already exists
 
 `db init` made the table. It will not change it — it only ever adds what is
-missing, and it will not touch a table that already exists.
+missing.
 
 That matters, because almost every schema change you make from now on will be to
 a table that is already there, often with rows in it. So do one now.
@@ -243,8 +243,8 @@ docker compose exec app npx prisma-cli db update --dry-run
 ```
 
 `--dry-run` prints the operations and changes nothing. Read them. This is a
-habit worth building now: on a database with real customers in it, the dry run
-is the difference between a change and an incident.
+habit worth building: on a database with real customers in it, the dry run is
+the difference between a change and an incident.
 
 When you are happy:
 
@@ -298,7 +298,7 @@ on every environment.
 `npx prisma-cli migration plan` writes one, and `npx prisma-cli migrate` applies
 the pending ones. You will use them the first time you change a table that has
 real data behind it. Today, on a database only you can see, the direct route is
-fine — and knowing that it is the direct route is the point.
+fine.
 :::
 
 :::try

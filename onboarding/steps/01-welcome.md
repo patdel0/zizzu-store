@@ -15,8 +15,8 @@ through the process a working team actually uses: a branch, small commits, a
 pull request, a review.
 
 Expect two days, and longer is common — the estimates on each step assume you
-are not stopping to understand anything, which you should be. There is no prize
-for rushing, and nobody is timing you.
+are not stopping to understand anything, which you should be. Nobody is timing
+you.
 
 === quiz=sandbox
 ## Nothing you do here counts
@@ -30,8 +30,18 @@ being careful in the way that makes people slow — clicking nothing, changing
 nothing, asking permission for everything. Delete things. See what happens.
 
 :::note If you break something badly
-`git switch main` puts you back to the untouched project, and every step here
-tells you how to undo it. Nothing in this tutorial is one-way.
+You cannot damage the real project. Your work happens on your own branch, and
+every step that changes something tells you how to put it back.
+
+Two things do not come back on their own, and it is better to know now than to
+be surprised:
+
+- **Files you made but never committed.** They follow you when you switch
+  branches, because git is not tracking them yet.
+- **The development database.** It lives in Docker, not in git, so a branch
+  switch does nothing to it.
+
+{{step:cleanup}} resets both, and tells you the commands.
 :::
 
 ===
@@ -78,7 +88,7 @@ stops and a real question starts.
 | [Docker](https://docs.docker.com/) | Runs the app and the database, so everyone's machine matches. |
 | [git](https://git-scm.com/docs) | Records the history of the project. |
 
-Each one is introduced where you first need it, not before.
+Each one is introduced where you first need it.
 
 ===
 ## Three things worth knowing up front
@@ -96,7 +106,6 @@ an unfamiliar codebase — on their first day, again at their next job, and agai
 in the corner of this system they have not opened yet. What experience changes
 is not the feeling but how long it lasts: fundamentals let you recognise the
 shape of things faster, so the fog clears in an afternoon instead of a
-fortnight. Waiting to feel comfortable before you start is waiting for something
-that is not coming.
+fortnight.
 
-That is the mindset. Next, get the thing running.
+Next, get the thing running.

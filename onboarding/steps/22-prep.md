@@ -29,11 +29,8 @@ literally anything — and decides whether it is a usable price.
 
 **What goes in:** one value, from a JSON body. Its type is `unknown`.
 
-That word is doing real work.
-[`unknown`](https://www.typescriptlang.org/docs/handbook/2/functions.html) is
-TypeScript's way of saying "a value, but I refuse to let you use it until you
-have checked what it is". The alternative, `any`, switches the checking off and
-lets the bug through in silence.
+That word is doing real work — it is the `unknown` from {{step:typescript}}, so
+nothing can be done with this value until it has been checked.
 
 So: what could actually arrive?
 
@@ -111,8 +108,6 @@ otherwise it is fine
 ```
 
 Four lines, and every one of them traces back to a row in the examples table.
-Notice how short it turned out. That is normal: the thinking was the work.
-
 === check=sandbox-branch,prep-notes,exported,examples-are-tests,passes ask=why-examples-first
 ## Write it
 
@@ -136,7 +131,7 @@ export function parsePriceCents(raw: unknown): Parsed<number> {
 }
 ```
 
-Keeping the PREP as a comment is not decoration. In six months it tells the next
+Keep the PREP as a comment. In six months it tells the next
 person *why* `"899"` is refused, which the code alone does not.
 
 **2. Turn every example into a test**, in `__tests__/products.test.ts`:
@@ -173,8 +168,7 @@ database once before *any* test runs, whichever file you asked for. If you see
 again.
 :::
 
-They must fail first. A test you have never seen fail is a test you have no
-reason to trust — you do not know whether it is wired up to anything.
+They must fail first.
 
 **4. Now write the function** until they pass. Your pseudocode is the
 implementation; you are mostly translating it.

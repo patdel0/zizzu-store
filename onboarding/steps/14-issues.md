@@ -41,7 +41,7 @@ flowchart LR
 ```
 
 One glance answers: what is being worked on, by whom, and what is waiting for
-someone. That is its entire job.
+someone.
 
 **Moving your card is not admin — it is how you communicate.** A card sitting in
 "To do" that you have been working on all week means someone else may pick it

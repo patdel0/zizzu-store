@@ -63,7 +63,7 @@ are yours. Dependency narrows the possible orders; it does not pick one.
 ===
 ## Trace it before you trust it
 
-Here is the part almost nobody does, and it takes two minutes.
+It takes two minutes, and it is the part that gets skipped.
 
 **Walk your list in order and ask, after each line: what actually exists now?**
 
@@ -194,6 +194,5 @@ do with your first few plans anyway.
 :::note If it disagrees with you
 It is a second opinion, not a verdict, and it has not seen the codebase. Where
 it and your list differ, the interesting move is to work out which of you is
-right — and if it is you, you have just discovered you can defend your plan,
-which is the more useful outcome.
+right — and if it is you, you have just discovered you can defend your plan.
 :::

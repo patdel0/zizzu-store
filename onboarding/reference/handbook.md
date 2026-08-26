@@ -1,7 +1,7 @@
 # Handbook
 
-Everything you would otherwise have to remember. Not a lesson — a thing to come
-back to. Nothing here is on the critical path of the course.
+Everything you would otherwise have to remember. Everything you would otherwise have to remember. Nothing here is on the critical
+path of the course.
 
 ---
 

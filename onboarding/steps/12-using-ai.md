@@ -1,8 +1,8 @@
 From here on you are writing real code, and you will be tempted to ask an AI to
 write it for you.
 
-This team has two rules about that, and unlike most of this tutorial they are
-not advice. They are the rules. Here they are, and then why.
+This team has two rules about that. Unlike most of this tutorial, they are not
+advice.
 
 ===
 ## The two rules
@@ -16,8 +16,8 @@ the failure mode this whole step is about.
 the assistant, not from Stack Overflow, not from the worked examples in this
 tutorial. Nothing is pasted in. Nothing is transcribed while you look at it.
 
-The second rule is stricter than it sounds and the wording is deliberate, so the
-next card is about what it actually asks of you.
+The second rule is stricter than it sounds, so the next card is about what it
+asks of you.
 
 :::note Why cs50.ai specifically
 It is Harvard's [CS50](https://cs50.harvard.edu/) assistant — same class of
@@ -103,11 +103,10 @@ check it, and the only thing available is you.
 
 A senior developer reads that function and sees the mutation bug in two seconds,
 because they have written it themselves and been bitten by it. That recognition
-is built by producing code and getting it wrong. It is precisely what does not
-get built by accepting code that is already right.
+is built by producing code and getting it wrong. It is what does not get built
+by accepting code that is already right.
 
-Which is the uncomfortable part of the argument: **the tool is most dangerous
-exactly while it is most useful to you.** It closes the gap between what you can
+So **the tool is most dangerous while it is most useful to you.** It closes the gap between what you can
 produce and what you need, which feels like progress and is why the gap stops
 closing on its own.
 
@@ -121,7 +120,7 @@ down to do something similar unaided and finding that you cannot.
 :::
 
 ===
-## One number worth knowing
+## What happens when the guardrail comes off
 
 About a thousand high-school students, randomly assigned, in a real school.
 
@@ -136,8 +135,8 @@ Read that middle line again. Not "learned less than they could have". *Worse
 than never having had it.* The practice gains were real and they were not
 learning.
 
-Note also what the guardrails did: they bought back the harm. They did not add
-anything. The best available result was breaking even.
+Note what the guardrails did: they bought back the harm and added nothing.
+Breaking even was the best result available.
 
 [Bastani et al., *Generative AI without guardrails can harm learning*, PNAS
 2025](https://www.pnas.org/doi/10.1073/pnas.2422633122)
@@ -182,8 +181,8 @@ learn nothing.
 yourself and formed a guess. Then you are checking a theory rather than
 outsourcing one.
 
-**"What am I not thinking about here?"** Genuinely good for edge cases you have
-not considered, and it leaves the deciding to you.
+**"What am I not thinking about here?"** Good for edge cases you have not
+considered, and it leaves the deciding to you.
 
 Two more rules with no exceptions:
 

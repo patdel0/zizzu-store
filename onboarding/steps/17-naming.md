@@ -11,7 +11,7 @@ rest is in the handbook.
 | kebab-case | `posts-board.tsx` | **file names** |
 | SCREAMING_SNAKE | `MAX_LIMIT` | fixed values at the top of a file |
 
-You get that for free, from capital letters, without looking anything up.
+You get that for free, from capital letters.
 
 :::try Check it yourself
 ```bash

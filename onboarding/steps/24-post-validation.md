@@ -50,11 +50,11 @@ if (!input.ok) {
 Borrow that shape. It keeps the handler readable, and the parsing ends up in a
 plain function you can test on its own, with no request and no database.
 
-:::note `unknown` versus `any`
-[`request.json()`](https://nextjs.org/docs/app/api-reference/functions/next-request) could return literally anything, so the result is typed
-[`unknown`](https://www.typescriptlang.org/docs/handbook/2/functions.html). TypeScript then refuses to let you touch it until you have checked
-what it is — which is the point. `any` would switch those checks off and let the
-bug through silently.
+:::note Why the body is `unknown`
+[`request.json()`](https://nextjs.org/docs/app/api-reference/functions/next-request)
+could return anything at all, so its result is typed `unknown` — the same
+reason as in {{step:typescript}}, and the reason the parsing below has to
+happen before anything else does.
 :::
 
 === check=sandbox-branch,bad-json
@@ -175,10 +175,11 @@ string. Log the detail where your team can see it; return the summary.
 :::
 
 ===
-## What you did not have to do
+## Two attacks you did not have to think about, and one you do
 
-You just wrote input validation, which is where most security advice starts. So
-it is worth naming the two attacks you did *not* have to think about, and why.
+You just wrote input validation, which is where most security advice starts. Two
+of the attacks it usually warns about never came up. It is worth knowing why —
+and there is a third that nothing protects you from.
 
 **You never built a query by pasting strings together.**
 
@@ -239,7 +240,7 @@ npm test
 
 Not just your file — the whole suite. If a `posts` test has gone red, you have
 broken something you were not looking at. Running everything before asking for a
-review is the minimum, and it is the habit this step is really teaching.
+review is the minimum.
 
 :::try Hit the real thing
 ```bash

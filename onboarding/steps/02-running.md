@@ -111,11 +111,7 @@ has both `DATABASE_URL` and `TEST_DATABASE_URL`.
 | `Could not reach Postgres` | The containers are not up. `./script/server`. |
 | The page never loads | Next.js is still compiling. Watch it with `docker compose logs -f app`. |
 
-`docker compose logs -f app` is the single most useful command when the app
+`docker compose logs -f app` is the first command to reach for when the app
 misbehaves. It shows you what the server is actually saying. Get used to
 reaching for it before you start guessing.
 
-:::note Keep this card in mind
-Nothing to do here — this is the card to come back to when something breaks,
-which it will. `docker compose logs -f app` is the first thing to reach for.
-:::

@@ -87,10 +87,6 @@ fine.
 **A test is that manual check, written down once, so a computer does it every
 time instead of you doing it never.**
 
-That is the whole idea. Not a clever bug-finding tool — a description of one
-behaviour you care about, in a form something else can re-check in
-milliseconds.
-
 :::why Which is why the suite stayed green earlier
 When you changed the title limit to 5, every test passed, because a test can
 only check a behaviour somebody described. Nobody had described the title limit.

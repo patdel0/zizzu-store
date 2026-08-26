@@ -213,7 +213,7 @@ you use. Read it in the order above and leave one comment that is a genuine
 question.
 
 The first review you write is the one where you discover how little of a diff
-you can follow without the description. That is the lesson.
+you can follow without the description.
 :::
 
 ===
@@ -247,12 +247,10 @@ Three things follow that surprise people:
 **Your branch gets deleted, and that is fine.** The commits are in `main` now.
 The branch was only ever a label.
 
-**The issue closes by itself**, if your description said `Closes #12`. That is
-what the keyword is for, and it is why the linking is not decoration.
+**The issue closes by itself**, if your description said `Closes #12`.
 
 **It usually goes to production**, on the projects that deploy automatically.
-The gap between "merged" and "customers have it" is often minutes. Which is why
-everything before the button is where the care goes.
+The gap between "merged" and "customers have it" is often minutes.
 
 :::note Your first merged PR
 Someone else presses the button, or you do after approval — it varies by team,

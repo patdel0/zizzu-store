@@ -40,8 +40,7 @@ curl -s http://localhost:3000/posts | head -20
 ```
 
 A wall of HTML. **That is exactly what your browser received** — the browser
-just draws it instead of printing it. That is all a browser is: something that
-asks for text and renders it.
+just draws it instead of printing it.
 
 Now the other one:
 
@@ -162,8 +161,7 @@ curl -s http://localhost:3000/api/posts
 
 Same answer every time, and nothing on the server changed. A `GET` **reads**.
 
-That property is not a nicety, and here is the practical consequence. Your
-browser re-issues GETs constantly without asking anyone: you press back, you
+Your browser re-issues GETs constantly without asking anyone: you press back, you
 press refresh, you restore a tab, a search engine crawls a link. All of those
 repeat a GET.
 

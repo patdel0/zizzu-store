@@ -51,9 +51,6 @@ nothing was watching it. A passing suite means one thing only:
 
 > **The behaviours somebody wrote down still work.**
 
-It does not mean the code is correct. It does not mean the app works. It means
-the described parts of it do.
-
 Which raises the question you cannot answer by looking at green ticks: **is the
 test I just wrote actually watching anything?**
 
@@ -83,9 +80,8 @@ flowchart LR
 Two different things are bundled in there, and they are not equally well
 supported. Worth separating them, because you will be told to do both.
 
-**Watching it fail is not optional.** That is the part you just proved to
-yourself: a test you have only ever seen pass might be watching nothing. Red
-first is how you find out, it takes one second, and there is no substitute.
+**Watching it fail is not optional.** You proved that to yourself a moment ago.
+Red first takes one second and there is no substitute for it.
 
 **Writing the test *before* the code is a preference, not a law.** The largest
 careful study of this — [Fucci et al., 2017](https://arxiv.org/abs/1611.05994) —
@@ -195,7 +191,7 @@ npm test -- __tests__/api/products.test.ts
 It fails — something like `Failed to resolve import "@/app/api/products/route"`.
 
 Read it properly. It is not saying "you did something wrong"; it is saying "the
-thing you asked for is not there yet", which is precisely what you expected.
+thing you asked for is not there yet", which is what you expected.
 Getting comfortable reading failure output is most of what separates a fast
 developer from a stuck one.
 
@@ -321,7 +317,6 @@ Change `{ data: products }` to `{ data: [] }` in the handler, and run the test
 again. It passes — because your one test only ever creates zero products, so an
 endpoint that always returns nothing satisfies it completely.
 
-Put it back. That is not a flaw in TDD; it is TDD telling you the truth about
-how much you have actually specified. A test suite only protects the behaviour
-it describes, and so far you have described one case.
+Put it back. So far you have described one case, and one case is all your suite
+protects.
 :::

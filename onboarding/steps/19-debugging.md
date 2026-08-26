@@ -88,7 +88,7 @@ started complaining. The generated files still describe a `title`; your source
 now says `heading`; everything downstream believes the generated files.
 
 One rename, two files broken, and the error names a type you have never heard
-of. The lesson is:
+of.
 
 > **When something you did not touch starts failing, ask what you *did* touch
 > that it depends on.**

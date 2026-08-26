@@ -67,8 +67,7 @@ bottom of the screen. Save and exit is **Ctrl+O**, **Enter**, **Ctrl+X**.
 
 :::note If you picked vim anyway
 Press `i` to start typing. Then `Esc`, then type `:wq` and press Enter to save
-and quit — or `:q!` to quit without saving. That really is the escape hatch
-people search for.
+and quit — or `:q!` to quit without saving.
 :::
 
 ===
@@ -130,7 +129,7 @@ Answer the prompts and it handles everything, including configuring git.
 **SSH keys — the usual choice for daily work.** You generate a key, give GitHub
 the public half, and never type a password again. GitHub's
 [step-by-step guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
-is genuinely good; follow it start to finish.
+is good; follow it start to finish.
 
 **A personal access token over HTTPS.** Create a token in GitHub's settings and
 use it in place of your password when git asks. [The

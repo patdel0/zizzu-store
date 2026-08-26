@@ -92,12 +92,12 @@ The page breaks, and the error is worth reading before you fix it:
 > You're importing a component that needs `useState`. This React hook only
 > works in a Client Component.
 
-That is the framework explaining the rule. `useState` needs somewhere to *keep*
+`useState` needs somewhere to *keep*
 the state between clicks, and something to *notice* the click. A server rendered
 this page and moved on milliseconds ago. There is nothing left there to hold a
 number or hear a button.
 
-**Put the line back.** The page does not work without it.
+**Put the line back.**
 
 === check=page-clean attest=state-on-server
 ## Experiment 3: the same thing, from the other side
@@ -112,7 +112,7 @@ export default function PostsPage() {
   const [x, setX] = useState(0);
 ```
 
-Reload. Same class of error, arriving from the opposite direction.
+Reload. Same class of error.
 
 **Take it back out.** The check below will tell you if you have left it in.
 

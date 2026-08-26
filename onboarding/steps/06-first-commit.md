@@ -79,7 +79,7 @@ It is a convention, not a rule git enforces: **subject under 50, body wrapped at
 --oneline`, GitHub's commit list, `git blame` — which cut the subject off around
 50 and were designed for 80-column terminals.
 
-The useful side effect is the one that matters. If your subject will not fit in
+The useful side effect: if your subject will not fit in
 50 characters, it is usually because the commit is doing two things, and wants
 to be two commits.
 :::

@@ -20,8 +20,8 @@ throwing away somebody's work.
 
 So it stops and asks you.
 
-**A conflict is a question, not an error.** Nobody has lost anything, nothing is
-corrupted, and you did not do it wrong.
+**A conflict is a question, not an error.** Nobody has lost anything and nothing
+is corrupted.
 
 ===
 ## Cause one
@@ -78,8 +78,6 @@ Three markers, and they mean exactly one thing each:
 
 `HEAD` is git's word for *where you are now* — the branch you were on when you
 started the merge.
-
-That is the whole notation. It is ugly and it is not hiding anything.
 
 ===
 ## Resolve it

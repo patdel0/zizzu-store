@@ -27,8 +27,8 @@ That is the whole reason branches exist: you get to be wrong in private.
 ===
 ## The four places your work can be
 
-This is the picture worth carrying. A change you make travels through four
-places, and one command moves it between each pair.
+A change you make travels through four places, and one command moves it between
+each pair.
 
 ```mermaid
 flowchart LR
@@ -112,8 +112,8 @@ What kind of change, which issue, roughly what it touches — before opening
 anything. The prefix is what tells a reviewer what to look for: `refactor/`
 means "check that nothing changed".
 
-**The full list of prefixes is in the handbook**, in the sidebar. You do not
-need to memorise it; you need to know it exists.
+**The full list of prefixes is in the handbook**, in the sidebar. It is there
+when you need it — do not memorise it.
 
 ===
 ## Commands you will use constantly
@@ -126,8 +126,7 @@ need to memorise it; you need to know it exists.
 | `git switch -c <name>` | Create a branch and move to it. |
 | `git log --oneline` | What has happened here recently? |
 
-`git status` is the one to run whenever you are unsure. It is free, it changes
-nothing, and it almost always answers your question. Run it now.
+`git status` is the one to run whenever you are unsure. Run it now.
 
 :::note "Detached HEAD" and other frights
 Git error messages are famously alarming and almost never mean you have lost

@@ -35,6 +35,47 @@ git push origin --delete sandbox/your-name
 Deleting a merged branch is normal housekeeping on a real project. The work is
 in `main`; the label is just clutter.
 
+===
+## The two things git does not put back
+
+The welcome step promised these would be here.
+
+**Files you never committed.** Switching branches carries untracked files with
+you, because git is not watching them. `git status` on `main` lists anything
+left over — delete what you do not want.
+
+**The development database.** It is a Docker volume, not a file in the project,
+so nothing you do in git touches it. Yours still has the `Product` table you
+made, and `main` has no contract that mentions one.
+
+That mismatch is worth clearing, because `db init` also *signs* the database
+with the contract it was built from — so a database built from your branch and
+an app running `main` no longer agree about what the schema should be:
+
+```bash
+docker compose exec app npx prisma-cli db verify
+```
+
+To start clean, throw the database away and rebuild it from `main`:
+
+```bash
+docker compose down -v
+```
+
+```bash
+./script/server
+```
+
+```bash
+docker compose exec app npx prisma-cli db init --no-interactive --yes
+```
+
+:::warn `-v` deletes the data
+That flag removes the volume, which is the whole point here — but it is the
+same flag on a project where the data matters. Read what a compose command does
+to volumes before you run it anywhere that is not your own machine.
+:::
+
 ---
 
 ===
@@ -128,15 +169,14 @@ job into an obvious one, and tells you tomorrow where you were today.
 **PREP before you type.** Parameters, returns, examples, pseudocode. Two minutes
 of deciding what a function *is* saves an hour of discovering it by crashing.
 
-**Write the test first.** Not because it is virtuous — because a test you have
-watched fail is the only kind you have any reason to trust.
+**Write the test first.** A test you have watched fail is the only kind you have
+any reason to trust.
 
 **Commit small, and say what the commit does.** The commit message is the only
 part of today's work someone reads in six months.
 
 **Copy the existing pattern.** A codebase where every feature looks the same is
-one you can move around in. Consistency beats your better idea, most of the
-time.
+one you can move around in. Consistency beats your better idea.
 
 **Ask at two hours.** Nobody remembers the question you asked. They remember the
 week you spent stuck.
