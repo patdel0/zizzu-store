@@ -98,6 +98,39 @@ Run it every time you change the contract. Forgetting is the most common way to
 produce an error that makes no sense: your editor insists `Product` does not
 exist, while you are looking straight at it.
 
+## One more file knows about your models
+
+Open `test/helpers.ts` and look at `resetDatabase`:
+
+```typescript
+export async function resetDatabase() {
+  // Posts reference users, so children go first.
+  await db.orm.public.Post.where((post) => post.id.isNotNull()).deleteAll();
+  await db.orm.public.User.where((user) => user.id.isNotNull()).deleteAll();
+}
+```
+
+That runs before **every single test**, and it is what lets tests run in any
+order without tripping over rows another test left behind. It lists the models
+by hand — so a model you add is a model it does not know about.
+
+Add yours at the top:
+
+```typescript
+await db.orm.public.Product.where((product) => product.id.isNotNull()).deleteAll();
+```
+
+:::warn Skip this and you will lose an hour
+Nothing breaks now. It breaks in three steps' time, when a test asserts there is
+one product and finds two — because the previous test's product is still there.
+The failure appears in a test you did not touch, in a file that looks correct,
+and points at your handler rather than at this line.
+
+That is worth noticing as a general shape: **the bug and its cause are often in
+different files.** When something fails in code you did not change, ask what you
+*did* change that it depends on.
+:::
+
 ## And the real tables?
 
 Describing a table is not the same as creating one. There are two databases, and

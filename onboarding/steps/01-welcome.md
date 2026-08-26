@@ -13,7 +13,9 @@ database table, an endpoint, a page, and tests for all of it — and taken it
 through the process a working team actually uses: a branch, small commits, a
 pull request, a review.
 
-It takes about a day. There is no prize for rushing.
+Expect two days, and longer is common — the estimates on each step assume you
+are not stopping to understand anything, which you should be. There is no prize
+for rushing, and nobody is timing you.
 
 ## Nothing you do here counts
 

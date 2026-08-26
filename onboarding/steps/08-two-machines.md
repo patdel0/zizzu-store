@@ -83,7 +83,7 @@ help; it is still there and still readable.
 So passwords, API keys and database connection strings live in server code, and
 never in a file that reaches the browser. A component running in the browser
 that needs data has to *ask* the server for it — which is what `fetch('/api/posts')`
-on line 40 of that file is doing.
+near the top of its `useEffect` is doing.
 :::
 
 ## Leave the logs in for now

@@ -80,8 +80,6 @@ git log --oneline                # recent history
 git push -u origin <branch>      # first push of a branch
 ```
 
-**Database**
-
 **Thinking**
 
 ```
@@ -117,7 +115,7 @@ When those do not answer it, ask. Two hours is enough.
 ## What to actually remember
 
 Most of what you did today was mechanics, and mechanics you will absorb without
-trying. Four things are worth carrying deliberately:
+trying. Six things are worth carrying deliberately:
 
 **Break it down before you start.** A list of small tasks turns a frightening
 job into an obvious one, and tells you tomorrow where you were today.

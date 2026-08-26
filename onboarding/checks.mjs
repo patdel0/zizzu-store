@@ -1245,6 +1245,30 @@ export const steps = [
         },
       },
       {
+        id: 'reset',
+        label: '`resetDatabase` clears products too',
+        async run() {
+          const source = await read('test/helpers.ts');
+
+          if (source === null) {
+            return { pass: false, detail: 'Could not read `test/helpers.ts`.' };
+          }
+
+          if (/db\.orm\.public\.Product[\s\S]{0,120}deleteAll\(\)/.test(source)) {
+            return {
+              pass: true,
+              detail: 'Every test will start without leftover products.',
+            };
+          }
+
+          return {
+            pass: false,
+            detail:
+              '`resetDatabase` in `test/helpers.ts` still only clears `Post` and `User`.\n\nAdd the `Product` line described above. This check exists because skipping it does not fail here — it fails three steps later, in a test you did not write, and looks like a bug in your handler.',
+          };
+        },
+      },
+      {
         id: 'emitted',
         label: 'The generated contract is up to date',
         async run() {

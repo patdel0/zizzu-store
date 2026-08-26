@@ -1,7 +1,7 @@
 # Seed issues
 
 Paste these into GitHub before a trainee starts, and put them in the **To do**
-column of the project board. Step 12 of the tutorial asks them to assign one to
+column of the project board. Step 19 of the tutorial asks them to assign one to
 themselves and move it across the board — that only works if there is something
 there to claim.
 
