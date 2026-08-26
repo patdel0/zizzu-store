@@ -637,6 +637,20 @@ export const steps = [
         label: 'I saw the `<<<<<<<` markers in my own file and read them',
       },
     ],
+    ask: [
+      {
+        id: 'what-conflict-is',
+        prompt:
+          'In your own words: what has actually gone wrong when git reports a conflict?',
+        lookFor: [
+          'two branches changed the same lines',
+          'git will not guess which version was meant',
+          'nothing is broken and nothing was done wrong',
+        ],
+        modelAnswer:
+          'Nothing is broken. Two branches edited the same lines, and git will not pick one for me, because picking would mean throwing away somebody\u2019s work on a guess. It merges different parts of a file without asking; it stops only where the changes overlap. It is a question, not an error.',
+      },
+    ],
     checks: [
       onSandboxBranch,
       {
@@ -694,25 +708,6 @@ export const steps = [
         },
       },
     ],
-    quiz: [
-      {
-        id: 'what-conflict-is',
-        prompt: 'What has actually gone wrong when git reports a conflict?',
-        options: [
-          { id: 'a', label: 'Something is broken in the repository.' },
-          {
-            id: 'b',
-            label:
-              'Two branches changed the same lines, and git will not guess which version you meant.',
-          },
-          { id: 'c', label: 'You ran the commands in the wrong order.' },
-          { id: 'd', label: 'Your branch is too far behind `main`.' },
-        ],
-        answer: 'b',
-        explain:
-          'Nothing is broken and you did nothing wrong. Git merges different parts of a file happily; it stops only when two branches edited the same lines, because picking one would mean throwing away somebody\u2019s work on a guess. It is a question, not an error.',
-      },
-    ],
   },
 
   {
@@ -760,6 +755,20 @@ export const steps = [
     phase: 'Seeing how it works',
     title: 'Watch the conversation',
     minutes: 35,
+    ask: [
+      {
+        id: 'get-repeat',
+        prompt:
+          'You ran the same `GET` three times and got the same answer, having changed nothing. Why does it matter that a GET behaves that way?',
+        lookFor: [
+          'browsers, caches and crawlers repeat GETs without asking',
+          'a GET that changed things would change them unpredictably',
+          'that is why the create form sends a POST instead',
+        ],
+        modelAnswer:
+          'Because a GET gets repeated by things that never asked me. Pressing back, refreshing, a search engine following a link \u2014 all re-issue it. That is only safe because a GET is meant to read and not change. Anything that does change something has to be a POST, which is why the create form on `/posts` is one.',
+      },
+    ],
     checks: [
       {
         id: 'app-up',
@@ -825,25 +834,7 @@ export const steps = [
         explain:
           '404 — the server answered perfectly well, there is just nothing at that address. That is worth separating in your head from "the server is down", which gives you no response at all, and from 500, which means it broke while trying.',
       },
-      {
-        id: 'get-repeat',
-        prompt:
-          'You ran the same `GET` three times and got the same answer, having changed nothing. Why does that property matter?',
-        options: [
-          { id: 'a', label: 'It makes GET requests faster.' },
-          {
-            id: 'b',
-            label:
-              'Browsers, caches and crawlers repeat GETs on their own — so a GET that changed things would change them unpredictably.',
-          },
-          { id: 'c', label: 'It is required by the HTTP specification.' },
-          { id: 'd', label: 'It does not matter; POST behaves the same way.' },
-        ],
-        answer: 'b',
-        explain:
-          'Press back, press refresh, let a search engine crawl a link — all of those re-issue a GET without asking anyone. That is safe only because a GET is supposed to read and not change. It is why the create form on `/posts` sends a POST, and why yours will too.',
-      },
-    ],
+          ],
   },
 
   {
@@ -964,6 +955,20 @@ export const steps = [
     phase: 'Seeing how it works',
     title: 'The line that decides',
     minutes: 30,
+    ask: [
+      {
+        id: 'which-to-use',
+        prompt:
+          'A filter box that narrows a list as you type needs `\'use client\'`. A page listing yesterday\u2019s orders does not. What is the difference?',
+        lookFor: [
+          'the filter changes after the page has loaded, in response to the user',
+          'the orders page is rendered once and then sits there',
+          'default to the server and reach for the client when something must react',
+        ],
+        modelAnswer:
+          'The filter has to react to something that happens after the page arrives \u2014 my typing \u2014 so its code has to be in the browser where the typing is. The orders page is worked out once and then just sits there, so the server can do it with less code and one round trip instead of two. Default to the server; go to the client when something has to respond.',
+      },
+    ],
     checks: [
       {
         id: 'counter',
@@ -1056,20 +1061,7 @@ export const steps = [
         explain:
           'It is an instruction about *where the code goes*. Without it, the component runs on the server and only its HTML is sent. With it, the code itself is shipped to the browser — which is what lets it hold state and respond to clicks, and what stops it holding secrets.',
       },
-      {
-        id: 'which-to-use',
-        prompt: 'Which of these actually needs to be a Client Component?',
-        options: [
-          { id: 'a', label: 'A page that lists yesterday\u2019s orders.' },
-          { id: 'b', label: 'A footer with links in it.' },
-          { id: 'c', label: 'A filter box that narrows a list as you type.' },
-          { id: 'd', label: 'A page showing one product\u2019s details.' },
-        ],
-        answer: 'c',
-        explain:
-          'Only the filter changes *after* the page has loaded, in response to the user. The other three are rendered once and sit there, so a Server Component does the job with less code and one round trip instead of two. Default to the server; reach for the client when something has to react.',
-      },
-    ],
+          ],
   },
 
   {
@@ -1414,6 +1406,20 @@ export const steps = [
         label: 'I saw my editor mark the mistake before I ran anything',
       },
     ],
+    ask: [
+      {
+        id: 'why-annotations',
+        prompt:
+          'Your editor underlined the mistake before you ran anything. Nothing executed. How did it know?',
+        lookFor: [
+          'the function declares what type it takes',
+          'passing something else contradicts what is already written',
+          'a contradiction can be found by reading, without running',
+        ],
+        modelAnswer:
+          'Nothing ran. `createPost` says in its own signature that `title` is a string, so handing it a number contradicts something already written down. A contradiction is findable by reading the code, which needs no database, no server and no test run \u2014 that is why it is instant.',
+      },
+    ],
     checks: [
       {
         id: 'tsc-clean',
@@ -1447,25 +1453,7 @@ export const steps = [
       },
     ],
     quiz: [
-      {
-        id: 'why-annotations',
-        prompt:
-          'Your editor underlined the mistake before you ran anything. How did it know?',
-        options: [
-          { id: 'a', label: 'It ran the test in the background.' },
-          {
-            id: 'b',
-            label:
-              'The function says what type it takes, so passing something else is a contradiction it can see by reading.',
-          },
-          { id: 'c', label: 'It guessed from the variable name.' },
-          { id: 'd', label: 'It asked the database.' },
-        ],
-        answer: 'b',
-        explain:
-          'Nothing ran. `createPost` declares that `title` is a string, so handing it a number contradicts something already written down — and a contradiction can be found by reading the code, which is fast and needs no database, no server and no test run.',
-      },
-      {
+            {
         id: 'union-meaning',
         prompt: 'What does `string | null` mean when you see it on a field?',
         options: [
@@ -1542,6 +1530,21 @@ export const steps = [
         label: 'I deleted an `await` and read what came back instead',
       },
     ],
+    ask: [
+      {
+        id: 'what-async-returns',
+        prompt:
+          'What do you actually get back when you call an `async` function, and what does `await` do to it?',
+        lookFor: [
+          'you get a promise, not the value',
+          'a promise is a receipt you can wait on',
+          '`await` turns the receipt into the value',
+          '`await` only works inside a function marked `async`',
+        ],
+        modelAnswer:
+          'A promise \u2014 always, even when the body returns a plain number. A promise is a receipt: it stands for a value that is not here yet. `await` is what redeems the receipt for the thing itself, and it only works inside a function marked `async`, which is why the two words turn up together everywhere.',
+      },
+    ],
     checks: [
       {
         id: 'await-restored',
@@ -1576,20 +1579,7 @@ export const steps = [
         explain:
           'A promise has no properties of its own to serialise, so `JSON.stringify` on one produces `{}`. Nothing throws. This is the shape of bug that costs juniors whole afternoons: correct-looking code, a wrong answer, and nothing at all to read.',
       },
-      {
-        id: 'what-async-returns',
-        prompt: 'What does calling an `async` function give you back?',
-        options: [
-          { id: 'a', label: 'The value it returns.' },
-          { id: 'b', label: 'A promise — a receipt you can wait on for the value.' },
-          { id: 'c', label: 'Nothing; it runs in the background.' },
-          { id: 'd', label: 'A function you call again to get the value.' },
-        ],
-        answer: 'b',
-        explain:
-          'Always a promise, even if the body returns a plain number. `await` is what turns the receipt into the thing — and it only works inside a function marked `async`, which is why you see the two words together constantly.',
-      },
-    ],
+          ],
   },
 
   {
@@ -1603,6 +1593,20 @@ export const steps = [
         label: 'I found the real error in the container log, not in the browser',
       },
       { id: 'read-the-diff', label: 'I read the assertion diff and it told me the answer' },
+    ],
+    ask: [
+      {
+        id: 'first-question',
+        prompt:
+          'Something worked an hour ago and does not now. What is the first question, and what command answers it?',
+        lookFor: [
+          'what did I change',
+          '`git diff` answers it immediately',
+          'it rules out a whole universe of other theories',
+        ],
+        modelAnswer:
+          'What did I change? Almost always the answer is me, and `git diff` tells me in one second. It rules out every theory that starts "maybe Next.js is broken", and it costs nothing to ask. Restarting things sometimes fixes it and teaches me nothing, so I meet the same bug again next week.',
+      },
     ],
     checks: [
       {
@@ -1651,20 +1655,7 @@ export const steps = [
         explain:
           '`internalError` calls `console.error(message, error)` and *then* answers with a flat message. That is deliberate — a raw error can contain table names, queries, sometimes connection strings, so the detail goes where your team can see it and the caller gets the summary. The detail always exists. You just have to know which window.',
       },
-      {
-        id: 'first-question',
-        prompt: 'Something worked an hour ago and does not now. What is the first question?',
-        options: [
-          { id: 'a', label: 'Is it a bug in Next.js?' },
-          { id: 'b', label: 'What did I change?' },
-          { id: 'c', label: 'Should I restart everything?' },
-          { id: 'd', label: 'What does the AI say about this error?' },
-        ],
-        answer: 'b',
-        explain:
-          'Almost always you. `git diff` answers it in one second and rules out an entire universe of theories. Restarting sometimes fixes it and teaches you nothing, which means you meet the same bug again next week.',
-      },
-    ],
+          ],
   },
 
   {
@@ -1676,6 +1667,20 @@ export const steps = [
       {
         id: 'saw-it-catch',
         label: 'I broke the ordering and watched a test fail and name it',
+      },
+    ],
+    ask: [
+      {
+        id: 'what-tests-buy',
+        prompt:
+          'Six months from now, someone changes a line near your endpoint. What have your tests bought them?',
+        lookFor: [
+          'a fast answer to "did I break anything somebody wrote down"',
+          'it is what makes the code changeable at all',
+          'not about finding bugs today',
+        ],
+        modelAnswer:
+          'A fast answer to "did I break something somebody already decided mattered". That is not about catching bugs today \u2014 it is what makes the code editable at all. Code nobody dares touch is where projects die, and a suite that answers in thirty seconds is what lets a stranger change it. In six months that stranger is me.',
       },
     ],
     checks: [
@@ -1719,25 +1724,7 @@ export const steps = [
         explain:
           'It is ordinary code, and it is not clever. It arranges a situation, calls your function, and compares what came back with what you claimed. A test cannot find a bug you never described — which is why the suite stayed green when the title limit broke.',
       },
-      {
-        id: 'what-tests-buy',
-        prompt:
-          'Six months from now someone changes a line near your endpoint. What have the tests bought them?',
-        options: [
-          { id: 'a', label: 'Proof that their change is correct.' },
-          {
-            id: 'b',
-            label:
-              'A fast answer to "did I break anything that somebody wrote down" — so they can change it at all.',
-          },
-          { id: 'c', label: 'Faster code.' },
-          { id: 'd', label: 'Permission to skip code review.' },
-        ],
-        answer: 'b',
-        explain:
-          'That is the real return, and it is not about finding bugs today. Code nobody dares touch is where projects go to die. A suite that answers in thirty seconds is what makes an unfamiliar codebase editable by someone who was not there when it was written — which, in six months, includes you.',
-      },
-    ],
+          ],
   },
 
   {
@@ -2218,6 +2205,20 @@ export const steps = [
     phase: 'Building a feature',
     title: 'POST — creating something',
     minutes: 45,
+    ask: [
+      {
+        id: 'why-post-here',
+        prompt:
+          'Back in the requests step you learned when to use POST instead of GET. Without looking: why is creating a post a POST?',
+        lookFor: [
+          'it changes something on the server',
+          'GET is repeated by browsers, caches and crawlers without asking',
+          'a repeated create would create duplicates',
+        ],
+        modelAnswer:
+          'Because it changes something. A GET gets repeated \u2014 refresh, back button, a crawler following a link \u2014 and nothing asks me first. If creating a post were a GET, every one of those repeats would make another post. POST is the method for "this changes state", and the browser treats it accordingly.',
+      },
+    ],
     checks: [
       onSandboxBranch,
       {
@@ -2417,6 +2418,20 @@ export const steps = [
     phase: 'Building a feature',
     title: 'Put a page on top of it',
     minutes: 60,
+    ask: [
+      {
+        id: 'client-again',
+        prompt:
+          'You are about to add a page. Recall the rule from the Client Components step: how do you decide whether this file needs `\'use client\'`?',
+        lookFor: [
+          'does anything have to react after the page has loaded',
+          'default to the server',
+          'the client is for state, events and effects',
+        ],
+        modelAnswer:
+          'I ask whether anything on it has to react after the page arrives \u2014 a click, typing, state that changes. If not, it stays a Server Component, which is the default and the cheaper one. `\'use client\'` is for the pieces that need to be running in the browser to do their job.',
+      },
+    ],
     checks: [
       onSandboxBranch,
       {
@@ -2572,6 +2587,20 @@ export const steps = [
     phase: 'Working with the team',
     title: 'Open a pull request',
     minutes: 45,
+    ask: [
+      {
+        id: 'history-recall',
+        prompt:
+          'Your reviewer is about to read your commits. From the commit step, hours ago: what makes a history readable, and what makes one annoying to review?',
+        lookFor: [
+          'one commit per one change, small and self-contained',
+          'the subject says what changed and why, not what file',
+          'a giant commit or "fix stuff" forces the reviewer to work it out',
+        ],
+        modelAnswer:
+          'Small commits that each do one thing, with subjects that say what changed rather than which file moved. A reviewer can read those one at a time and follow the reasoning. One enormous commit, or a run of "wip" and "fix stuff", makes them reconstruct my thinking from the diff \u2014 which is slow, and where review comments start to be about the wrong things.',
+      },
+    ],
     checks: [
       onSandboxBranch,
       {

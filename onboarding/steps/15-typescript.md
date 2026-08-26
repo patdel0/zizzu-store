@@ -120,7 +120,7 @@ types claim — which is precisely why the endpoint you are about to write check
 its input by hand.
 :::
 
-=== check=tsc-clean quiz=why-annotations,union-meaning
+=== check=tsc-clean quiz=union-meaning ask=why-annotations
 ## Check and clean up
 
 Make sure the quotes are back, then:

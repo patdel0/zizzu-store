@@ -151,7 +151,7 @@ Every caller then has to read the body to find out whether it worked — which i
 exactly the job the status code was there to do.
 :::
 
-=== quiz=get-repeat
+=== ask=get-repeat
 ## 5. Why GET and POST are not interchangeable
 
 Run this three times:

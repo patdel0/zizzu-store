@@ -46,6 +46,12 @@ Write it, run it, watch it fail:
 npm test -- __tests__/api/products.test.ts
 ```
 
+=== ask=why-post-here
+## Before you write it
+
+You met this hours ago. Answer from memory — being wrong here costs nothing,
+and trying to remember is the part that works.
+
 === check=post-exported,green
 ## Make it pass
 

@@ -740,6 +740,32 @@ input.blank[data-state="wrong"] {
   color: var(--muted);
 }
 
+.ask__covered {
+  list-style: none;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  font-size: 0.875rem;
+}
+
+.ask__covered li {
+  padding-left: 1.5rem;
+  position: relative;
+  color: var(--muted);
+  margin: 0.25rem 0;
+}
+
+.ask__covered li::before {
+  position: absolute;
+  left: 0;
+  content: "○";
+  color: var(--faint);
+}
+
+.ask__covered li[data-covered="true"]::before {
+  content: "✓";
+  color: var(--accent);
+}
+
 .ask__model-label {
   margin: 0.875rem 0 0.25rem;
   font-size: 0.75rem;

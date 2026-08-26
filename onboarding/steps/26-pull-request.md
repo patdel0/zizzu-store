@@ -49,6 +49,11 @@ If it fails, read the error before trying again. "Permission denied
 (publickey)" means the authentication above is not set up yet, not that you did
 the push wrong.
 
+=== ask=history-recall
+## What your reviewer is about to see
+
+Before you open it: your commits are the first thing they read.
+
 === attest=opened
 ## Open the pull request
 

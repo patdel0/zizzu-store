@@ -100,7 +100,7 @@ the list of things people bothered to write down — which is a reason to write
 them, not a reason to distrust them.
 :::
 
-=== quiz=what-tests-buy
+=== ask=what-tests-buy
 ## Why a team writes them
 
 Catching your own mistakes today is the smallest of the reasons.

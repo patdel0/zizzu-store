@@ -332,9 +332,14 @@ const routes = {
       answer,
     });
 
+    // Decided locally, so a reader with no key still learns which idea they
+    // missed rather than only seeing a model answer to compare against.
+    const covered = llm.conceptsCovered(question.lookFor, answer);
+
     return {
       recorded: true,
       complete: isStepComplete(stepId),
+      covered,
       // Always returned, whatever the model said or failed to say. Comparing
       // your answer to a good one is the part that does the teaching.
       modelAnswer: question.modelAnswer,

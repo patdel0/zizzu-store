@@ -58,6 +58,45 @@ export function model() {
   return MODEL;
 }
 
+/**
+ * Which of the author's key ideas the reader's answer touched, decided offline.
+ *
+ * The retrieval literature says the benefit comes from *attempting* to produce
+ * the answer, not from being graded on it — so this never gates anything. It
+ * exists so that a reader with no key still gets something better than "here is
+ * the model answer": a note about which idea they did not mention.
+ *
+ * Deliberately generous. Each `lookFor` bullet is reduced to its content words
+ * and counts as covered if a third of them appear.
+ */
+const STOP = new Set([
+  'the', 'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been', 'it', 'its', 'to',
+  'of', 'in', 'on', 'at', 'and', 'or', 'but', 'that', 'this', 'which', 'you',
+  'your', 'not', 'no', 'so', 'if', 'for', 'from', 'with', 'as', 'by', 'can',
+  'will', 'would', 'they', 'them', 'their', 'have', 'has', 'had', 'do', 'does',
+  'what', 'when', 'where', 'why', 'how', 'up', 'out', 'about', 'into', 'than',
+  'then', 'there', 'here', 'one', 'two', 'first', 'only', 'because', 'until',
+]);
+
+function words(text) {
+  return String(text)
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/)
+    .filter((word) => word.length > 2 && !STOP.has(word));
+}
+
+export function conceptsCovered(lookFor, answer) {
+  const said = new Set(words(answer));
+
+  return (lookFor ?? []).map((bullet) => {
+    const key = [...new Set(words(bullet))];
+    const hit = key.filter((word) => said.has(word)).length;
+
+    return { bullet, covered: key.length === 0 || hit / key.length >= 0.33 };
+  });
+}
+
 function systemPrompt(nonce) {
   return [
     "You give one short piece of feedback on a beginner developer's written answer.",

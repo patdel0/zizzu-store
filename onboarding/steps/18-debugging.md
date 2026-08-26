@@ -119,7 +119,7 @@ break one, where the browser told you a thing failed and nothing else.
 
 **3.** Put it back.
 
-=== quiz=where-does-it-surface,first-question
+=== quiz=where-does-it-surface ask=first-question
 ## A method, for when there is no tutorial
 
 Four questions, in order. Most bugs die at the second.

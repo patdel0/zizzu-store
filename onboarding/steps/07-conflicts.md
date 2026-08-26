@@ -111,7 +111,7 @@ That is the single most common way this goes wrong. The check below looks for
 exactly that.
 :::
 
-=== check=sandbox-branch,no-markers,merged quiz=what-conflict-is
+=== check=sandbox-branch,no-markers,merged ask=what-conflict-is
 ## Finish the merge
 
 Tell git you have sorted it, and commit:

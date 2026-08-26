@@ -338,6 +338,26 @@ function renderAskResult(reply) {
     parts.push(`<p class="ask__note">${escapeHtml(ASK_REASONS[reply.reason] ?? ASK_REASONS.offline)}</p>`);
   }
 
+  // Which of the author's points the answer touched — computed on the server,
+  // offline, so this appears whether or not any feedback came back.
+  if (reply.covered?.length) {
+    const missed = reply.covered.filter((item) => !item.covered);
+
+    parts.push(
+      '<ul class="ask__covered">' +
+        reply.covered
+          .map(
+            (item) =>
+              `<li data-covered="${item.covered}">${escapeHtml(item.bullet)}</li>`,
+          )
+          .join('') +
+        '</ul>',
+      missed.length === 0
+        ? '<p class="ask__note">You touched every point.</p>'
+        : `<p class="ask__note">${missed.length} point${missed.length === 1 ? '' : 's'} you did not mention — worth a second look.</p>`,
+    );
+  }
+
   parts.push(
     '<p class="ask__model-label">One good answer</p>',
     `<p class="ask__model">${escapeHtml(reply.modelAnswer)}</p>`,

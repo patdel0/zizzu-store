@@ -83,7 +83,7 @@ TypeScript catches many of these, which is another reason `npx tsc --noEmit` is
 worth running before you push.
 :::
 
-=== quiz=what-async-returns
+=== ask=what-async-returns
 ## Where you will meet it
 
 Every one of these, from files you have already opened:

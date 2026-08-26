@@ -116,7 +116,7 @@ Reload. Same class of error, arriving from the opposite direction.
 
 **Take it back out.** The check below will tell you if you have left it in.
 
-=== quiz=what-marker-does,which-to-use
+=== quiz=what-marker-does ask=which-to-use
 ## What each side gives up
 
 | | Server Component | Client Component (`'use client'`) |
