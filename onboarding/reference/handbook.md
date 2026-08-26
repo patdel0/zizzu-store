@@ -165,13 +165,28 @@ you did.
 
 ## Using AI
 
-Three rules with no exceptions:
+While you are onboarding, two rules, no exceptions:
 
-- **Never paste anything you could not explain in review.** You will be asked.
+- **[cs50.ai](https://cs50.ai/) is the only assistant.** Not ChatGPT, not
+  Claude, not Copilot, and not the one in your editor — turn that off, it
+  suggests as you type. The duck is configured to lead you to an answer instead
+  of handing you one, and it declines when asked to write your code.
+- **No code enters the repo that you did not write yourself.** Not pasted, and
+  not transcribed with the example open. Read it, look away, write it.
+
+Then three that hold afterwards too:
+
+- **Never commit anything you could not explain in review.** You will be asked.
 - **Never trust it about this codebase.** It has not read our contract or our
   conventions, and will confidently invent a Prisma method that does not exist.
 - **Ask it to read, not to write.** "Explain this line by line" and "where should
   I look? do not fix it" keep the work with you.
+
+The evidence for the first two is in {{step:using-ai}}: producing beats reading
+([d = 0.40, rising to 0.64 after a day](https://link.springer.com/article/10.3758/BF03193441)),
+and students given an unguarded assistant scored
+[17% worse than students who never had one](https://www.pnas.org/doi/10.1073/pnas.2422633122)
+once it was taken away.
 
 ---
 

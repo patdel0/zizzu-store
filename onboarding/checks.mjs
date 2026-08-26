@@ -1073,21 +1073,23 @@ export const steps = [
       {
         id: 'why-type-it',
         prompt:
-          'You could paste every code block in this tutorial and finish hours sooner. What would you lose?',
+          'The rule is not "never look at the examples" — it is read them, look away, then write it. Why the looking away? What would you lose by transcribing it with the example open?',
         lookFor: [
-          'typing forces you to read every line',
-          'you notice what you do not understand',
-          'you can produce something similar afterwards, not just recognise it',
+          'transcribing is still copying, because the answer is in front of you',
+          'producing it from understanding is what makes it stick',
+          'you discover which lines you could not have written yourself',
+          'afterwards you can write something similar rather than only recognising it',
         ],
         modelAnswer:
-          'Pasting gets the tests green without me having read the code. Typing it out makes me go through every line, and that is where I notice the bits I do not actually understand — a name I cannot explain, a line I could not have written. Afterwards I can write something similar myself, instead of only recognising it when I see it again.',
+          'With the example open I am copying, just slowly — I never have to produce anything, because the answer is right there. Looking away turns it into producing, and that is where I discover which lines I could not have written myself, which is the useful information. Transcribing does make me read every character, which is worth something, but afterwards I can only recognise the code rather than write it again.',
       },
     ],
     attest: [
       {
-        id: 'type-not-paste',
-        label: 'For the rest of this tutorial I will type the code blocks, not paste them',
-        hint: 'It is slower. That is the entire point — see the card above.',
+        id: 'write-not-copy',
+        label:
+          'cs50.ai only, and no code enters this repo that I did not write myself',
+        hint: 'Both halves. Turn off the assistant built into your editor — it suggests as you type, which is the failure mode this step is about. And "write it myself" means read the example, look away, then produce it — not pasted, and not transcribed with the example open.',
       },
     ],
     quiz: [
@@ -1111,7 +1113,8 @@ export const steps = [
       },
       {
         id: 'good-use',
-        prompt: 'Which of these uses is likely to leave you knowing more afterwards?',
+        prompt:
+          'Which of these can you ask cs50.ai during onboarding without breaking either rule?',
         options: [
           { id: 'a', label: '"Write me a POST endpoint for products."' },
           {
