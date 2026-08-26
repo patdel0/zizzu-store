@@ -1029,113 +1029,6 @@ export const steps = [
   },
 
   {
-    id: 'prep',
-    phase: 'Building a feature',
-    title: 'PREP — think before you type',
-    minutes: 50,
-    checks: [
-      onSandboxBranch,
-      {
-        id: 'prep-notes',
-        label: 'You wrote the PREP out, above the function',
-        async run() {
-          const source = await read('lib/products.ts');
-
-          if (source === null) {
-            return {
-              pass: false,
-              detail: 'No `lib/products.ts` yet. Create it — the shape is described above.',
-            };
-          }
-
-          const wanted = ['parameters', 'returns', 'examples', 'pseudocode'];
-          const lower = source.toLowerCase();
-          const missing = wanted.filter((word) => !lower.includes(word));
-
-          if (missing.length > 0) {
-            return {
-              pass: false,
-              detail: `Your comment block is missing: **${missing.join(', ')}**.\n\nAll four, written out before the code. It takes two minutes and it is the whole exercise.`,
-            };
-          }
-
-          return { pass: true, detail: 'All four parts are there.' };
-        },
-      },
-      {
-        id: 'exported',
-        label: '`parsePriceCents` is exported',
-        async run() {
-          const source = await read('lib/products.ts');
-
-          if (source === null) return { pass: false, detail: 'No `lib/products.ts` yet.' };
-
-          if (/export\s+function\s+parsePriceCents/.test(source)) {
-            return { pass: true, detail: 'Found the function.' };
-          }
-
-          return {
-            pass: false,
-            detail:
-              'No `export function parsePriceCents(...)` in `lib/products.ts`. It has to be exported, or the test cannot import it.',
-          };
-        },
-      },
-      {
-        id: 'examples-are-tests',
-        label: 'Every example became a test',
-        async run() {
-          const source = await read('__tests__/products.test.ts');
-
-          if (source === null) {
-            return {
-              pass: false,
-              detail:
-                'No `__tests__/products.test.ts`. Your examples go here — one `it` per case.',
-            };
-          }
-
-          const cases = (source.match(/\bit\(/g) ?? []).length;
-
-          if (cases < 5) {
-            return {
-              pass: false,
-              detail: `Only ${cases} test${cases === 1 ? '' : 's'}. The examples above list more cases than that, and each one deserves its own \`it\` — when a test fails, its name should tell you what broke.`,
-            };
-          }
-
-          return { pass: true, detail: `${cases} tests, one per example.` };
-        },
-      },
-      {
-        id: 'passes',
-        label: 'They pass',
-        slow: SLOW,
-        async run() {
-          const { passed, output, timedOut } = await runVitest('__tests__/products.test.ts');
-
-          if (timedOut) {
-            return { pass: false, detail: 'Timed out. Is Postgres up? `./script/server`.' };
-          }
-
-          if (passed) {
-            return {
-              pass: true,
-              detail:
-                'Green — and you wrote the examples before the code, which is the habit the rest of this tutorial is built on.',
-            };
-          }
-
-          return {
-            pass: false,
-            detail: `Not passing yet.${databaseHint(output)}\n\n\`\`\`\n${tail(output)}\n\`\`\``,
-          };
-        },
-      },
-    ],
-  },
-
-  {
     id: 'database',
     phase: 'Building a feature',
     title: 'Add a model to the database',
@@ -1258,10 +1151,10 @@ export const steps = [
   },
 
   {
-    id: 'tdd-red',
+    id: 'tdd',
     phase: 'Building a feature',
-    title: 'Red — write the test first',
-    minutes: 45,
+    title: 'Write a test, then make it pass',
+    minutes: 60,
     checks: [
       onSandboxBranch,
       {
@@ -1283,15 +1176,25 @@ export const steps = [
         id: 'no-route-yet',
         label: 'You have not written the route yet',
         async run() {
-          if (await exists('app/api/products/route.ts')) {
-            return {
-              pass: false,
-              detail:
-                '`app/api/products/route.ts` already exists.\n\nNot a disaster, but you have skipped the part that matters. Delete it, watch the test fail, then write it back. A test you have never seen fail is a test you have no reason to trust.',
-            };
+          if (!(await exists('app/api/products/route.ts'))) {
+            return { pass: true, detail: 'No route yet — good.' };
           }
 
-          return { pass: true, detail: 'No route yet — good.' };
+          // Re-running the step later must not strand the reader on a check
+          // that asserts the absence of a file they have since written. If the
+          // history shows the test came first, the point was made.
+          const testSha = await commitThatAdded('__tests__/api/products.test.ts');
+          const routeSha = await commitThatAdded('app/api/products/route.ts');
+
+          if (testSha && routeSha && (await isAncestor(testSha, routeSha))) {
+            return { pass: true, detail: 'You wrote the route, but the test came first.' };
+          }
+
+          return {
+            pass: false,
+            detail:
+              '`app/api/products/route.ts` already exists, and no commit shows the test coming first.\n\nDelete the route, watch the test fail, then write it back. A test you have never watched fail is a test you have no reason to trust.',
+          };
         },
       },
       {
@@ -1360,16 +1263,7 @@ export const steps = [
           return { pass: true, detail: `Committed as \`${sha.slice(0, 7)}\`.` };
         },
       },
-    ],
-  },
 
-  {
-    id: 'tdd-green',
-    phase: 'Building a feature',
-    title: 'Green — make it pass',
-    minutes: 45,
-    checks: [
-      onSandboxBranch,
       {
         id: 'route-exists',
         label: '`app/api/products/route.ts` exists',
@@ -1461,7 +1355,7 @@ export const steps = [
           };
         },
       },
-    ],
+],
     quiz: [
       {
               id: 'envelope',
@@ -1481,6 +1375,113 @@ export const steps = [
               explain:
                 'Conventions like this are worth more than they look. Every consumer checks `response.ok`, then reads `body.data` or `body.error` — and that will be true of the endpoint you write next, without anyone having to ask.',
             },
+    ],
+  },
+
+  {
+    id: 'prep',
+    phase: 'Building a feature',
+    title: 'PREP — think before you type',
+    minutes: 50,
+    checks: [
+      onSandboxBranch,
+      {
+        id: 'prep-notes',
+        label: 'You wrote the PREP out, above the function',
+        async run() {
+          const source = await read('lib/products.ts');
+
+          if (source === null) {
+            return {
+              pass: false,
+              detail: 'No `lib/products.ts` yet. Create it — the shape is described above.',
+            };
+          }
+
+          const wanted = ['parameters', 'returns', 'examples', 'pseudocode'];
+          const lower = source.toLowerCase();
+          const missing = wanted.filter((word) => !lower.includes(word));
+
+          if (missing.length > 0) {
+            return {
+              pass: false,
+              detail: `Your comment block is missing: **${missing.join(', ')}**.\n\nAll four, written out before the code. It takes two minutes and it is the whole exercise.`,
+            };
+          }
+
+          return { pass: true, detail: 'All four parts are there.' };
+        },
+      },
+      {
+        id: 'exported',
+        label: '`parsePriceCents` is exported',
+        async run() {
+          const source = await read('lib/products.ts');
+
+          if (source === null) return { pass: false, detail: 'No `lib/products.ts` yet.' };
+
+          if (/export\s+function\s+parsePriceCents/.test(source)) {
+            return { pass: true, detail: 'Found the function.' };
+          }
+
+          return {
+            pass: false,
+            detail:
+              'No `export function parsePriceCents(...)` in `lib/products.ts`. It has to be exported, or the test cannot import it.',
+          };
+        },
+      },
+      {
+        id: 'examples-are-tests',
+        label: 'Every example became a test',
+        async run() {
+          const source = await read('__tests__/products.test.ts');
+
+          if (source === null) {
+            return {
+              pass: false,
+              detail:
+                'No `__tests__/products.test.ts`. Your examples go here — one `it` per case.',
+            };
+          }
+
+          const cases = (source.match(/\bit\(/g) ?? []).length;
+
+          if (cases < 5) {
+            return {
+              pass: false,
+              detail: `Only ${cases} test${cases === 1 ? '' : 's'}. The examples above list more cases than that, and each one deserves its own \`it\` — when a test fails, its name should tell you what broke.`,
+            };
+          }
+
+          return { pass: true, detail: `${cases} tests, one per example.` };
+        },
+      },
+      {
+        id: 'passes',
+        label: 'They pass',
+        slow: SLOW,
+        async run() {
+          const { passed, output, timedOut } = await runVitest('__tests__/products.test.ts');
+
+          if (timedOut) {
+            return { pass: false, detail: 'Timed out. Is Postgres up? `./script/server`.' };
+          }
+
+          if (passed) {
+            return {
+              pass: true,
+              detail:
+                'Green — and you wrote the examples before the code, which is the habit the rest of this tutorial is built on.',
+            };
+          }
+
+          return {
+            pass: false,
+            detail: `Not passing yet.${databaseHint(output)}\n\n\`\`\`\n${tail(output)}\n\`\`\``,
+          };
+        },
+      },
     ],
   },
 
