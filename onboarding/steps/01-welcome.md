@@ -1,95 +1,65 @@
-Welcome. Over the next day or so you are going to take a feature from nothing
-to a pull request: a database table, an API endpoint, a page, tests for all of
-it, and the workflow that gets it reviewed.
+Welcome. This tutorial assumes you know nothing about how a web project works,
+because most people starting their first one don't, and pretending otherwise
+just wastes your time.
 
-Nothing you do here gets merged. You will work on a throwaway branch and close
-your pull request without merging it, so you can make every mistake there is
-without consequence. **That is the point.** Break things.
+So it starts at the beginning: what a server is, what happens when you open a
+website, what an API is, what a database is for. Only then does it touch this
+project's code.
 
-## How this tutorial works
+## What you will end up doing
 
-Each step explains something, asks you to do it in your real editor and your
-real terminal, and then checks your actual repository — your branch, your files,
-your commits, your tests. When a check fails it tells you what it looked for and
-what to do next.
+By the end you will have added a working feature to a real codebase — a
+database table, an endpoint, a page, and tests for all of it — and taken it
+through the process a working team actually uses: a branch, small commits, a
+pull request, a review.
 
-Nothing is faked. If a check goes green, the thing really works.
+It takes about a day. There is no prize for rushing.
 
-:::note Leave this running
-Keep this server running in its own terminal tab. It has already loaded
-everything it needs, so you can switch git branches freely without disturbing
-it. Your progress is saved outside the project, so closing the tab loses
-nothing.
+## Nothing you do here counts
+
+You will work on your own throwaway branch, and at the end you will close your
+pull request **without merging it**. The project ends up exactly as you found
+it.
+
+That is deliberate. It means there is no way to break anything, so you can stop
+being careful in the way that makes people slow — clicking nothing, changing
+nothing, asking permission for everything. Delete things. See what happens.
+
+:::note If you break something badly
+`git switch main` puts you back to the untouched project, and every step here
+tells you how to undo it. Nothing in this tutorial is one-way.
 :::
 
-## What Zizzu is
+## How it works
 
-A web shop, built with:
+Each step explains an idea, asks you to do something in your editor and your
+terminal, then **checks your real repository** — your files, your branch, your
+commits, your tests.
 
-| Piece | What it does |
-|---|---|
-| **Next.js** | The web framework. Renders pages *and* answers API requests. |
-| **React** | How pages are described, as components. |
-| **TypeScript** | JavaScript with types, so mistakes are caught before you run anything. |
-| **Tailwind CSS** | Styling written as small classes in the markup. |
-| **Postgres** | The database. Runs in a container. |
-| **Prisma** | How the code talks to the database, in typed TypeScript. |
-| **Vitest** | Tests for functions and API endpoints. |
-| **Playwright** | Tests that drive a real browser. |
-| **Docker** | Runs the app and the database, so everyone's machine matches. |
+Nothing is simulated. When a check goes green, the thing really works. When it
+goes red, it tells you what it looked for and what to do next.
 
-You do not need to know all of these. You need to know where things live and
-what to copy.
+Some steps ask questions instead. Those are not a test you can fail; you can
+answer as many times as you like. They exist because reading something and
+having understood it are different, and it is better to find out now.
 
-## The map
+:::warn Leave this running
+Keep the tutorial server running in its own terminal tab for the whole day. It
+loaded everything it needs when it started, so you can switch git branches
+freely without disturbing it.
 
-The only rule you need to start: **in Next.js, a folder is a URL.**
-
-```
-app/
-  page.tsx              →  the home page, at /
-  layout.tsx            →  the shell every page sits inside
-  posts/
-    page.tsx            →  the page at /posts
-    posts-board.tsx     →  a component that page uses
-  api/
-    posts/
-      route.ts          →  the endpoint at /api/posts
-
-lib/prisma/
-  contract.ts           →  what tables exist and what is in them
-  db.ts                 →  the database client you import
-
-__tests__/api/          →  Vitest tests for endpoints
-e2e/                    →  Playwright tests that drive a browser
-test/                   →  helpers the tests share
-
-docs/                   →  the project's own documentation
-script/setup            →  install everything
-script/server           →  start the containers
-```
-
-Two filenames carry all the meaning:
-
-- **`page.tsx`** renders something a person looks at.
-- **`route.ts`** answers an HTTP request from code.
-
-Put either one in a folder, and that folder's path becomes its URL.
-
-## The one thing to copy
-
-`posts` is a complete, working example of everything you are about to build —
-model, endpoint, page, tests. It exists to be copied. When you get stuck later,
-the answer is almost always "look at how posts does it".
-
-:::try Have a look around
-Open these four files in your editor now. Do not try to understand them; just
-see that they exist and roughly how long they are.
-
-- `app/api/posts/route.ts`
-- `app/posts/posts-board.tsx`
-- `__tests__/api/posts.test.ts`
-- `lib/prisma/contract.ts`
+Your progress is saved outside the project, so closing the browser tab, or your
+laptop, loses nothing.
 :::
 
-Now two questions, to check the map made sense.
+## Two things worth knowing up front
+
+**Being stuck is the job.** Not a phase you get through. People with twenty
+years of experience are stuck several times a week; they have just got faster at
+recognising it and asking. There is a whole step on how to ask well.
+
+**You are not expected to remember this.** Nobody holds a codebase in their
+head. They know roughly where to look, and they look. This tutorial is trying to
+give you the "roughly where", not a memorised map.
+
+Ready. One question, then we start from the beginning.

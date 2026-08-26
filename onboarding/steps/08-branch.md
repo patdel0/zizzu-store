@@ -10,10 +10,14 @@ branch everyone shares — it is meant to always work. When you start a piece of
 work you make your own branch, which is just a second label starting from the
 same commit. Your commits move your label forward; `main` stays where it is.
 
-```
-main      ──●──●──●
-                   \
-your branch         ●──●──●
+```mermaid
+gitGraph
+    commit id: "Add posts"
+    commit id: "Fix the layout"
+    branch sandbox/you
+    checkout sandbox/you
+    commit id: "Your first change"
+    commit id: "Your second"
 ```
 
 Nothing you commit on your branch can affect anyone else until it is merged.

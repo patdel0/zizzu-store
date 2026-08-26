@@ -17,12 +17,22 @@ The issue is where the *why* lives. The code only ever shows the *what*.
 
 The **project board** is every issue as a card in a column:
 
-```
-   To do          In progress        In review           Done
- ┌─────────┐     ┌─────────┐      ┌─────────┐      ┌─────────┐
- │  #14    │     │  #12    │      │  #11    │      │  #9     │
- │  #15    │     │         │      │         │      │  #10    │
- └─────────┘     └─────────┘      └─────────┘      └─────────┘
+```mermaid
+flowchart LR
+    subgraph todo [To do]
+        A["#14 Delete a product"]
+        B["#15 No CI"]
+    end
+    subgraph prog [In progress]
+        C["#12 Products API<br/>assigned: you"]
+    end
+    subgraph rev [In review]
+        D["#11 Home page"]
+    end
+    subgraph done [Done]
+        E["#9 Add Prisma"]
+    end
+    todo --> prog --> rev --> done
 ```
 
 One glance answers: what is being worked on, by whom, and what is waiting for

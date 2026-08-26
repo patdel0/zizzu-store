@@ -320,6 +320,59 @@ pre.code code {
   white-space: pre;
 }
 
+/* Before Mermaid runs — and if it never does — this is the diagram source. */
+pre.mermaid {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+  overflow-x: auto;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* Once it has, the `pre` holds an SVG and should not look like code. */
+pre.mermaid[data-processed] {
+  padding: 1.25rem 1rem;
+  font-size: inherit;
+  text-align: center;
+}
+
+pre.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/*
+ * gitGraph picks its own branch and commit label colours, and ignores the
+ * theme variables passed to `mermaid.initialize`. Its defaults are mid-greys
+ * that leave the labels around 3:1 against their own backgrounds, so they are
+ * overridden here. Mermaid writes its styles into the SVG with id specificity,
+ * which is what the `!important` is for.
+ */
+pre.mermaid svg .branchLabelBkg.label0 {
+  fill: #3f3f46 !important;
+}
+
+pre.mermaid svg .branchLabelBkg.label1 {
+  fill: #047857 !important;
+}
+
+pre.mermaid svg .label.branch-label0 text,
+pre.mermaid svg .label.branch-label1 text {
+  fill: #ffffff !important;
+}
+
+pre.mermaid svg .commit-label-bkg {
+  fill: var(--code-bg) !important;
+}
+
+pre.mermaid svg text.commit-label {
+  fill: var(--text) !important;
+}
+
 blockquote {
   margin: 1rem 0;
   padding-left: 1rem;

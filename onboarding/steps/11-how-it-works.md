@@ -8,38 +8,33 @@ this in the other.
 
 ## The trip
 
-```
-   BROWSER                    SERVER (Next.js)                   POSTGRES
+```mermaid
+sequenceDiagram
+    autonumber
+    participant B as Browser
+    participant P as page.tsx
+    participant C as posts-board.tsx<br/>(in the browser)
+    participant R as route.ts
+    participant D as Postgres
 
-1. you visit /posts
-                    ──────►   app/posts/page.tsx
-                              renders on the server
-                    ◄──────   sends back HTML
+    B->>P: you visit /posts
+    P-->>B: HTML for the page
+    Note over C: the page appears,<br/>then the component wakes up
+    C->>R: GET /api/posts
+    R->>D: SELECT * FROM "Post"
+    D-->>R: rows
+    R-->>C: { data: [ ... ] }
+    Note over C: the list renders
 
-2. the page appears
-   posts-board.tsx
-   wakes up in the
-   browser and asks
-   for the data
-     GET /api/posts  ──────►  app/api/posts/route.ts
-                              GET() runs
-                                db.orm.public.Post   ──────►   SELECT * FROM
-                                  .orderBy(...)                "Post" ORDER BY
-                                  .all()             ◄──────   "createdAt" DESC
-                    ◄──────   { data: [ … ] }
-
-3. the list renders
-
-4. you submit the form
-     POST /api/posts ──────►  POST() runs
-                              validates the body
-                              checks the author exists ─────►  SELECT … FROM "User"
-                                                       ◄─────
-                                Post.create(...)       ─────►  INSERT INTO "Post"
-                    ◄──────   201 { data: { … } }      ◄─────
-
-5. the new post is
-   added to the list
+    Note over B,D: you submit the form
+    C->>R: POST /api/posts
+    R->>R: validate the body
+    R->>D: does that author exist?
+    D-->>R: yes
+    R->>D: INSERT INTO "Post"
+    D-->>R: the new row
+    R-->>C: 201 { data: { ... } }
+    Note over C: the new post joins the list
 ```
 
 Four files, and each has one job:
@@ -90,18 +85,12 @@ notice the shape:
 4. Create the row → **201**, with the new post.
 5. Anything unexpected → log it on the server, answer **500** with a generic message.
 
-Five outcomes, and only one of them is the happy path. That ratio is normal.
+Five outcomes, and only one of them is the happy path. That ratio is normal, and
+it is most of why endpoints are longer than you would expect.
 
-The status codes are not decoration; they are how the caller knows what
-happened without reading English:
-
-| Code | Meaning |
-|---|---|
-| **200** | Fine, here it is. |
-| **201** | Fine, and I created something. |
-| **400** | You sent me nonsense. Do not retry unchanged. |
-| **422** | I understood you, but it does not make sense — that author does not exist. |
-| **500** | I broke. Not your fault. |
+Those are the status codes from step 3, doing their job: the 422 is "I
+understood you, but that author does not exist", which is a different problem
+from the 400s above it and deserves a different answer.
 
 :::warn Never let an error leak
 Look at `internalError` at the bottom of the file. It logs the real error where

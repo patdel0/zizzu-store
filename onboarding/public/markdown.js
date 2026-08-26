@@ -39,10 +39,16 @@ export function renderMarkdown(source) {
       }
 
       index += 1;
+
+      // A ```mermaid fence becomes a diagram. `app.js` hands these to Mermaid
+      // once they are in the document; until then the source sits in the `pre`,
+      // which is also what stays on screen if rendering ever fails.
       out.push(
-        `<pre class="code" data-lang="${escapeHtml(language)}"><code>${escapeHtml(
-          code.join('\n'),
-        )}</code></pre>`,
+        language === 'mermaid'
+          ? `<pre class="mermaid">${escapeHtml(code.join('\n'))}</pre>`
+          : `<pre class="code" data-lang="${escapeHtml(language)}"><code>${escapeHtml(
+              code.join('\n'),
+            )}</code></pre>`,
       );
 
       continue;

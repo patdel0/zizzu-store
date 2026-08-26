@@ -45,12 +45,25 @@ const here = import.meta.dirname;
 const assets = new Map();
 const content = new Map();
 
-for (const name of await readdir(join(here, 'public'))) {
-  assets.set(`/${name}`, {
-    body: await readFile(join(here, 'public', name)),
-    type: MIME[extname(name)] ?? 'application/octet-stream',
-  });
+/** Walks `public/` so nested folders — `vendor/` — are served too. */
+async function loadAssets(directory, prefix = '') {
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const path = join(directory, entry.name);
+
+    if (entry.isDirectory()) {
+      await loadAssets(path, `${prefix}/${entry.name}`);
+
+      continue;
+    }
+
+    assets.set(`${prefix}/${entry.name}`, {
+      body: await readFile(path),
+      type: MIME[extname(entry.name)] ?? 'application/octet-stream',
+    });
+  }
 }
+
+await loadAssets(join(here, 'public'));
 
 for (const name of await readdir(join(here, 'steps'))) {
   if (name.endsWith('.md')) {

@@ -10,6 +10,13 @@ Test-driven development is three steps, repeated:
 2. **Green.** Write the simplest code that makes it pass.
 3. **Refactor.** Tidy up, with the test there to catch you.
 
+```mermaid
+flowchart LR
+    R["🔴 Red<br/>write a failing test"] --> G["🟢 Green<br/>make it pass, simply"]
+    G --> F["🔵 Refactor<br/>tidy, tests still passing"]
+    F --> R
+```
+
 The step people skip is the first one, and it is the one that does the work.
 
 :::why

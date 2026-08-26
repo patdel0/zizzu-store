@@ -49,7 +49,7 @@ const onSandboxBranch = {
       pass: false,
       detail:
         branch === 'main'
-          ? 'You are on `main`. Go back to step 3 and switch to your `sandbox/…` branch — nothing in this tutorial should ever be committed to `main`.'
+          ? 'You are on `main`. Go back to step 8 and switch to your `sandbox/…` branch — nothing in this tutorial should ever be committed to `main`.'
           : `You are on \`${branch}\`, which is not a \`sandbox/…\` branch. Run \`git switch sandbox/your-name\`.`,
     };
   },
@@ -95,9 +95,203 @@ function databaseHint(output) {
 export const steps = [
   {
     id: 'welcome',
-    phase: 'Getting oriented',
-    title: 'What you are joining',
+    phase: 'What all this is',
+    title: 'Start here',
     minutes: 10,
+    quiz: [
+      {
+        id: 'sandbox',
+        prompt:
+          'What happens to the code you write during this tutorial?',
+        options: [
+          { id: 'a', label: 'It gets merged into the project once you finish.' },
+          { id: 'b', label: 'Nothing — you close it without merging, and the project is unchanged.' },
+          { id: 'c', label: 'A senior developer decides whether to keep it.' },
+          { id: 'd', label: 'It is deleted the moment you make a mistake.' },
+        ],
+        answer: 'b',
+        explain:
+          'This is a sandbox. You will do every step for real — real branch, real tests, real pull request — and then close it unmerged. Nothing you do here can damage the project, which means there is no reason to be careful in the wrong way. Try things.',
+      },
+    ],
+  },
+
+  {
+    id: 'web-basics',
+    phase: 'What all this is',
+    title: 'What happens when you open a website',
+    minutes: 20,
+    quiz: [
+      {
+        id: 'who-runs-what',
+        prompt:
+          'You open a shop\u2019s website on your phone. Where does the code that decides which products to show actually run?',
+        options: [
+          { id: 'a', label: 'On your phone.' },
+          { id: 'b', label: 'On the shop\u2019s server.' },
+          { id: 'c', label: 'On both at once, in sync.' },
+          { id: 'd', label: 'In the internet.' },
+        ],
+        answer: 'b',
+        explain:
+          'Your phone runs the *browser*. The browser asks a server for a page, and the server is the machine that holds the products and decides what to send. That split — one machine asks, another answers — is the shape of nearly everything you will build.',
+      },
+      {
+        id: 'what-arrives',
+        prompt: 'What does the server actually send back to your browser?',
+        options: [
+          { id: 'a', label: 'A picture of the page.' },
+          { id: 'b', label: 'The whole website.' },
+          { id: 'c', label: 'Text — HTML describing the page, which the browser then draws.' },
+          { id: 'd', label: 'The database.' },
+        ],
+        answer: 'c',
+        explain:
+          'It is all text. HTML says what is on the page, CSS says what it looks like, and the browser turns that into the thing you see. "View source" in any browser shows you the actual text that arrived.',
+      },
+    ],
+  },
+
+  {
+    id: 'http',
+    phase: 'What all this is',
+    title: 'Requests, methods, and status codes',
+    minutes: 25,
+    quiz: [
+      {
+        id: 'method-choice',
+        prompt:
+          'You are adding a form that creates a new customer account. Which method should the request use?',
+        options: [
+          { id: 'a', label: 'GET, because it is simpler.' },
+          { id: 'b', label: 'POST, because it creates something.' },
+          { id: 'c', label: 'Either — they do the same thing.' },
+          { id: 'd', label: 'DELETE, because the form is submitted.' },
+        ],
+        answer: 'b',
+        explain:
+          'GET means "give me something" and should change nothing. POST means "here is some data, do something with it". The distinction is not cosmetic: browsers and caches are allowed to repeat a GET whenever they like, so a GET that creates an account could create several.',
+      },
+      {
+        id: 'status-meaning',
+        prompt:
+          'Your app asks a server for a page and gets back a **404**. What does that tell you?',
+        options: [
+          { id: 'a', label: 'The server is broken.' },
+          { id: 'b', label: 'Your internet connection dropped.' },
+          { id: 'c', label: 'The server answered fine — there is just nothing at that address.' },
+          { id: 'd', label: 'You are not allowed to see it.' },
+        ],
+        answer: 'c',
+        explain:
+          'A 404 is a successful conversation with a disappointing answer. The server heard you and replied. That is the difference between a 4xx — "the problem is with what you asked for" — and a 5xx, which means the server itself fell over.',
+      },
+      {
+        id: 'who-is-at-fault',
+        prompt:
+          'Which of these means **the server** broke, rather than the request being wrong?',
+        options: [
+          { id: 'a', label: '400' },
+          { id: 'b', label: '404' },
+          { id: 'c', label: '422' },
+          { id: 'd', label: '500' },
+        ],
+        answer: 'd',
+        explain:
+          'Anything starting with 4 blames the request; anything starting with 5 blames the server. It matters because it tells you where to look: a 400 means fix the caller, a 500 means read the server log.',
+      },
+    ],
+  },
+
+  {
+    id: 'apis',
+    phase: 'What all this is',
+    title: 'What an API is',
+    minutes: 20,
+    quiz: [
+      {
+        id: 'api-vs-page',
+        prompt:
+          'What is the difference between `/products` and `/api/products` in an app like this one?',
+        options: [
+          { id: 'a', label: 'One is faster than the other.' },
+          {
+            id: 'b',
+            label:
+              '`/products` returns a page for a person to look at; `/api/products` returns data for code to use.',
+          },
+          { id: 'c', label: 'They are the same thing with different names.' },
+          { id: 'd', label: '`/api/products` is only for other companies.' },
+        ],
+        answer: 'b',
+        explain:
+          'Same information, two audiences. A page is HTML dressed up for a human. An API answers with plain data — no colours, no layout — because the thing reading it is a program that will decide what to do with it.',
+      },
+      {
+        id: 'why-json',
+        prompt: 'Why do APIs answer with JSON rather than HTML?',
+        options: [
+          { id: 'a', label: 'JSON is smaller.' },
+          { id: 'b', label: 'HTML is out of date.' },
+          {
+            id: 'c',
+            label:
+              'A program needs the values themselves, not a description of how to display them.',
+          },
+          { id: 'd', label: 'Browsers cannot read HTML from an API.' },
+        ],
+        answer: 'c',
+        explain:
+          'If your code wants a price it wants `899`, not `<p class="price">\u00a38.99</p>` to pick apart. JSON is just a text format for values — numbers, text, lists, and nested objects — that every language can read.',
+      },
+    ],
+  },
+
+  {
+    id: 'databases',
+    phase: 'What all this is',
+    title: 'Where the data actually lives',
+    minutes: 20,
+    quiz: [
+      {
+        id: 'why-database',
+        prompt:
+          'Why keep products in a database instead of a file the app reads and writes?',
+        options: [
+          { id: 'a', label: 'Files are not allowed on servers.' },
+          {
+            id: 'b',
+            label:
+              'A database handles many people reading and writing at once, and finds things without reading everything.',
+          },
+          { id: 'c', label: 'Databases are newer.' },
+          { id: 'd', label: 'Files cannot hold enough data.' },
+        ],
+        answer: 'b',
+        explain:
+          'Two customers buying the last item at the same moment is the whole problem. A database is built for exactly that — simultaneous access without corruption — and it can find one row among millions without reading the rest.',
+      },
+      {
+        id: 'row-column',
+        prompt: 'In a `Product` table, what is a **row**?',
+        options: [
+          { id: 'a', label: 'One kind of information, like "price".' },
+          { id: 'b', label: 'One product.' },
+          { id: 'c', label: 'The whole table.' },
+          { id: 'd', label: 'A database query.' },
+        ],
+        answer: 'b',
+        explain:
+          'A table is a grid. Each **column** is a kind of information every product has — name, price. Each **row** is one actual product, with a value in each column. A spreadsheet is the same idea, which is not a coincidence.',
+      },
+    ],
+  },
+
+  {
+    id: 'the-map',
+    phase: 'What all this is',
+    title: 'Where things are in this project',
+    minutes: 20,
     quiz: [
       {
         id: 'where-endpoint',
@@ -111,7 +305,7 @@ export const steps = [
         ],
         answer: 'b',
         explain:
-          'Next.js maps folders to URLs. A folder under `app/api/` becomes the path, and the file inside it must be called `route.ts` — that is what tells Next.js "this answers HTTP requests" rather than "this renders a page".',
+          'Next.js maps folders to URLs. A folder under `app/api/` becomes the path, and the file inside it must be called `route.ts` \u2014 that is what tells Next.js "this answers HTTP requests" rather than "this renders a page".',
       },
       {
         id: 'where-page',
@@ -126,12 +320,29 @@ export const steps = [
         explain:
           'Same rule, different filename. `page.tsx` renders a page, `route.ts` answers an API request. The folder is the URL either way.',
       },
+      {
+        id: 'where-to-copy',
+        prompt:
+          'You are asked to add a `reviews` feature. What is the first thing to do?',
+        options: [
+          { id: 'a', label: 'Search the internet for a Next.js reviews tutorial.' },
+          { id: 'b', label: 'Design it from scratch so it is not constrained by old code.' },
+          {
+            id: 'c',
+            label: 'Read how `posts` is built, and follow the same shape.',
+          },
+          { id: 'd', label: 'Ask someone to build the first version for you.' },
+        ],
+        answer: 'c',
+        explain:
+          '`posts` exists to be copied. A codebase where every feature is built the same way is one you can find your way around \u2014 and matching the existing pattern is a thing reviewers actively want, not a lack of ambition.',
+      },
     ],
   },
 
   {
     id: 'running',
-    phase: 'Getting oriented',
+    phase: 'Getting set up',
     title: 'Get it running',
     minutes: 20,
     checks: [
@@ -485,7 +696,7 @@ export const steps = [
 
   {
     id: 'how-it-works',
-    phase: 'How the app works',
+    phase: 'How this app works',
     title: 'How a request travels through the app',
     minutes: 25,
     quiz: [
@@ -869,37 +1080,37 @@ export const steps = [
   },
 
   {
-    id: 'post-route',
+    id: 'post-happy',
     phase: 'Building a feature',
-    title: 'POST, and everything that can go wrong',
-    minutes: 60,
+    title: 'POST — creating something',
+    minutes: 45,
     checks: [
       onSandboxBranch,
       {
-        id: 'cases',
-        label: 'Your tests cover the failure cases, not just the happy one',
+        id: 'asserts-201',
+        label: 'A test asserts a 201 and the saved product',
         async run() {
           const source = await read('__tests__/api/products.test.ts');
 
           if (source === null) return { pass: false, detail: 'No test file.' };
 
-          const wanted = [
-            ['201 on success', /\b201\b/],
-            ['400 on invalid input', /\b400\b/],
-            ['422 on a duplicate name', /\b422\b/],
-          ];
-          const missing = wanted
-            .filter(([, pattern]) => !pattern.test(source))
-            .map(([name]) => name);
-
-          if (missing.length > 0) {
+          if (!/\b201\b/.test(source)) {
             return {
               pass: false,
-              detail: `No test asserts: **${missing.join(', ')}**.\n\nThe happy path is the easy half. Most of what a handler actually does is refuse bad input politely.`,
+              detail:
+                'No test asserts a **201**. Write that one first, and watch it fail before you write the handler.',
             };
           }
 
-          return { pass: true, detail: 'All three status codes are asserted.' };
+          if (!/POST/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'Your test file never calls `POST`. Import it from `@/app/api/products/route`, next to `GET`.',
+            };
+          }
+
+          return { pass: true, detail: 'Found a `POST` test asserting 201.' };
         },
       },
       {
@@ -919,6 +1130,63 @@ export const steps = [
             detail:
               'No `export async function POST(request)` in the route. One named export per HTTP method — that is how Next.js knows which one to call.',
           };
+        },
+      },
+      {
+        id: 'green',
+        label: 'Your products tests pass',
+        slow: SLOW,
+        async run() {
+          const { passed, output, timedOut } = await runVitest(
+            '__tests__/api/products.test.ts',
+          );
+
+          if (timedOut) {
+            return { pass: false, detail: 'Timed out. Is Postgres up? `./script/server`.' };
+          }
+
+          if (passed) return { pass: true, detail: 'Green.' };
+
+          return {
+            pass: false,
+            detail: `Still failing.${databaseHint(output)}\n\n\`\`\`\n${tail(output)}\n\`\`\``,
+          };
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'post-validation',
+    phase: 'Building a feature',
+    title: 'Refusing bad input',
+    minutes: 45,
+    checks: [
+      onSandboxBranch,
+      {
+        id: 'cases',
+        label: 'Your tests cover the failure cases',
+        async run() {
+          const source = await read('__tests__/api/products.test.ts');
+
+          if (source === null) return { pass: false, detail: 'No test file.' };
+
+          const wanted = [
+            ['400 on invalid input', /\b400\b/],
+            ['422 on a duplicate name', /\b422\b/],
+          ];
+          const missing = wanted
+            .filter(([, pattern]) => !pattern.test(source))
+            .map(([name]) => name);
+
+          if (missing.length > 0) {
+            return {
+              pass: false,
+              detail: `No test asserts: **${missing.join(', ')}**.\n\nThe happy path is the easy half. Most of what a handler actually does is refuse bad input politely.`,
+            };
+          }
+
+          return { pass: true, detail: 'Both failure statuses are asserted.' };
         },
       },
       {

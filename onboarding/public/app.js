@@ -17,6 +17,56 @@ let state = null;
 let currentId = null;
 const markdownCache = new Map();
 
+// ------------------------------------------------------------------ diagrams
+
+const darkMode = window.matchMedia('(prefers-color-scheme: dark)');
+
+function initMermaid() {
+  if (typeof mermaid === 'undefined') return;
+
+  const dark = darkMode.matches;
+
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: dark ? 'dark' : 'default',
+    securityLevel: 'strict',
+    fontFamily: 'ui-sans-serif, -apple-system, "Segoe UI", system-ui, sans-serif',
+    // gitGraph ignores theme variables for its label colours, so those are
+    // corrected in styles.css instead — see the `pre.mermaid svg` rules there.
+    themeVariables: { fontSize: '14px' },
+    flowchart: { curve: 'basis', useMaxWidth: true },
+    sequence: { useMaxWidth: true, actorMargin: 40, mirrorActors: false },
+  });
+}
+
+/**
+ * Turns the `pre.mermaid` blocks in a container into diagrams.
+ *
+ * If Mermaid is missing or a diagram has a syntax error, the source stays
+ * visible in the `pre` — a readable fallback rather than a blank space.
+ */
+async function drawDiagrams(container) {
+  const nodes = [...container.querySelectorAll('pre.mermaid')];
+
+  if (nodes.length === 0 || typeof mermaid === 'undefined') return;
+
+  try {
+    await mermaid.run({ nodes });
+  } catch (error) {
+    console.error('Could not render a diagram:', error);
+  }
+}
+
+initMermaid();
+
+// A trainee switching their system theme mid-step should not be left with a
+// diagram in the old palette.
+darkMode.addEventListener('change', () => {
+  initMermaid();
+
+  if (currentId) show(currentId);
+});
+
 async function api(path, body) {
   const response = await fetch(path, {
     method: body ? 'POST' : 'GET',
@@ -115,6 +165,7 @@ async function show(id) {
 
   body.innerHTML = renderMarkdown(markdown);
   contentEl.append(body);
+  drawDiagrams(body);
 
   for (const question of step.quiz) {
     contentEl.append(drawQuestion(step, question));

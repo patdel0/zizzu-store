@@ -24,14 +24,17 @@ trainee can start it before `npm install` has ever finished.
 
 ## What it covers
 
-Fourteen steps, roughly a day's work, in four phases:
+Twenty steps, roughly a day's work, in six phases. It assumes no prior
+knowledge — the first third is concepts, before the repository is touched at
+all.
 
 | Phase | Steps |
 |---|---|
-| Getting oriented | The stack and the file map; getting it running |
+| What all this is | Client and server; HTTP methods and status codes; what an API is; what a database is for; this project's file map |
+| Getting set up | Docker, Node, the containers, a green test suite |
 | Your first change | Branching; a JSX and Tailwind edit; the first commit |
-| How the app works | Server vs. client, the request lifecycle, status codes |
-| Building a feature | A `Product` model, TDD red/green, `POST` and validation, a page and a browser test |
+| How this app works | Server vs. client components, the request lifecycle |
+| Building a feature | A `Product` model, TDD red/green, `POST`, validation, a page and a browser test |
 | Working with the team | Issues and the board, pull requests, review, cleanup |
 
 The trainee works on a `sandbox/<name>` branch and **closes their pull request
@@ -67,8 +70,13 @@ checks.mjs        every step, its checks, its quiz, its attestations
 lib/shell.mjs     read-only helpers: git, files, HTTP
 steps/NN-<id>.md  the prose for each step (filename maps to the step id)
 public/           the page: index.html, styles.css, app.js, markdown.js
+public/vendor/    Mermaid, committed rather than installed
 ISSUES.md         seed issues to paste into GitHub before a trainee starts
 ```
+
+Diagrams are ```mermaid fences in the step markdown, rendered in the browser by
+the vendored bundle. If Mermaid ever fails to load, the diagram source stays
+visible in a `pre` rather than leaving a hole in the page.
 
 Progress is stored in `~/.zizzu-onboarding/progress.json`, outside the
 repository, so switching branches never loses it. "Start over" in the sidebar

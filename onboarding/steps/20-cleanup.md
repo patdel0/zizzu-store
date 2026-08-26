@@ -29,28 +29,18 @@ in `main`; the label is just clutter.
 
 Every piece of work you do looks like this:
 
-```
-  pick an issue  →  assign yourself  →  move to In progress
-        ↓
-  git switch main && git pull
-        ↓
-  git switch -c feature/12-short-name
-        ↓
-  ┌──────────────────────────────────┐
-  │  write a failing test            │
-  │  make it pass                    │  ← repeat, committing as you go
-  │  tidy up                         │
-  └──────────────────────────────────┘
-        ↓
-  npm test                           ← the whole suite, not just yours
-        ↓
-  git push -u origin <branch>
-        ↓
-  open a PR  →  move to In review
-        ↓
-  respond to review  →  push more commits
-        ↓
-  merge  →  move to Done  →  delete the branch
+```mermaid
+flowchart TD
+    A[Pick an issue<br/>assign yourself, move to In progress] --> B[git switch main && git pull]
+    B --> C[git switch -c feature/12-short-name]
+    C --> D{{"Write a failing test<br/>Make it pass<br/>Tidy up"}}
+    D -->|commit as you go| D
+    D --> E[npm test<br/>the whole suite, not just yours]
+    E --> F[git push -u origin branch]
+    F --> G[Open a PR<br/>move to In review]
+    G --> H[Respond to review<br/>push more commits]
+    H --> I[Merge<br/>move to Done, delete the branch]
+    I --> A
 ```
 
 ## Commands
