@@ -928,6 +928,71 @@ export const steps = [
   },
 
   {
+    id: 'using-ai',
+    phase: 'Building a feature',
+    title: 'Using AI without it using you',
+    minutes: 30,
+    ask: [
+      {
+        id: 'why-type-it',
+        prompt:
+          'You could paste every code block in this tutorial and finish hours sooner. What would you lose?',
+        lookFor: [
+          'typing forces you to read every line',
+          'you notice what you do not understand',
+          'you can produce something similar afterwards, not just recognise it',
+        ],
+        modelAnswer:
+          'Pasting gets the tests green without me having read the code. Typing it out makes me go through every line, and that is where I notice the bits I do not actually understand — a name I cannot explain, a line I could not have written. Afterwards I can write something similar myself, instead of only recognising it when I see it again.',
+      },
+    ],
+    attest: [
+      {
+        id: 'type-not-paste',
+        label: 'For the rest of this tutorial I will type the code blocks, not paste them',
+        hint: 'It is slower. That is the entire point — see the card above.',
+      },
+    ],
+    quiz: [
+      {
+        id: 'find-the-bug',
+        prompt:
+          'That `newestFirst` function looks right and is wrong twice. Which pair of problems does it have?',
+        options: [
+          {
+            id: 'a',
+            label:
+              'It sorts oldest-first despite its name, and it reorders the caller\u2019s array in place.',
+          },
+          { id: 'b', label: 'It crashes on an empty array, and it is slow.' },
+          { id: 'c', label: 'It does not handle `null`, and the return type is wrong.' },
+          { id: 'd', label: 'Nothing is wrong with it.' },
+        ],
+        answer: 'a',
+        explain:
+          '`a - b` sorts ascending, which is oldest first — the opposite of the name. And `.sort()` rearranges the array it was given rather than returning a new one, so whoever called it now has their data in a different order without asking. Both are the kind of plausible, confident, wrong code these tools produce, and both are findable by reading it.',
+      },
+      {
+        id: 'good-use',
+        prompt: 'Which of these uses is likely to leave you knowing more afterwards?',
+        options: [
+          { id: 'a', label: '"Write me a POST endpoint for products."' },
+          {
+            id: 'b',
+            label:
+              '"Here is my endpoint and the error it gives. What should I look at first? Do not fix it."',
+          },
+          { id: 'c', label: '"Fix this file."' },
+          { id: 'd', label: '"Write the tests for this so I do not have to."' },
+        ],
+        answer: 'b',
+        explain:
+          'It keeps you doing the work. You still have to read the code, form a theory, and make the change — the AI only narrows where to look. The other three hand over the part where the learning happens, and you find out at review, or at the next thing you cannot do.',
+      },
+    ],
+  },
+
+  {
     id: 'decomposition',
     phase: 'Building a feature',
     title: 'Break the problem down',
