@@ -70,7 +70,7 @@ has both `DATABASE_URL` and `TEST_DATABASE_URL`.
 misbehaves. It shows you what the server is actually saying. Get used to
 reaching for it before you start guessing.
 
-:::try
-Run all three commands above, then use the button below. The last two checks
-take a minute — they are really running your tests.
+:::note Keep this card in mind
+Nothing to do here — this is the card to come back to when something breaks,
+which it will. `docker compose logs -f app` is the first thing to reach for.
 :::

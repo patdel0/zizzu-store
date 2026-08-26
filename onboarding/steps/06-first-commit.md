@@ -104,6 +104,6 @@ Commit your home page change. Then run `git log --oneline` and see your commit
 sitting on top of the project's history.
 :::
 
-The check below looks at your commit messages and will tell you specifically
+The check on the previous card reads your commit messages and says specifically
 what to fix. Being told "that should be `Add`, not `Added`" is a normal thing to
-hear in a code review, and easier to hear from a program.
+hear in a code review, and easier to hear from a program than from a person.

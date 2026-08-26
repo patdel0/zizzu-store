@@ -177,4 +177,4 @@ on its own — browsers will actually stop and ask before re-sending one.
 **The rule: GET reads, POST changes.** ([Every method, on MDN](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Methods).) You saw the reading half above. You will
 build the changing half in step 16.
 
-Four questions, all answerable from what you just ran.
+One more question, answerable from what you just ran.

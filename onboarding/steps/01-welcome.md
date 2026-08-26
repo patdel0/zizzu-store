@@ -91,4 +91,4 @@ recognising it and asking. There is a whole step on how to ask well.
 head. They know roughly where to look, and they look. This tutorial is trying to
 give you the "roughly where", not a memorised map.
 
-Ready. One question, then we start from the beginning.
+That is the mindset. Next, get the thing running.
