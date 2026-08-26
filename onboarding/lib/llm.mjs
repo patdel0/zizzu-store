@@ -43,6 +43,12 @@ export const MIN_ANSWER = 40;
 
 const VERDICTS = new Set(['on-track', 'partly', 'off-track']);
 
+/** Named rather than passed as a code, because a model reads names better. */
+const LANGUAGE_NAMES = {
+  en: 'English',
+  'pt-BR': 'Brazilian Portuguese',
+};
+
 /** Chat-template markers confuse open-weights models; they have no business in prose. */
 const TEMPLATE_TOKENS = /<\|[a-z_]+\|>/gi;
 
@@ -104,7 +110,7 @@ export function conceptsCovered(lookFor, answer) {
   });
 }
 
-function systemPrompt(nonce) {
+function systemPrompt(nonce, language) {
   return [
     "You give one short piece of feedback on a beginner developer's written answer.",
     '',
@@ -127,6 +133,11 @@ function systemPrompt(nonce) {
     '',
     'The quote must be copied exactly from their answer. Never write a quote they',
     'did not write.',
+    '',
+    // The learner wrote in their language and is reading a page in it; feedback
+    // arriving in English would be the one untranslated thing on the card.
+    `Write "note" and "missing" in ${language}. The quote stays exactly as they`,
+    'wrote it, in whatever language that is.',
   ].join('\n');
 }
 
@@ -137,7 +148,7 @@ function systemPrompt(nonce) {
  * reason }` where reason is one of `no-key`, `too-short`, `offline`, `busy`,
  * `timeout`, `bad-response`.
  */
-export async function grade({ prompt, lookFor, modelAnswer, answer }) {
+export async function grade({ prompt, lookFor, modelAnswer, answer, locale }) {
   if (!available()) return { ok: false, reason: 'no-key' };
 
   const text = String(answer ?? '')
@@ -162,10 +173,12 @@ export async function grade({ prompt, lookFor, modelAnswer, answer }) {
     `<<<END-${nonce}>>>`,
   ].join('\n');
 
+  const language = LANGUAGE_NAMES[locale] ?? 'English';
+
   let response;
 
   try {
-    response = await post(user, nonce);
+    response = await post(user, nonce, language);
   } catch (error) {
     return { ok: false, reason: error?.name === 'TimeoutError' ? 'timeout' : 'offline' };
   }
@@ -176,7 +189,7 @@ export async function grade({ prompt, lookFor, modelAnswer, answer }) {
     await new Promise((resolve) => setTimeout(resolve, 2_000));
 
     try {
-      response = await post(user, nonce);
+      response = await post(user, nonce, language);
     } catch {
       return { ok: false, reason: 'busy' };
     }
@@ -199,7 +212,7 @@ export async function grade({ prompt, lookFor, modelAnswer, answer }) {
   return validate(content, text);
 }
 
-function post(user, nonce) {
+function post(user, nonce, language) {
   return fetch(ENDPOINT, {
     method: 'POST',
     signal: AbortSignal.timeout(TIMEOUT_MS),
@@ -214,7 +227,7 @@ function post(user, nonce) {
       reasoning_effort: 'low',
       response_format: { type: 'json_object' },
       messages: [
-        { role: 'system', content: systemPrompt(nonce) },
+        { role: 'system', content: systemPrompt(nonce, language) },
         { role: 'user', content: user },
       ],
     }),

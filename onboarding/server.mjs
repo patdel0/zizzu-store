@@ -136,6 +136,13 @@ await loadMarkdown(join(here, 'reference'), reference, (name) =>
   name.replace(/\.md$/, ''),
 );
 
+/** A catalog string for `locale`, or `fallback` when that key is untranslated. */
+function localise(locale, key, fallback) {
+  const value = translator(catalogs, locale)(key);
+
+  return value === key ? fallback : value;
+}
+
 /** UI chrome and every gate string, per locale. */
 const catalogs = { [DEFAULT_LOCALE]: {} };
 
@@ -352,7 +359,7 @@ const routes = {
     return { results, complete: isStepComplete(stepId, merged) };
   },
 
-  async 'POST /api/quiz'(body) {
+  async 'POST /api/quiz'(body, locale) {
     const stepId = String(body.step ?? '');
     const questionId = String(body.question ?? '');
     const graded = gradeQuiz(stepId, questionId, String(body.choice ?? ''));
@@ -365,7 +372,13 @@ const routes = {
       await saveProgress();
     }
 
-    return { ...graded, complete: isStepComplete(stepId) };
+    return {
+      ...graded,
+      // The explanation is the teaching part of a quiz, so it has to arrive in
+      // the reader's language even though the grading does not depend on it.
+      explain: localise(locale, `quiz.${stepId}.${questionId}.explain`, graded.explain),
+      complete: isStepComplete(stepId),
+    };
   },
 
   async 'POST /api/attest'(body) {
@@ -383,7 +396,7 @@ const routes = {
     return { ok: true, complete: isStepComplete(stepId) };
   },
 
-  async 'POST /api/ask'(body) {
+  async 'POST /api/ask'(body, locale) {
     const stepId = String(body.step ?? '');
     const questionId = String(body.question ?? '');
     const question = askQuestion(stepId, questionId);
@@ -402,11 +415,21 @@ const routes = {
     progress.ask[`${stepId}.${questionId}`] = true;
     await saveProgress();
 
+    // The rubric and model answer go to the model, and the model answer is
+    // shown to the reader, so both follow the reader's language. Feedback then
+    // comes back in the language it was asked about.
+    const key = `ask.${stepId}.${questionId}`;
+    const lookFor = (question.lookFor ?? []).map((bullet, index) =>
+      localise(locale, `${key}.lookFor.${index}`, bullet),
+    );
+    const modelAnswer = localise(locale, `${key}.modelAnswer`, question.modelAnswer);
+
     const feedback = await llm.grade({
-      prompt: question.prompt,
-      lookFor: question.lookFor,
-      modelAnswer: question.modelAnswer,
+      prompt: localise(locale, `${key}.prompt`, question.prompt),
+      lookFor,
+      modelAnswer,
       answer,
+      locale,
     });
 
     // Decided locally, so a reader with no key still learns which idea they
@@ -415,7 +438,7 @@ const routes = {
     // — see `conceptsCovered`.
     const covered = question.structural
       ? null
-      : llm.conceptsCovered(question.lookFor, answer);
+      : llm.conceptsCovered(lookFor, answer);
 
     return {
       recorded: true,
@@ -423,7 +446,7 @@ const routes = {
       covered,
       // Always returned, whatever the model said or failed to say. Comparing
       // your answer to a good one is the part that does the teaching.
-      modelAnswer: question.modelAnswer,
+      modelAnswer,
       feedback: feedback.ok ? feedback : null,
       reason: feedback.ok ? null : feedback.reason,
     };
