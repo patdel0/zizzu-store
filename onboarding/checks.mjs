@@ -2433,6 +2433,112 @@ export const steps = [
     title: 'Refusing bad input',
     minutes: 45,
     checks: [
+      {
+        id: 'bad-json',
+        label: 'A body that is not JSON gets a 400',
+        async run() {
+          const source = await read('app/api/products/route.ts');
+
+          if (source === null) {
+            return { pass: false, detail: 'No `app/api/products/route.ts` yet.' };
+          }
+
+          // `request.json()` throws on malformed input, so the handler has to
+          // catch it rather than let it become a 500.
+          if (!/try\s*\{[\s\S]{0,200}request\.json\(\)/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                '`await request.json()` is not inside a `try`. It throws on a body that is not JSON, and an uncaught throw becomes a 500 \u2014 which tells the caller nothing about what they got wrong.',
+            };
+          }
+
+          const test = await read('__tests__/api/products.test.ts');
+
+          if (test === null || !/postRawRequest/.test(test)) {
+            return {
+              pass: false,
+              detail:
+                'The handler guards it, but no test proves it. Use `postRawRequest(\'/api/products\', \'not json\')` \u2014 `postRequest` would serialise your string into valid JSON, so it cannot reach this branch.',
+            };
+          }
+
+          return { pass: true, detail: 'Guarded, and a test sends real junk at it.' };
+        },
+      },
+      {
+        id: 'missing-name',
+        label: 'A missing or empty name gets a 400',
+        async run() {
+          const source = await read('app/api/products/route.ts');
+
+          if (source === null) {
+            return { pass: false, detail: 'No `app/api/products/route.ts` yet.' };
+          }
+
+          if (!/\.trim\(\)/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'Nothing trims the name. A name of three spaces is not missing by `typeof`, but it is still not a name \u2014 and untrimmed, `\"  Mug  \"` and `\"Mug\"` become two different products.',
+            };
+          }
+
+          return { pass: true, detail: 'The name is trimmed before it is judged.' };
+        },
+      },
+      {
+        id: 'uses-parse',
+        label: 'The handler reuses `parsePriceCents`',
+        async run() {
+          const source = await read('app/api/products/route.ts');
+
+          if (source === null) {
+            return { pass: false, detail: 'No `app/api/products/route.ts` yet.' };
+          }
+
+          if (!/parsePriceCents/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'The handler does not use `parsePriceCents`. You wrote and tested it in the PREP step against eight examples \u2014 writing those checks a second time here means two places to keep in step, and one of them has no tests.',
+            };
+          }
+
+          return { pass: true, detail: 'Reused, so the edge cases stay tested in one place.' };
+        },
+      },
+      {
+        id: 'duplicate-name',
+        label: 'A duplicate name gets a 422',
+        async run() {
+          const source = await read('app/api/products/route.ts');
+
+          if (source === null) {
+            return { pass: false, detail: 'No `app/api/products/route.ts` yet.' };
+          }
+
+          if (!/\b422\b/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'Nothing answers 422. A duplicate name is understood perfectly and still cannot be done \u2014 which is exactly the distinction between 400 and 422.',
+            };
+          }
+
+          const helpers = await read('test/helpers.ts');
+
+          if (helpers === null || !/createProduct/.test(helpers)) {
+            return {
+              pass: false,
+              detail:
+                'The handler refuses duplicates, but `test/helpers.ts` has no `createProduct`. This test needs a product to already exist \u2014 put the fixture next to `createPost` rather than repeating the setup inline.',
+            };
+          }
+
+          return { pass: true, detail: '422 on duplicates, with a fixture to arrange it.' };
+        },
+      },
       onSandboxBranch,
       {
         id: 'cases',

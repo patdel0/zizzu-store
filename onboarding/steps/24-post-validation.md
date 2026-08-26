@@ -57,11 +57,11 @@ what it is — which is the point. `any` would switch those checks off and let t
 bug through silently.
 :::
 
-=== check=sandbox-branch,cases
-## The loops
+=== check=sandbox-branch,bad-json
+## Loop one: a body that is not JSON
 
-**1. A body that is not JSON.** `postRawRequest('/api/products', 'not json')`
-sends the text untouched. `request.json()` throws on it, so wrap it:
+`postRawRequest('/api/products', 'not json')` sends the text untouched.
+`request.json()` throws on it, so wrap it:
 
 ```typescript
 let body: unknown;
@@ -73,13 +73,21 @@ try {
 }
 ```
 
-**2. A missing name.** `typeof name !== 'string' || name.trim() === ''`. Trim it
-before saving, so `"  Mug  "` and `"Mug"` do not become two products.
+Write the test, watch it fail, make it pass, commit. Then come back.
 
-**3. A bad price.** You already wrote this one.
+=== check=missing-name
+## Loop two: a missing name
 
-In {{step:prep}} you PREP'd and tested `parsePriceCents`. This is what it was for —
-import it rather than writing the checks a second time:
+`typeof name !== 'string' || name.trim() === ''`.
+
+Trim before saving, so `"  Mug  "` and `"Mug"` do not become two products.
+
+=== check=uses-parse
+## Loop three: a bad price
+
+You already wrote this one. In {{step:prep}} you PREP'd and tested
+`parsePriceCents` — this is what it was for. Import it rather than writing the
+checks a second time:
 
 ```typescript
 import { parsePriceCents } from '@/lib/products';
@@ -91,22 +99,24 @@ if (!price.ok) {
 }
 ```
 
-Note what you get for free: it is already tested, in `__tests__/products.test.ts`,
-against all eight of your examples. The handler test only has to prove the
-handler *uses* it — one case is enough, because the edge cases are covered where
-they belong.
+Note what you get for free: it is already tested against all eight of your
+examples. The handler test only has to prove the handler *uses* it — one case is
+enough, because the edge cases are covered where they belong.
 
 :::note This is what "a plain function" buys you
 `parsePriceCents` needs no request, no database and no server. That makes it
 trivial to test exhaustively, which is why the tricky decisions live there
 rather than in the middle of the handler.
 
-When you find yourself wanting to mock a database to reach some branch, it is
-usually a sign that the logic in that branch should move into a function like
-this one.
+When you find yourself wanting to mock a database to reach some branch, that is
+usually a sign the logic in that branch should move into a function like this
+one.
 :::
 
-**4. A duplicate name.** Look before you write:
+=== check=duplicate-name
+## Loop four: a duplicate name
+
+Look before you write:
 
 ```typescript
 const existing = await db.orm.public.Product.where({ name: input.value.name }).first();
@@ -120,7 +130,7 @@ if (existing) {
 ```
 
 Arrange this test by creating the product first, then posting the same name
-again. You will want a helper for that:
+again. You will want a helper:
 
 ```typescript
 let productCount = 0;
@@ -130,23 +140,26 @@ export async function createProduct(overrides: { name?: string; priceCents?: num
 
   return db.orm.public.Product.create({
     name: overrides.name ?? `Product ${productCount}`,
-    description: null,
     priceCents: overrides.priceCents ?? 999,
   });
 }
 ```
 
-Put it in `test/helpers.ts` next to `createPost`, rather than repeating the setup
-in each test. That file exists so a test reads as what it checks, not as
+Put it in `test/helpers.ts` next to `createPost`, rather than repeating the
+setup in each test. That file exists so a test reads as what it checks, not as
 database plumbing.
 
 :::note Why the counter
-Two fixtures both called "Product" would collide the moment you test uniqueness.
-Fixtures should differ by default, and be identical only when a test says so.
+Two fixtures both called "Product" would collide the moment you test
+uniqueness. Fixtures should differ by default, and be identical only when a test
+says so.
 :::
 
-**5. Unexpected failures.** Wrap the database work in a `try`/`catch`, log the
-real error, and answer a flat 500:
+=== check=cases
+## Loop five: unexpected failures
+
+Wrap the database work in a `try`/`catch`, log the real error, and answer a flat
+500:
 
 ```typescript
 } catch (error) {
@@ -159,6 +172,49 @@ real error, and answer a flat 500:
 :::warn Never send the raw error to the caller
 A database error can contain table names, the query, sometimes the connection
 string. Log the detail where your team can see it; return the summary.
+:::
+
+===
+## What you did not have to do
+
+You just wrote input validation, which is where most security advice starts. So
+it is worth naming the two attacks you did *not* have to think about, and why.
+
+**You never built a query by pasting strings together.**
+
+```typescript
+// Never. Not once, not "just this one time for a search box".
+`SELECT * FROM products WHERE name = '${name}'`
+```
+
+A product called `'; DROP TABLE products; --` ends that query early and starts a
+new one. That is SQL injection, and it is still near the top of the
+[OWASP Top Ten](https://owasp.org/www-project-top-ten/) after twenty-five years.
+`db.orm.public.Product.where({ name })` sends the name as a *parameter*,
+separately from the query — so there is no sentence for it to escape from. You
+get that for free by using the query builder, and you lose it the moment you
+reach for raw SQL.
+
+**You never put user text straight into a page.** React escapes anything in
+`{...}` before it renders, so a name containing `<script>` displays as those
+characters rather than running. The way out of that protection has a deliberately
+alarming name — `dangerouslySetInnerHTML` — and if you ever find yourself typing
+it, stop and find another way. That is cross-site scripting, and it is the same
+mistake as SQL injection wearing a different hat: **data got treated as
+instructions.**
+
+**And nothing secret is in the code you are about to push.** Connection strings,
+API keys and tokens live in `.env`, which is in `.gitignore`. Committing one is
+not fixed by deleting it in the next commit — it is in the history, and the
+history is what gets pushed. The fix is to rotate the secret, which means telling
+someone. Do that quickly rather than quietly.
+
+:::note The pattern under all three
+Somewhere, a string you were given gets read as something with power — a query,
+markup, a command. Every time you hand user input to something that interprets
+it, ask what happens if that input is hostile rather than clumsy. Frameworks
+handle the common cases, which is exactly why the dangerous moments are the ones
+where you step outside them.
 :::
 
 ===
