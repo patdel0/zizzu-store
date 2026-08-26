@@ -63,12 +63,12 @@ there is no whole-number column in `Post`, so you could not have got that one by
 looking.
 
 :::blank Complete the Product model
-const Product = {{model}}('Product', {
+const Product = {{camel:model}}('Product', {
   fields: {
     id: field.id.uuidv7String(),
-    name: field.{{text}}(),
-    description: field.text().{{optional}}(),
-    priceCents: field.{{int}}(),
+    name: field.{{camel:text|string}}(),
+    description: field.text().{{camel:optional|nullable}}(),
+    priceCents: field.{{camel:int|integer|number}}(),
     createdAt: field.temporal.createdAt(),
     updatedAt: field.temporal.updatedAt(),
   },

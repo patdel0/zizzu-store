@@ -1174,32 +1174,45 @@ export const steps = [
         id: 'plan-ordered',
         label: 'Nothing is built before the thing it needs',
         async run() {
-          const source = (await read('PLAN.md')) ?? '';
-          const lower = source.toLowerCase();
-          const storage = Math.min(
-            ...[lower.indexOf('model'), lower.indexOf('table'), lower.indexOf('database'), lower.indexOf('store')]
-              .filter((at) => at !== -1),
-            Infinity,
-          );
-          const page = Math.max(lower.indexOf('page'), lower.indexOf('form'));
+          const source = await read('PLAN.md');
 
-          if (storage === Infinity) {
+          if (source === null) return { pass: false, detail: 'No `PLAN.md` yet.' };
+
+          // Only the checklist lines. Reading the whole file let the project's
+          // own name — "Zizzu Store" — satisfy the search for "store".
+          const tasks = source
+            .split('\n')
+            .filter((line) => /^\s*[-*]\s*\[[ xX]\]/.test(line))
+            .map((line) => line.toLowerCase());
+
+          const find = (words) =>
+            tasks.findIndex((task) => words.some((word) => task.includes(word)));
+
+          const storage = find(['model', 'table', 'database', 'store a', 'keep a', 'storing']);
+          const ui = find(['page', 'form', 'button', 'screen']);
+
+          if (storage === -1) {
             return {
               pass: false,
               detail:
-                'Nothing in your plan mentions the database, a table or storing a product. Somewhere to *put* a product has to exist before anything can read one back — that is the bottom of the stack, so it is the first task.',
+                'No task mentions storing a product — a table, a model, a database. Somewhere to *put* a product has to exist before anything can read one back, so that is the bottom of the stack and the first task.',
             };
           }
 
-          if (page !== -1 && page < storage) {
+          if (ui !== -1 && ui < storage) {
             return {
               pass: false,
-              detail:
-                'Your plan builds the page before the thing it reads from. Trace it: on the day you finish the page, what does it show? Work upwards instead — storage, then the address that hands the data over, then the page.',
+              detail: `Task ${ui + 1} builds the page, but the thing it reads from is not until task ${storage + 1}.\n\nTrace it: on the day you finish the page, what does it show? Work upwards instead — storage, then the address that hands the data over, then the page.`,
             };
           }
 
-          return { pass: true, detail: 'Every task has what it needs underneath it.' };
+          return {
+            pass: true,
+            detail:
+              ui === -1
+                ? 'Storage comes first. (No page task yet — add one if the job needs it.)'
+                : `Storage at task ${storage + 1}, page at task ${ui + 1}. Every task has what it needs underneath it.`,
+          };
         },
       },
     ],
@@ -1920,6 +1933,9 @@ export const steps = [
           }
 
           const cases = (source.match(/\bit\(/g) ?? []).length;
+          // Counting `it(` alone passes five empty bodies. An assertion is what
+          // makes it a test.
+          const assertions = (source.match(/\bexpect\(/g) ?? []).length;
 
           if (cases < 5) {
             return {
@@ -1928,7 +1944,14 @@ export const steps = [
             };
           }
 
-          return { pass: true, detail: `${cases} tests, one per example.` };
+          if (assertions < cases) {
+            return {
+              pass: false,
+              detail: `${cases} \`it\` blocks but only ${assertions} \`expect\`. A test with nothing to assert passes whatever the code does — which is the failure the last step was about.`,
+            };
+          }
+
+          return { pass: true, detail: `${cases} tests, ${assertions} assertions.` };
         },
       },
       {
@@ -1994,7 +2017,7 @@ export const steps = [
       },
       {
         id: 'docblock-useful',
-        label: 'It says what goes in and what comes out',
+        label: 'It says something the code cannot say for itself',
         async run() {
           const source = (await read('lib/products.ts')) ?? '';
           const block = source.match(
@@ -2003,28 +2026,30 @@ export const steps = [
 
           if (!block) return { pass: false, detail: 'Write the docblock first.' };
 
-          const text = block[1];
-          const missing = [];
+          const text = block[1].toLowerCase();
+          const words = block[1].replace(/[\s*/@]/g, '').length;
 
-          if (!/@param\b/.test(text)) missing.push('`@param` — what goes in');
-          if (!/@returns?\b/.test(text)) missing.push('`@returns` — what comes out');
-
-          if (missing.length > 0) {
-            return {
-              pass: false,
-              detail: `Your docblock is missing: ${missing.join(', ')}.\n\nThose two tags are what your editor reads to show the description beside each argument while somebody is typing a call.`,
-            };
-          }
-
-          if (text.replace(/[\s*/]/g, '').length < 80) {
+          if (words < 90) {
             return {
               pass: false,
               detail:
-                'The tags are there but there is almost nothing in them. Say what the function is for and what a caller gets back — a sentence each is plenty.',
+                'That is very short. Say what the function is for, what a caller gets back in both cases, and one thing the code cannot explain on its own — such as why the price is in cents.',
             };
           }
 
-          return { pass: true, detail: 'It documents its inputs and its output.' };
+          const covers = [
+            ['what comes in', /raw|unknown|input|body|value|argument/],
+            ['what goes back', /return|ok|error|cents|result|refus/],
+          ].filter(([, pattern]) => !pattern.test(text));
+
+          if (covers.length > 0) {
+            return {
+              pass: false,
+              detail: `Your docblock does not mention **${covers.map(([name]) => name).join(' or ')}**.\n\nA reader hovering this needs both: what to hand it, and what they get back when it works and when it does not.`,
+            };
+          }
+
+          return { pass: true, detail: 'It documents what goes in and what comes back.' };
         },
       },
     ],

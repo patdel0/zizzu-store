@@ -30,21 +30,31 @@ a note nobody sees and documentation that follows the function around.
 ## The two tags worth using
 
 A docblock can be one line, like the one above. When a function takes something
-and gives something back, two tags earn their place:
+and gives something back, say both:
 
 ```typescript
 /**
  * Turns a price from an untrusted request body into a number of cents.
  *
- * @param raw - the value straight from `request.json()`, which could be anything
- * @returns the price in cents, or the reason it was refused
+ * Takes the value straight from `request.json()`, which could be anything at
+ * all. Gives back the price in cents, or the reason it was refused — never
+ * throws.
  */
 ```
 
-`@param` describes one argument. `@returns` describes what comes back. Your
-editor shows the `@param` line beside the argument *while somebody is typing the
-call* — which is the moment they need it and the moment they are least likely to
-go looking.
+Your editor shows that to whoever is calling it, *while they are typing the
+call* — the moment they need it and the moment they are least likely to go
+looking.
+
+:::note There is a tag syntax, and this project does not use it
+You will see `@param` and `@returns` in other codebases, and your editor
+understands them. Every one of the seventeen docblocks in this repository is
+plain prose instead.
+
+Match the repository. A convention is only worth anything if it is followed
+everywhere, and consistency beats the better idea — which is the same advice
+{{step:naming}} closed with.
+:::
 
 :::why Why not just describe it in the code
 Names carry a lot, and good names beat a comment every time. But some things a
@@ -65,8 +75,8 @@ into one — it is already most of the way there.
 Aim for four lines:
 
 - one sentence on what the function is for
-- `@param` — what goes in, and that it is untrusted
-- `@returns` — what comes back, in both cases
+- what goes in, and that it is untrusted
+- what comes back, in both cases
 - one line on a decision the code cannot explain, such as why the price is in
   cents
 
