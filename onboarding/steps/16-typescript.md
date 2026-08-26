@@ -118,6 +118,83 @@ types claim — which is why the endpoint you are about to write checks
 its input by hand.
 :::
 
+===
+## Where a type goes
+
+There is no `types/` folder in this project, and that is on purpose. **A type
+lives in the file that owns it**, and is exported only if something else needs
+it.
+
+Every hand-written type in this codebase follows that. There are four:
+
+| Type | Where | Exported? |
+| --- | --- | --- |
+| `Parsed<T>` | `app/api/posts/route.ts` | No — only that file parses |
+| `CreatePostInput` | `app/api/posts/route.ts` | No |
+| `SerializedPost` | `app/posts/posts-board.tsx` | Yes — the page uses it too |
+| `CreateState` | `app/posts/posts-board.tsx` | No |
+
+Two house rules go with it.
+
+**Use `type`, not `interface`.** Both work and the differences rarely matter.
+This project uses `type` in all four, so use `type` — the handbook rule applies
+here as much as anywhere: consistency beats your better idea.
+
+**Only name a type when the name earns it.** `CreateState` is named because
+`useActionState` refers to it three times. A shape used once is clearer written
+where it is used:
+
+```typescript
+function badge(product: { name: string; priceCents: number }) { … }
+```
+
+Naming that would add a line and tell the reader nothing.
+
+===
+## The one type worth looking at twice
+
+`SerializedPost` describes a post *as it arrives over JSON*, and it is nearly —
+but not quite — the database model:
+
+```typescript
+export type SerializedPost = {
+  id: string;
+  title: string;
+  content: string | null;
+  authorId: string;
+  createdAt: string;   // a Date in the database
+  updatedAt: string;   // and here too
+};
+```
+
+JSON has no date type. `createdAt` leaves the server as a `Date` and arrives in
+the browser as a string, so a type describing what the browser receives has to
+say `string` — even though the same field is a `Date` two files away.
+
+That is why it is written by hand rather than taken from the contract: it
+describes the **wire**, not the table.
+
+:::warn And that is its weakness
+Nothing connects the two. Add a field to `Post` in the contract, regenerate, and
+`SerializedPost` does not change — it just quietly stops describing what the
+endpoint sends.
+
+This is the same drift you met between `contract.ts` and `contract.json`, one
+level further out, and here nothing catches it. When you change a model, search
+for the hand-written type that mirrors it. There is usually one.
+:::
+
+:::why What about `.d.ts` files?
+You will see two in this project — `next-env.d.ts` and `lib/prisma/contract.d.ts`
+— and **both are generated**. Do not edit either.
+
+A `.d.ts` holds type declarations and no code. They are written for two reasons:
+to describe a JavaScript library that has no types of its own, and to declare
+things that exist globally at runtime. Neither comes up in ordinary application
+work, so you can go years without writing one. If you ever need to, you will
+know why — and until then, a `.d.ts` you did not generate is a smell.
+:::
+
 === check=tsc-clean quiz=union-meaning ask=why-annotations
 ## Check and clean up
 
