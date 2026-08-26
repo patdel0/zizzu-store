@@ -1155,8 +1155,39 @@ export const steps = [
     phase: 'Building a feature',
     title: 'Write a test, then make it pass',
     minutes: 60,
+    attest: [
+      {
+        id: 'green-but-broken',
+        label: 'I saw the whole suite pass while the app was visibly broken',
+        hint: 'That is the point of the experiment. Do not tick it until you have seen it.',
+      },
+    ],
     checks: [
       onSandboxBranch,
+      {
+        id: 'limit-restored',
+        label: 'You put the title limit back to 200',
+        async run() {
+          const source = await read('app/api/posts/route.ts');
+
+          if (source === null) {
+            return { pass: false, detail: 'Could not read `app/api/posts/route.ts`.' };
+          }
+
+          if (/TITLE_MAX_LENGTH\s*=\s*200\b/.test(source)) {
+            return { pass: true, detail: 'Back to 200. The experiment left nothing behind.' };
+          }
+
+          const found = source.match(/TITLE_MAX_LENGTH\s*=\s*(\d+)/);
+
+          return {
+            pass: false,
+            detail: found
+              ? `\`TITLE_MAX_LENGTH\` is still ${found[1]}. Put it back to 200 — you broke it on purpose, and leaving it broken would be a real bug in a real file.`
+              : 'Could not find `TITLE_MAX_LENGTH` in the route. Restore the file with `git restore app/api/posts/route.ts`.',
+          };
+        },
+      },
       {
         id: 'test-exists',
         label: '`__tests__/api/products.test.ts` exists',

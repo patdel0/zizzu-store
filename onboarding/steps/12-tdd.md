@@ -1,13 +1,74 @@
-There is a table. There is no endpoint. The obvious next move is to write the
-endpoint — and you are going to do the opposite.
+You are about to build the products endpoint. Before that, a two-minute
+experiment about tests — because the order you do things in turns out to matter
+more than it sounds.
+
+=== check=limit-restored attest=green-but-broken
+## Break something on purpose
+
+The `posts` feature is finished and its tests all pass. Let us see what that
+actually guarantees.
+
+**1.** Open `app/api/posts/route.ts` and find this line near the top:
+
+```typescript
+const TITLE_MAX_LENGTH = 200;
+```
+
+**2.** Change the `200` to `5`. Save.
+
+**3.** Run the tests:
+
+```bash
+npm test
+```
+
+**All green.**
+
+**4.** Now use the app. Make sure it is running, then:
+
+```bash
+curl -s -X POST http://localhost:3000/api/posts \
+  -H 'Content-Type: application/json' \
+  -d '{"title":"My first post","authorId":"0199c0de-1a2b-7c3d-8e4f-5a6b7c8d9e0f"}'
+```
+
+```json
+{"error":"`title` must be at most 5 characters"}
+```
+
+The app now rejects any title longer than a word. Every test passes.
+
+**5.** Put the `200` back, and save.
 
 ===
-## Write the test first
+## What that means
 
-Test-driven development is three steps, repeated:
+You just broke the app and the test suite did not notice.
 
-1. **Red.** Write a test for something that does not exist. Run it. Watch it
-   fail.
+That is not a bug in the tests. Nobody ever wrote a test for the title limit, so
+nothing was watching it. A passing suite means one thing only:
+
+> **The behaviours somebody wrote down still work.**
+
+It does not mean the code is correct. It does not mean the app works. It means
+the described parts of it do.
+
+Which raises the question you cannot answer by looking at green ticks: **is the
+test I just wrote actually watching anything?**
+
+A test you have only ever seen pass might be connected to nothing at all. A
+typo in the name of the thing it imports, an assertion that is true either way —
+both look exactly like a passing test.
+
+There is one way to find out, and it takes a second: **watch it fail first.**
+
+===
+## Red, green, refactor
+
+That is the whole of test-driven development. Three steps, repeated:
+
+1. **Red.** Write a test for something that does not exist yet. Run it. Watch
+   it fail.
 2. **Green.** Write the simplest code that makes it pass.
 3. **Refactor.** Tidy up, with the test there to catch you.
 
@@ -18,20 +79,16 @@ flowchart LR
     F --> R
 ```
 
-The step people skip is the first one, and it is the one that does the work.
+Step one is the one people skip, and it is the one that does the work. Seeing
+red is how you learn the test is real. Everything after that is easier.
 
-:::why Why write the test first, when you could just write the code?
-A test you have never seen fail proves nothing. If you write the code first and
-then a test that passes, you have learned exactly one thing: the test passed
-once. You do not know whether it would notice if the code broke — and a test
-that cannot fail is worse than no test, because it looks like coverage.
+:::why There is a second benefit, and you will feel it within the hour
+Writing the test first makes you decide what the endpoint should *do* before you
+start thinking about how it works.
 
-Watching it go red first is the only way to know it is wired up to anything.
-
-There is a second effect, which you will notice within the hour: writing the
-test first forces you to decide what the endpoint should *do* before you are
-elbow-deep in how it works. You end up designing the thing from the outside,
-which is where it is actually used.
+You end up describing it from the outside — the way it will actually be used —
+instead of from the inside, where it is easy to build something awkward and not
+notice.
 :::
 
 ===
