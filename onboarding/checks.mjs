@@ -1593,6 +1593,81 @@ export const steps = [
   },
 
   {
+    id: 'debugging',
+    phase: 'Seeing how it works',
+    title: 'When it breaks',
+    minutes: 40,
+    attest: [
+      {
+        id: 'found-in-logs',
+        label: 'I found the real error in the container log, not in the browser',
+      },
+      { id: 'read-the-diff', label: 'I read the assertion diff and it told me the answer' },
+    ],
+    checks: [
+      {
+        id: 'posts-route-restored',
+        label: 'You put `app/api/posts/route.ts` back',
+        async run() {
+          const dirty = await gitOut('status', '--porcelain', '--', 'app/api/posts/route.ts');
+
+          if (dirty === '') return { pass: true, detail: 'Restored.' };
+
+          return {
+            pass: false,
+            detail:
+              'The route still has your deliberate break in it:\n\n```\ngit restore app/api/posts/route.ts\n```',
+          };
+        },
+      },
+      {
+        id: 'contract-restored',
+        label: 'The contract and its generated files agree again',
+        async run() {
+          const dirty = await gitOut('status', '--porcelain', '--', 'lib/prisma');
+
+          if (dirty === '') return { pass: true, detail: 'Back in step.' };
+
+          return {
+            pass: false,
+            detail:
+              '`lib/prisma` still has changes from the experiment:\n\n```\ngit restore lib/prisma\n```\n\nIf you meant to keep a contract change, run `npx prisma-cli contract emit` instead so the generated files match.',
+          };
+        },
+      },
+    ],
+    quiz: [
+      {
+        id: 'where-does-it-surface',
+        prompt:
+          'The browser shows `{"error":"Failed to list posts"}` and a 500. Where is the *real* error?',
+        options: [
+          { id: 'a', label: 'In the browser console.' },
+          { id: 'b', label: 'In the container log — the handler logged it before answering.' },
+          { id: 'c', label: 'Nowhere; a 500 discards it.' },
+          { id: 'd', label: 'In the database log.' },
+        ],
+        answer: 'b',
+        explain:
+          '`internalError` calls `console.error(message, error)` and *then* answers with a flat message. That is deliberate — a raw error can contain table names, queries, sometimes connection strings, so the detail goes where your team can see it and the caller gets the summary. The detail always exists. You just have to know which window.',
+      },
+      {
+        id: 'first-question',
+        prompt: 'Something worked an hour ago and does not now. What is the first question?',
+        options: [
+          { id: 'a', label: 'Is it a bug in Next.js?' },
+          { id: 'b', label: 'What did I change?' },
+          { id: 'c', label: 'Should I restart everything?' },
+          { id: 'd', label: 'What does the AI say about this error?' },
+        ],
+        answer: 'b',
+        explain:
+          'Almost always you. `git diff` answers it in one second and rules out an entire universe of theories. Restarting sometimes fixes it and teaches you nothing, which means you meet the same bug again next week.',
+      },
+    ],
+  },
+
+  {
     id: 'what-tests-are',
     phase: 'Building a feature',
     title: 'What a test actually is',
