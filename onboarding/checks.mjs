@@ -503,9 +503,9 @@ export const steps = [
           for (const { sha, subject } of commits) {
             const short = `\`${sha.slice(0, 7)}\` "${subject}"`;
 
-            if (subject.length > 72) {
+            if (subject.length > 50) {
               problems.push(
-                `${short} — the subject is ${subject.length} characters. Keep it under 72 so it stays readable in a log.`,
+                `${short} — the subject is ${subject.length} characters. Keep it under 50: git tools truncate around there, and a subject that does not fit is usually two commits.`,
               );
             }
 

@@ -51,7 +51,7 @@ Read it as: "applying this commit will *add a tagline to the home page*."
 The rules that follow from that:
 
 - Start with a capital, no full stop at the end. It is a title, not a sentence.
-- Under ~72 characters, so it is readable in a log.
+- Under 50 characters, so it is readable in a log.
 - Say what changed, not that something changed. "Update stuff" tells nobody
   anything.
 
@@ -70,6 +70,17 @@ Reject a post title longer than 200 characters
 The column is text, so a long title was accepted and then broke the
 list page's layout. 200 matches the limit the design uses.
 ```
+
+:::note Where 50 comes from
+It is a convention, not a rule git enforces: **subject under 50, body wrapped at
+72**. Those numbers come from the places a message gets displayed — `git log
+--oneline`, GitHub's commit list, `git blame` — which cut the subject off around
+50 and were designed for 80-column terminals.
+
+The useful side effect is the one that matters. If your subject will not fit in
+50 characters, it is usually because the commit is doing two things, and wants
+to be two commits.
+:::
 
 ## Small commits
 
