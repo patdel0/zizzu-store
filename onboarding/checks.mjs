@@ -1352,6 +1352,56 @@ export const steps = [
   },
 
   {
+    id: 'naming',
+    phase: 'Building a feature',
+    title: 'What to call things',
+    minutes: 30,
+    quiz: [
+      {
+        id: 'file-case',
+        prompt:
+          'You are adding a component that shows one product card. What do you call the file?',
+        options: [
+          { id: 'a', label: '`ProductCard.tsx`' },
+          { id: 'b', label: '`product-card.tsx`' },
+          { id: 'c', label: '`productCard.tsx`' },
+          { id: 'd', label: '`product_card.tsx`' },
+        ],
+        answer: 'b',
+        explain:
+          'Files in this project are kebab-case — `posts-board.tsx`, `global-setup.ts`, `database-url.ts`. The component *inside* it is still `ProductCard`. Those two conventions are different on purpose, and the reason is dull but real: macOS and Windows treat `ProductCard.tsx` and `productcard.tsx` as the same file, Linux does not, and a repository that disagrees with itself about capitals breaks on somebody else\u2019s machine.',
+      },
+      {
+        id: 'which-extension',
+        prompt: 'Why is `posts-board.tsx` a `.tsx` while `route.ts` is a `.ts`?',
+        options: [
+          { id: 'a', label: '`.tsx` is for files in the `app/` folder.' },
+          { id: 'b', label: '`.tsx` is for anything that runs in the browser.' },
+          { id: 'c', label: '`.tsx` is for files that contain JSX — HTML-shaped markup.' },
+          { id: 'd', label: 'They are interchangeable; it is a matter of taste.' },
+        ],
+        answer: 'c',
+        explain:
+          'The `x` is the only difference and it means "this file contains JSX". `route.ts` returns data and never writes a tag, so it does not need it. Put JSX in a `.ts` file and TypeScript reads the angle brackets as something else entirely and gives you an error that does not mention JSX at all.',
+      },
+      {
+        id: 'function-name',
+        prompt:
+          'A function takes an unknown value and returns either a valid price or a reason it was refused. Best name?',
+        options: [
+          { id: 'a', label: '`price(raw)`' },
+          { id: 'b', label: '`handlePrice(raw)`' },
+          { id: 'c', label: '`parsePriceCents(raw)`' },
+          { id: 'd', label: '`checkPriceCentsAndReturnResultOrError(raw)`' },
+        ],
+        answer: 'c',
+        explain:
+          'A verb first, because it does something. `price` sounds like a value, not an action. `handle` is the emptiest verb in programming — it tells you nothing about what happens. And the last one describes the implementation, which will change; the name should survive that.',
+      },
+    ],
+  },
+
+  {
     id: 'what-tests-are',
     phase: 'Building a feature',
     title: 'What a test actually is',
