@@ -68,11 +68,57 @@ darkMode.addEventListener('change', () => {
   if (currentId) show(currentId);
 });
 
+/**
+ * The reader's chosen language, remembered in this browser.
+ *
+ * Kept out of the progress file on purpose: progress is about what they have
+ * done, and language is about this machine. Someone reading in Portuguese on a
+ * laptop and English on a desktop is not a conflict to resolve.
+ */
+const LANG_KEY = 'zizzu-onboarding-lang';
+
+function storedLang() {
+  try {
+    return localStorage.getItem(LANG_KEY) ?? undefined;
+  } catch {
+    // Private windows and blocked site data both throw here.
+    return undefined;
+  }
+}
+
+function rememberLang(code) {
+  try {
+    localStorage.setItem(LANG_KEY, code);
+  } catch {
+    // Nothing to do — the choice lasts for this page load instead.
+  }
+}
+
+let lang = storedLang();
+
+/** Appends the chosen language to a URL, leaving any existing query alone. */
+function localised(path) {
+  if (!lang) return path;
+
+  return path + (path.includes('?') ? '&' : '?') + 'lang=' + encodeURIComponent(lang);
+}
+
+/** A UI string, from the catalog the server sent. Falls back to the key. */
+function ui(key, params) {
+  const template = state?.ui?.[key] ?? key;
+
+  if (!params) return template;
+
+  return String(template).replace(/\{(\w+)\}/g, (whole, name) =>
+    name in params ? String(params[name]) : whole,
+  );
+}
+
 async function api(path, body, { timeout = 15_000 } = {}) {
   // A hung request used to hang the card with no error path. Anything that can
   // wait on a network has to be able to give up.
   try {
-    const response = await fetch(path, {
+    const response = await fetch(localised(path), {
       method: body ? 'POST' : 'GET',
       signal: AbortSignal.timeout(timeout),
       headers: body ? { 'Content-Type': 'application/json' } : undefined,
@@ -87,9 +133,42 @@ async function api(path, body, { timeout = 15_000 } = {}) {
 
 async function loadState() {
   state = await api('/api/state');
+  lang = state.locale;
   branchEl.textContent = `on ${state.branch}`;
   branchEl.title = state.repoRoot;
+  drawLanguagePicker();
   drawSidebar();
+}
+
+/**
+ * The language picker, drawn from whatever locales the server offers.
+ *
+ * Changing it reloads the page rather than re-rendering in place: every card,
+ * every check result and the handbook all come from the server, and a reload
+ * is one code path instead of five that could each miss a string.
+ */
+function drawLanguagePicker() {
+  const host = document.getElementById('language');
+
+  if (!host || !state.locales) return;
+
+  host.innerHTML =
+    `<label class="language__label" for="language-select">${escapeHtml(ui('ui.language'))}</label>` +
+    '<select class="language__select" id="language-select">' +
+    state.locales
+      .map(
+        (locale) =>
+          `<option value="${escapeHtml(locale.code)}"${
+            locale.code === state.locale ? ' selected' : ''
+          }>${escapeHtml(locale.flag)} ${escapeHtml(locale.label)}</option>`,
+      )
+      .join('') +
+    '</select>';
+
+  host.querySelector('select').addEventListener('change', (event) => {
+    rememberLang(event.target.value);
+    location.reload();
+  });
 }
 
 function stepById(id) {

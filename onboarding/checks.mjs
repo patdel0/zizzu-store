@@ -3208,23 +3208,52 @@ function imperativeOf(verb) {
 export const stepsById = new Map(steps.map((step) => [step.id, step]));
 
 /** Everything the page needs to draw a step, minus the answers to the quizzes. */
-export function publicSteps() {
+/**
+ * The steps as the browser sees them, optionally translated.
+ *
+ * `t` is a lookup that falls back to English, so an untranslated string comes
+ * back in English rather than as a key. Called with no argument — as the
+ * server's own startup validation does — everything stays English.
+ */
+export function publicSteps(t = (key, fallback) => fallback) {
   return steps.map((step, index) => ({
     id: step.id,
     number: index + 1,
-    phase: step.phase,
-    title: step.title,
+    phase: t(`phase.${slug(step.phase)}`, step.phase),
+    title: t(`step.${step.id}.title`, step.title),
     minutes: step.minutes,
     checks: (step.checks ?? []).map(({ id, label, slow }) => ({
       id,
-      label,
+      label: t(`check.${step.id}.${id}`, label),
       slow: Boolean(slow),
     })),
-    attest: step.attest ?? [],
-    quiz: (step.quiz ?? []).map(({ id, prompt, options }) => ({ id, prompt, options })),
+    attest: (step.attest ?? []).map(({ id, label, hint }) => ({
+      id,
+      label: t(`attest.${step.id}.${id}.label`, label),
+      hint: hint === undefined ? undefined : t(`attest.${step.id}.${id}.hint`, hint),
+    })),
+    quiz: (step.quiz ?? []).map(({ id, prompt, options }) => ({
+      id,
+      prompt: t(`quiz.${step.id}.${id}.prompt`, prompt),
+      options: options.map((option) => ({
+        id: option.id,
+        label: t(`quiz.${step.id}.${id}.option.${option.id}`, option.label),
+      })),
+    })),
     // `lookFor` and `modelAnswer` stay on the server, like quiz answers do.
-    ask: (step.ask ?? []).map(({ id, prompt }) => ({ id, prompt })),
+    ask: (step.ask ?? []).map(({ id, prompt }) => ({
+      id,
+      prompt: t(`ask.${step.id}.${id}.prompt`, prompt),
+    })),
   }));
+}
+
+/** `The tools of the trade` -> `the-tools-of-the-trade`, for catalog keys. */
+export function slug(text) {
+  return String(text)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
 }
 
 /**

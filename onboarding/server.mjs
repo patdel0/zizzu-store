@@ -4,6 +4,13 @@ import { homedir } from 'node:os';
 import { join, extname } from 'node:path';
 import { askQuestion, gradeQuiz, publicSteps, runChecks, stepsById } from './checks.mjs';
 import * as llm from './lib/llm.mjs';
+import {
+  DEFAULT_LOCALE,
+  LOCALES,
+  isLocale,
+  resolveLocale,
+  translator,
+} from './lib/i18n.mjs';
 import { splitCards } from './lib/cards.mjs';
 import { currentBranch, repoRoot } from './lib/shell.mjs';
 import { watchRepo } from './lib/watch.mjs';
@@ -93,12 +100,52 @@ await loadAssets(join(here, 'public'));
  */
 const reference = new Map();
 
-for (const name of await readdir(join(here, 'reference'))) {
-  if (name.endsWith('.md')) {
-    reference.set(
-      name.replace(/\.md$/, ''),
-      await readFile(join(here, 'reference', name), 'utf8'),
-    );
+/**
+ * Reads a directory of markdown into `store`, keyed `<locale>:<name>`.
+ *
+ * English sits at the top level and each translation in a subdirectory named
+ * for its locale, so adding one is adding a folder — no existing path moves,
+ * and a locale with three files translated is three translated files rather
+ * than a broken course.
+ */
+async function loadMarkdown(directory, store, key) {
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    if (entry.isDirectory() && isLocale(entry.name)) {
+      for (const file of await readdir(join(directory, entry.name))) {
+        if (!file.endsWith('.md')) continue;
+
+        store.set(
+          `${entry.name}:${key(file)}`,
+          await readFile(join(directory, entry.name, file), 'utf8'),
+        );
+      }
+
+      continue;
+    }
+
+    if (entry.isFile() && entry.name.endsWith('.md')) {
+      store.set(
+        `${DEFAULT_LOCALE}:${key(entry.name)}`,
+        await readFile(join(directory, entry.name), 'utf8'),
+      );
+    }
+  }
+}
+
+await loadMarkdown(join(here, 'reference'), reference, (name) =>
+  name.replace(/\.md$/, ''),
+);
+
+/** UI chrome and every gate string, per locale. */
+const catalogs = { [DEFAULT_LOCALE]: {} };
+
+for (const name of await readdir(join(here, 'i18n'))) {
+  if (!name.endsWith('.json')) continue;
+
+  const code = name.replace(/\.json$/, '');
+
+  if (isLocale(code)) {
+    catalogs[code] = JSON.parse(await readFile(join(here, 'i18n', name), 'utf8'));
   }
 }
 
@@ -116,19 +163,14 @@ for (const name of await readdir(join(here, 'fixtures'))) {
   fixtures.set(name, await readFile(join(here, 'fixtures', name), 'utf8'));
 }
 
-for (const name of await readdir(join(here, 'steps'))) {
-  if (name.endsWith('.md')) {
-    // `03-branch.md` holds the content for the step with id `branch`.
-    content.set(
-      name.replace(/^\d+-/, '').replace(/\.md$/, ''),
-      await readFile(join(here, 'steps', name), 'utf8'),
-    );
-  }
-}
+// `03-branch.md` holds the content for the step with id `branch`.
+await loadMarkdown(join(here, 'steps'), content, (name) =>
+  name.replace(/^\d+-/, '').replace(/\.md$/, ''),
+);
 
 const missing = publicSteps()
   .map((step) => step.id)
-  .filter((id) => !content.has(id));
+  .filter((id) => !content.has(`${DEFAULT_LOCALE}:${id}`));
 
 if (missing.length > 0) {
   console.error(`No step content for: ${missing.join(', ')}`);
@@ -255,13 +297,34 @@ watchRepo((reason) => {
 });
 
 const routes = {
-  async 'GET /api/state'() {
+  async 'GET /api/state'(_body, locale) {
+    const t = translator(catalogs, locale);
+    // `publicSteps` asks for a fallback rather than params, because its
+    // fallback is the English string already sitting in the step definition.
+    const withFallback = (key, fallback) => {
+      const value = t(key);
+
+      return value === key ? fallback : value;
+    };
+
     return {
-      steps: publicSteps(),
+      steps: publicSteps(withFallback),
       progress: progressSnapshot(),
       branch: await currentBranch(),
       repoRoot,
       llm: { available: llm.available(), minAnswer: llm.MIN_ANSWER },
+      locale,
+      locales: LOCALES,
+      // The UI's own strings. Small enough to send whole, and it means the page
+      // never renders a key while a second request is in flight.
+      ui: Object.fromEntries(
+        Object.entries(catalogs[DEFAULT_LOCALE] ?? {})
+          .filter(([key]) => key.startsWith('ui.'))
+          .map(([key]) => [key, t(key)]),
+      ),
+      translatedSteps: publicSteps()
+        .map((step) => step.id)
+        .filter((id) => content.has(`${locale}:${id}`)),
     };
   },
 
@@ -431,21 +494,39 @@ const server = createServer(async (request, response) => {
       return response.end(file);
     }
 
+    // Per request, so a reader can switch language without restarting anything.
+    const locale = resolveLocale(
+      url.searchParams.get('lang') ?? request.headers['accept-language'],
+    );
+
+    /** The asked-for locale if that page is translated, else English. */
+    const pick = (store, key) =>
+      store.get(`${locale}:${key}`) ?? store.get(`${DEFAULT_LOCALE}:${key}`);
+
     if (request.method === 'GET' && path.startsWith('/api/reference/')) {
-      const markdown = reference.get(path.slice('/api/reference/'.length));
+      const name = path.slice('/api/reference/'.length);
+      const markdown = pick(reference, name);
 
       if (markdown === undefined) return json(response, 404, { error: 'Unknown page' });
 
-      return json(response, 200, { markdown });
+      return json(response, 200, {
+        markdown,
+        translated: reference.has(`${locale}:${name}`),
+      });
     }
 
     if (request.method === 'GET' && path.startsWith('/api/content/')) {
       const stepId = path.slice('/api/content/'.length);
-      const markdown = content.get(stepId);
+      const markdown = pick(content, stepId);
 
       if (markdown === undefined) return json(response, 404, { error: 'Unknown step' });
 
-      return json(response, 200, { cards: splitCards(markdown) });
+      return json(response, 200, {
+        cards: splitCards(markdown),
+        // So the page can say so when a step has not been translated yet,
+        // rather than silently serving English under a Portuguese heading.
+        translated: content.has(`${locale}:${stepId}`),
+      });
     }
 
     const handler = routes[`${request.method} ${path}`];
@@ -453,7 +534,7 @@ const server = createServer(async (request, response) => {
     if (!handler) return json(response, 404, { error: 'Not found' });
 
     const body = request.method === 'POST' ? await readBody(request) : {};
-    const result = await handler(body);
+    const result = await handler(body, locale);
 
     return json(response, result?.error ? 400 : 200, result);
   } catch (error) {
