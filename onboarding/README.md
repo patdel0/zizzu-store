@@ -1,0 +1,100 @@
+# Onboarding
+
+An interactive tutorial that takes a developer who has never worked on a project
+before from their first HTML change to an open pull request, using this
+repository as the material.
+
+It lives on the `onboarding` branch and is never merged into `main`.
+
+## Running it
+
+```bash
+git switch onboarding
+node onboarding/server.mjs
+```
+
+Then open [localhost:4000](http://localhost:4000).
+
+Leave it running and switch back to `main` to work — the server reads its pages
+and step content into memory at boot, so it keeps serving after its own source
+is no longer checked out. Set `ONBOARDING_PORT` if 4000 is taken.
+
+There is nothing to install. It has no dependencies, which is the point: a
+trainee can start it before `npm install` has ever finished.
+
+## What it covers
+
+Fourteen steps, roughly a day's work, in four phases:
+
+| Phase | Steps |
+|---|---|
+| Getting oriented | The stack and the file map; getting it running |
+| Your first change | Branching; a JSX and Tailwind edit; the first commit |
+| How the app works | Server vs. client, the request lifecycle, status codes |
+| Building a feature | A `Product` model, TDD red/green, `POST` and validation, a page and a browser test |
+| Working with the team | Issues and the board, pull requests, review, cleanup |
+
+The trainee works on a `sandbox/<name>` branch and **closes their pull request
+without merging it**. Nothing they do reaches `main`.
+
+## How the checking works
+
+Each step ends with checks that run against the real repository — `git log`,
+the files on disk, `npm test`, and HTTP requests to the running app. Nothing is
+simulated, and a failing check explains what it looked for and what to do next.
+
+Three kinds of gate, mixed per step:
+
+- **Checks** — automated, in `checks.mjs`.
+- **Quizzes** — graded on the server, so the answers are not in the page source
+  and a wrong guess does not reveal the right one.
+- **Attestations** — tick-boxes, for things no program can verify (opening a
+  pull request, moving a card on the board).
+
+Some checks are less obvious than they look:
+
+- Commit subjects are linted for imperative mood, length, and vagueness.
+- The `tdd-red` check confirms the test fails **for the right reason** — a suite
+  that fails because Postgres is down is not a red.
+- The `tdd-green` check compares commit ancestry to confirm the test was
+  committed *before* the code that makes it pass.
+
+## Layout
+
+```
+server.mjs        zero-dependency HTTP server; loads everything at boot
+checks.mjs        every step, its checks, its quiz, its attestations
+lib/shell.mjs     read-only helpers: git, files, HTTP
+steps/NN-<id>.md  the prose for each step (filename maps to the step id)
+public/           the page: index.html, styles.css, app.js, markdown.js
+ISSUES.md         seed issues to paste into GitHub before a trainee starts
+```
+
+Progress is stored in `~/.zizzu-onboarding/progress.json`, outside the
+repository, so switching branches never loses it. "Start over" in the sidebar
+clears it.
+
+## Editing it
+
+Add or reword a step by editing its file in `steps/`. Add a check by adding an
+entry to the step's `checks` array in `checks.mjs`; a check is
+`{ id, label, run }` where `run` returns `{ pass, detail }`. Mark anything that
+shells out to `npm test` with `slow: SLOW` so the page warns before running it.
+
+`detail` is the whole feedback loop. Say what was looked for and what to do
+next — never just that something failed.
+
+Restart the server after any change; it caches at boot deliberately.
+
+## Security
+
+The server binds to `127.0.0.1` and rejects other `Host` headers. Every command
+it runs is hard-coded — the browser only ever posts a step id — and it never
+writes to the repository.
+
+## Before a trainee starts
+
+1. Create the issues in `ISSUES.md` on GitHub and put them in the **To do**
+   column of the project board.
+2. Check that they have Docker and Node installed.
+3. Agree who is reviewing their pull request, and tell that person it is coming.

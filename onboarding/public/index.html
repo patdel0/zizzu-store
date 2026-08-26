@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zizzu · Onboarding</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='26'>🧭</text></svg>"
+    />
+  </head>
+  <body>
+    <div class="layout">
+      <nav class="sidebar" aria-label="Tutorial steps">
+        <header class="sidebar__head">
+          <p class="sidebar__title">Zizzu onboarding</p>
+          <div class="progress" role="img" aria-label="Overall progress">
+            <div class="progress__bar"><span id="progress-fill"></span></div>
+            <p class="progress__label" id="progress-label">—</p>
+          </div>
+        </header>
+
+        <ol class="steps" id="steps"></ol>
+
+        <footer class="sidebar__foot">
+          <p class="branch" id="branch">—</p>
+          <button type="button" class="link-button" id="reset">
+            Start over
+          </button>
+        </footer>
+      </nav>
+
+      <main class="content" id="content" tabindex="-1">
+        <p class="loading">Loading…</p>
+      </main>
+    </div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>
