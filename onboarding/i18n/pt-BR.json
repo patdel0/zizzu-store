@@ -424,5 +424,14 @@
   "quiz.pull-request.review-feedback.option.b": "Propondo uma mudança, e perguntando em vez de mandar porque você pode ter um contexto que ela não tem.",
   "quiz.pull-request.review-feedback.option.c": "Bloqueando o PR até você reescrever.",
   "quiz.pull-request.review-feedback.option.d": "Sendo passivo-agressiva.",
-  "quiz.pull-request.review-feedback.explain": "Comentários de revisão são sobre o código, e uma pergunta normalmente é uma pergunta de verdade. Duas respostas servem: “boa ideia, feito”, e “tentei isso e precisa do objeto da requisição — mudo com prazer se você ainda achar melhor”. O que não serve é resolver a conversa sem responder."
+  "quiz.pull-request.review-feedback.explain": "Comentários de revisão são sobre o código, e uma pergunta normalmente é uma pergunta de verdade. Duas respostas servem: “boa ideia, feito”, e “tentei isso e precisa do objeto da requisição — mudo com prazer se você ainda achar melhor”. O que não serve é resolver a conversa sem responder.",
+  "ui.finish": "Concluir",
+  "ui.nextNamed": "Próximo: {title} →",
+  "ui.backToStep": "← Voltar para a etapa",
+  "ui.resetConfirmAction": "Sim, apagar",
+  "ui.resetCancel": "Cancelar",
+  "ui.resetReally": "Tem certeza? Isso apaga tudo",
+  "ui.resetting": "Recomeçando…",
+  "ui.resetFailed": "Não foi possível recomeçar — tente de novo",
+  "ui.missedOne": "1 ponto que você não mencionou — vale uma segunda olhada."
 }

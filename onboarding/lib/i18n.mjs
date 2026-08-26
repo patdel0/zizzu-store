@@ -13,8 +13,8 @@
 export const DEFAULT_LOCALE = 'en';
 
 export const LOCALES = [
-  { code: 'en', label: 'English', flag: '🇬🇧' },
-  { code: 'pt-BR', label: 'Português (Brasil)', flag: '🇧🇷' },
+  { code: 'en', label: 'English', short: 'EN', flag: '🇬🇧' },
+  { code: 'pt-BR', label: 'Português (Brasil)', short: 'PT', flag: '🇧🇷' },
 ];
 
 export function isLocale(code) {

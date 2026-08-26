@@ -424,5 +424,14 @@
   "check.cleanup.main-untouched": "`main` is exactly as you found it",
   "attest.cleanup.closed.label": "I closed my pull request without merging it",
   "attest.cleanup.closed.hint": "This one was practice. Real work gets merged; this branch does not, so `main` stays exactly as you found it.",
-  "attest.cleanup.issue-done.label": "I moved my issue to Done on the board"
+  "attest.cleanup.issue-done.label": "I moved my issue to Done on the board",
+  "ui.finish": "Finish",
+  "ui.nextNamed": "Next: {title} →",
+  "ui.backToStep": "← Back to the step",
+  "ui.resetConfirmAction": "Yes, erase it",
+  "ui.resetCancel": "Cancel",
+  "ui.resetReally": "Really? This clears everything",
+  "ui.resetting": "Starting over…",
+  "ui.resetFailed": "Could not reset — try again",
+  "ui.missedOne": "1 point you did not mention — worth a second look."
 }

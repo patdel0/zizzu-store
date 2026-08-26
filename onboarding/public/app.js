@@ -137,6 +137,10 @@ async function loadState() {
   branchEl.textContent = `on ${state.branch}`;
   branchEl.title = state.repoRoot;
   drawLanguagePicker();
+  // Anything marked `data-ui` in the HTML is chrome the catalog owns.
+  for (const node of document.querySelectorAll('[data-ui]')) {
+    node.textContent = ui(node.dataset.ui);
+  }
   drawSidebar();
 }
 
@@ -152,15 +156,23 @@ function drawLanguagePicker() {
 
   if (!host || !state.locales) return;
 
+  // A native select shows the selected option's own text, so the closed control
+  // is only as narrow as its longest label. On a phone that crowds the sidebar
+  // header, so narrow screens get the short form.
+  const narrow = window.matchMedia('(max-width: 60rem)').matches;
+
   host.innerHTML =
     `<label class="language__label" for="language-select">${escapeHtml(ui('ui.language'))}</label>` +
-    '<select class="language__select" id="language-select">' +
+    '<span class="language__icon" aria-hidden="true">🌐</span>' +
+    `<select class="language__select" id="language-select" title="${escapeHtml(ui('ui.language'))}">` +
     state.locales
       .map(
         (locale) =>
           `<option value="${escapeHtml(locale.code)}"${
             locale.code === state.locale ? ' selected' : ''
-          }>${escapeHtml(locale.flag)} ${escapeHtml(locale.label)}</option>`,
+          }>${escapeHtml(locale.flag)} ${escapeHtml(
+            narrow ? (locale.short ?? locale.code) : locale.label,
+          )}</option>`,
       )
       .join('') +
     '</select>';
@@ -170,6 +182,12 @@ function drawLanguagePicker() {
     location.reload();
   });
 }
+
+// Rotating a phone, or dragging a window across the breakpoint, should not
+// leave the control in the wrong form.
+window
+  .matchMedia('(max-width: 60rem)')
+  .addEventListener('change', () => state?.locales && drawLanguagePicker());
 
 function stepById(id) {
   return state.steps.find((step) => step.id === id);
@@ -199,7 +217,7 @@ function drawSidebar() {
   const percent = Math.round((done / state.steps.length) * 100);
 
   progressFill.style.width = `${percent}%`;
-  progressLabel.textContent = `${done} of ${state.steps.length} steps done`;
+  progressLabel.textContent = ui('ui.progress', { done, total: state.steps.length });
 
   stepsEl.innerHTML = '';
   let phase = null;
@@ -279,7 +297,9 @@ async function show(id, cardIndex) {
   const header = document.createElement('div');
 
   header.innerHTML =
-    `<p class="eyebrow">${escapeHtml(step.phase)} · Step ${step.number} of ${state.steps.length}</p>` +
+    `<p class="eyebrow">${escapeHtml(step.phase)} · ${escapeHtml(
+      ui('ui.step', { number: step.number, total: state.steps.length }),
+    )}</p>` +
     `<h1>${escapeHtml(step.title)}</h1>` +
     `<div class="pips" role="img" aria-label="Card ${index + 1} of ${cards.length}">` +
     cards
@@ -327,7 +347,7 @@ async function show(id, cardIndex) {
 // ------------------------------------------------------ written answers
 
 const ASK_REASONS = {
-  'no-key': 'Compare your answer with this one.',
+  'no-key': ui('ui.compare'),
   offline: 'No connection, so no comment on yours — compare it with this instead.',
   busy: 'The feedback service is busy. Compare your answer with this one.',
   timeout: 'The feedback service did not answer in time. Compare yours with this.',
@@ -335,9 +355,9 @@ const ASK_REASONS = {
 };
 
 const VERDICT_LABEL = {
-  'on-track': 'On track',
-  partly: 'Partly there',
-  'off-track': 'Not quite',
+  'on-track': ui('ui.onTrack'),
+  partly: ui('ui.partly'),
+  'off-track': ui('ui.offTrack'),
 };
 
 /**
@@ -363,13 +383,13 @@ function drawAsk(step, question) {
   field.className = 'ask__input';
   field.rows = 4;
   field.spellcheck = true;
-  field.placeholder = 'Write your answer…';
+  field.placeholder = ui('ui.writeAnswer');
 
   const submit = document.createElement('button');
 
   submit.type = 'button';
   submit.className = 'button';
-  submit.textContent = 'Submit answer';
+  submit.textContent = ui('ui.submitAnswer');
 
   const status = document.createElement('p');
 
@@ -390,14 +410,14 @@ function drawAsk(step, question) {
     }
 
     submit.disabled = true;
-    status.textContent = 'Reading it…';
+    status.textContent = ui('ui.reading');
 
     const reply = await api('/api/ask', { step: step.id, question: question.id, answer });
 
     submit.disabled = false;
 
     if (!reply?.recorded) {
-      status.textContent = 'Could not record that. Try again.';
+      status.textContent = ui('ui.answerFailed');
 
       return;
     }
@@ -418,7 +438,7 @@ function drawAsk(step, question) {
   if (answered) {
     field.disabled = true;
     submit.hidden = true;
-    status.textContent = 'Answered.';
+    status.textContent = ui('ui.answered');
   }
 
   return box;
@@ -455,14 +475,18 @@ function renderAskResult(reply) {
           )
           .join('') +
         '</ul>',
-      missed.length === 0
-        ? '<p class="ask__note">You touched every point.</p>'
-        : `<p class="ask__note">${missed.length} point${missed.length === 1 ? '' : 's'} you did not mention — worth a second look.</p>`,
+      `<p class="ask__note">${escapeHtml(
+        missed.length === 0
+          ? ui('ui.covered')
+          : missed.length === 1
+            ? ui('ui.missedOne')
+            : ui('ui.missed', { n: missed.length }),
+      )}</p>`,
     );
   }
 
   parts.push(
-    '<p class="ask__model-label">One good answer</p>',
+    `<p class="ask__model-label">${escapeHtml(ui('ui.modelAnswer'))}</p>`,
     `<p class="ask__model">${escapeHtml(reply.modelAnswer)}</p>`,
   );
 
@@ -573,7 +597,7 @@ function wireExercises(container) {
         item.dataset.state =
           Number(item.dataset.position) === i ? 'right' : 'wrong';
       });
-      status.textContent = ordered ? 'That is the order.' : '';
+      status.textContent = ordered ? ui('ui.orderCheck') : '';
       status.dataset.state = ordered ? 'right' : '';
     };
 
@@ -875,7 +899,7 @@ function drawCardNav(step, cards, index) {
 
   back.type = 'button';
   back.className = 'button button--ghost';
-  back.textContent = '← Back';
+  back.textContent = ui('ui.back');
   back.disabled = index === 0 && step.number === 1;
   back.addEventListener('click', () => {
     if (index > 0) return show(step.id, index - 1);
@@ -892,7 +916,11 @@ function drawCardNav(step, cards, index) {
   next.type = 'button';
   next.className = 'button';
   next.id = 'card-next';
-  next.textContent = last ? (nextStep ? `Next: ${nextStep.title} →` : 'Finish') : 'Next →';
+  next.textContent = last
+    ? nextStep
+      ? ui('ui.nextNamed', { title: nextStep.title })
+      : ui('ui.finish')
+    : ui('ui.next');
   next.addEventListener('click', () => {
     if (!last) return show(step.id, index + 1);
     if (nextStep) return show(nextStep.id, 0);
@@ -1010,7 +1038,7 @@ document.getElementById('open-handbook').addEventListener('click', async () => {
 
   back.type = 'button';
   back.className = 'button button--ghost';
-  back.textContent = '\u2190 Back to the step';
+  back.textContent = ui('ui.backToStep');
   back.addEventListener('click', () => show(currentId, cardPosition.get(currentId)));
 
   const nav = document.createElement('div');
@@ -1027,7 +1055,7 @@ let resetArmed = null;
 
 resetButton.addEventListener('click', async () => {
   if (resetArmed === null) {
-    resetButton.textContent = 'Really? This clears everything';
+    resetButton.textContent = ui('ui.resetReally');
     resetButton.classList.add('link-button--armed');
     resetArmed = setTimeout(disarmReset, 5000);
 
@@ -1035,17 +1063,17 @@ resetButton.addEventListener('click', async () => {
   }
 
   disarmReset();
-  resetButton.textContent = 'Starting over…';
+  resetButton.textContent = ui('ui.resetting');
 
   const result = await api('/api/reset', {});
 
   if (result?.error) {
-    resetButton.textContent = 'Could not reset — try again';
+    resetButton.textContent = ui('ui.resetFailed');
 
     return;
   }
 
-  resetButton.textContent = 'Start over';
+  resetButton.textContent = ui('ui.reset');
   cardPosition.clear();
   await loadState();
   show(state.steps[0].id, 0);
@@ -1055,7 +1083,7 @@ function disarmReset() {
   if (resetArmed !== null) clearTimeout(resetArmed);
 
   resetArmed = null;
-  resetButton.textContent = 'Start over';
+  resetButton.textContent = ui('ui.reset');
   resetButton.classList.remove('link-button--armed');
 }
 
