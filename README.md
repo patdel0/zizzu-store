@@ -15,6 +15,21 @@ Once installed, run:
 - Next.js: http://localhost:3000
 - PostgresSQL: 
 
+### API
+
+`GET`/`POST` on `/api/posts`, with a demo page at http://localhost:3000/posts.
+See [docs/api-routes.md](docs/api-routes.md) — it is the template to copy when
+adding an endpoint.
+
+### Tests
+
+``` bash
+npm test;          # Vitest — plain functions and Route Handlers
+npm run test:e2e;  # Playwright — pages and components
+```
+
+Both need Postgres running. See [docs/testing.md](docs/testing.md).
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
