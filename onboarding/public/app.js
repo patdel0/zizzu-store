@@ -864,6 +864,37 @@ function pendingFastChecks() {
  * the handler saw `false` and returned. Two clicks on the button itself work
  * everywhere, and are easier to back out of.
  */
+/**
+ * The handbook, shown in place of a card and dismissed back to where you were.
+ * It never gates anything and never advances progress — conventions and command
+ * lists are consulted, not studied.
+ */
+document.getElementById('open-handbook').addEventListener('click', async () => {
+  const { markdown } = await api('/api/reference/handbook');
+
+  contentEl.innerHTML = '';
+
+  const body = document.createElement('div');
+
+  body.innerHTML = renderMarkdown(markdown ?? '# Handbook\n\nCould not load it.');
+  contentEl.append(body);
+
+  const back = document.createElement('button');
+
+  back.type = 'button';
+  back.className = 'button button--ghost';
+  back.textContent = '\u2190 Back to the step';
+  back.addEventListener('click', () => show(currentId, cardPosition.get(currentId)));
+
+  const nav = document.createElement('div');
+
+  nav.className = 'card-nav';
+  nav.append(back);
+  contentEl.append(nav);
+  contentEl.scrollTop = 0;
+  contentEl.focus();
+});
+
 const resetButton = document.getElementById('reset');
 let resetArmed = null;
 

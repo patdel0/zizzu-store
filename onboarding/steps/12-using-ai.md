@@ -6,53 +6,28 @@ them. But there is a way of using them that leaves you knowing less each week,
 and it is the obvious way, so it is worth thirty minutes now.
 
 ===
-## What the research actually found
+## One number worth knowing
 
-About a thousand students, randomly assigned, four sessions of maths practice.
+About a thousand students, randomly assigned. The group with an ordinary AI
+assistant improved their practice scores **48%** — then scored **17% worse than
+students who never had AI at all** on an exam they sat alone.
 
-One group got a normal AI assistant — the kind that answers. Their practice
-scores went up **48%**.
+A version that gave hints instead of answers came out level with the no-AI
+group. The guardrails bought back the harm; they did not add anything.
 
-Then the assistant was taken away for an exam they sat alone. That group scored
-**17% worse than students who had never had AI at all.**
+:::why The part you cannot detect in yourself
+Motivation and enjoyment were measured and came out **unchanged**. So you will
+not notice this by feeling bad. You notice it later, sitting down to do
+something similar unaided and finding you cannot.
 
-A second group used a version with guardrails: it gave hints instead of answers.
-They came out level with the no-AI group — the guardrails bought back the harm,
-they did not add anything.
+Harvard's CS50 draws the line as an academic-honesty rule: using a general
+assistant to complete code is dishonest on their courses, while
+[their own duck](https://cs50.readthedocs.io/cs50.ai/) — built to lead toward
+answers rather than spoil them — is fine. Same model either way. The difference
+is what you ask it for.
 
-:::why Why the first group did worse than never having it
-They were not lazy, and they did not feel like they were cheating. The effect
-has a name — *metacognitive laziness* — and the studies that measured it found
-motivation and enjoyment **unchanged**.
-
-That is the uncomfortable part. You cannot detect this in yourself by noticing
-that you feel bad, because you will not. You detect it later, when you sit down
-to do something similar unaided and find you cannot.
+[Bastani et al., PNAS 2025](https://www.pnas.org/doi/10.1073/pnas.2422633122)
 :::
-
-===
-## The line CS50 draws
-
-Harvard's CS50 — the biggest introductory programming course there is — ran into
-this early and drew a sharp line.
-
-Using ChatGPT, Claude, Copilot or Gemini to suggest or complete code is
-**academically dishonest** on their courses. Using their own AI, the
-[CS50 Duck](https://cs50.readthedocs.io/cs50.ai/), is fine.
-
-The difference is not the model. It is what the tool is willing to do. Their
-duck is built to
-["behave more like a good tutor, leading students toward answers rather than
-spoiling them outright"](https://cs50.readthedocs.io/cs50.ai/) — where a general
-assistant is, in their words, "all too willing to provide outright answers".
-
-You are not a student and nobody is grading you. But the distinction is the
-useful one to carry:
-
-> **A tool that leads you to the answer makes you better. A tool that hands you
-> the answer makes you faster today and worse next month.**
-
-Same model, either way. The difference is what you ask it for.
 
 === quiz=find-the-bug
 ## The other reason to be careful

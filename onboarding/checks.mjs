@@ -397,20 +397,6 @@ export const steps = [
         explain:
           'It says what kind of change it is, which issue it belongs to, and what it touches — all readable in a list of thirty branches without opening anything. `patch-1` and `maria-work` say nothing. The third has capitals and spaces, which git allows and every command-line tool then makes you quote.',
       },
-      {
-        id: 'which-prefix',
-        prompt:
-          'You are rewriting a messy function. Same behaviour, tidier code, no bug being fixed. What prefix?',
-        options: [
-          { id: 'a', label: '`feature/` — you are changing the code' },
-          { id: 'b', label: '`fix/` — messy code is a kind of bug' },
-          { id: 'c', label: '`refactor/` — the behaviour is unchanged' },
-          { id: 'd', label: '`chore/` — nobody asked for it' },
-        ],
-        answer: 'c',
-        explain:
-          'The prefix tells a reviewer what to look for. `refactor/` says "the behaviour should be identical" — so their job is to check that nothing changed, and the existing tests should pass untouched. Calling it `feature/` would send them looking for new behaviour that is not there.',
-      },
     ],
     checks: [
       onSandboxBranch,
@@ -725,6 +711,46 @@ export const steps = [
         answer: 'b',
         explain:
           'Nothing is broken and you did nothing wrong. Git merges different parts of a file happily; it stops only when two branches edited the same lines, because picking one would mean throwing away somebody\u2019s work on a guess. It is a question, not an error.',
+      },
+    ],
+  },
+
+  {
+    id: 'javascript',
+    phase: 'Seeing how it works',
+    title: 'The JavaScript this project assumes',
+    minutes: 30,
+    quiz: [
+      {
+        id: 'what-import-does',
+        prompt:
+          'A file has `export function parsePriceCents(...)`. Another has `import { parsePriceCents } from \'@/lib/products\'`. What is the `export` for?',
+        options: [
+          { id: 'a', label: 'It makes the function public on the internet.' },
+          {
+            id: 'b',
+            label:
+              'Nothing outside a file can see anything in it unless the file offers it.',
+          },
+          { id: 'c', label: 'It is required on every function in TypeScript.' },
+          { id: 'd', label: 'It runs the function when the file loads.' },
+        ],
+        answer: 'b',
+        explain:
+          'A file is a sealed box. `export` is the file offering something outward; `import` is another file asking for it by name. That is why the failing test in a few steps says "Failed to resolve import" — you will be importing from a file that does not exist yet.',
+      },
+      {
+        id: 'destructure',
+        prompt: 'What does `const { data } = body;` do?',
+        options: [
+          { id: 'a', label: 'Copies the whole of `body` into a variable called `data`.' },
+          { id: 'b', label: 'Pulls the `data` property out of `body` into its own variable.' },
+          { id: 'c', label: 'Creates a new object containing only `data`.' },
+          { id: 'd', label: 'Checks that `body` has a `data` property.' },
+        ],
+        answer: 'b',
+        explain:
+          'It is shorthand for `const data = body.data;`. The braces are a pattern describing the shape you want out. `const [posts, setPosts] = useState(...)` is the same idea with square brackets, for arrays — which is why the two things `useState` gives back can be named whatever you like.',
       },
     ],
   },
@@ -1506,6 +1532,67 @@ export const steps = [
   },
 
   {
+    id: 'async',
+    phase: 'Seeing how it works',
+    title: 'Nothing happens immediately',
+    minutes: 35,
+    attest: [
+      {
+        id: 'saw-undefined',
+        label: 'I deleted an `await` and read what came back instead',
+      },
+    ],
+    checks: [
+      {
+        id: 'await-restored',
+        label: 'You put the `await` back',
+        async run() {
+          const dirty = await gitOut('status', '--porcelain', '--', '__tests__/api/posts.test.ts');
+
+          if (dirty === '') {
+            return { pass: true, detail: 'The test file is back as it was.' };
+          }
+
+          return {
+            pass: false,
+            detail:
+              'You still have the deleted `await` in `__tests__/api/posts.test.ts`:\n\n```\ngit restore __tests__/api/posts.test.ts\n```',
+          };
+        },
+      },
+    ],
+    quiz: [
+      {
+        id: 'forgotten-await',
+        prompt:
+          'You forget an `await` on a function that reads the database, then send the result as JSON. What does the caller receive?',
+        options: [
+          { id: 'a', label: 'An error saying you forgot to await.' },
+          { id: 'b', label: 'The data, slightly later.' },
+          { id: 'c', label: '`{}` — an empty object, with no error anywhere.' },
+          { id: 'd', label: 'The request hangs forever.' },
+        ],
+        answer: 'c',
+        explain:
+          'A promise has no properties of its own to serialise, so `JSON.stringify` on one produces `{}`. Nothing throws. This is the shape of bug that costs juniors whole afternoons: correct-looking code, a wrong answer, and nothing at all to read.',
+      },
+      {
+        id: 'what-async-returns',
+        prompt: 'What does calling an `async` function give you back?',
+        options: [
+          { id: 'a', label: 'The value it returns.' },
+          { id: 'b', label: 'A promise — a receipt you can wait on for the value.' },
+          { id: 'c', label: 'Nothing; it runs in the background.' },
+          { id: 'd', label: 'A function you call again to get the value.' },
+        ],
+        answer: 'b',
+        explain:
+          'Always a promise, even if the body returns a plain number. `await` is what turns the receipt into the thing — and it only works inside a function marked `async`, which is why you see the two words together constantly.',
+      },
+    ],
+  },
+
+  {
     id: 'what-tests-are',
     phase: 'Building a feature',
     title: 'What a test actually is',
@@ -1870,7 +1957,76 @@ export const steps = [
           'Writing the examples forced me to decide what counts as a valid price before I wrote any code — text, decimals, zero, negatives. By the time I got to the function the decisions were already made, so it was short, and I did not have to invent test cases afterwards because the examples were already the tests.',
       },
     ],
+    attest: [
+      {
+        id: 'saw-hover',
+        label: 'I hovered over `parsePriceCents` somewhere it is called and saw my own words',
+      },
+    ],
     checks: [
+      {
+        id: 'has-docblock',
+        label: '`parsePriceCents` has a docblock above it',
+        async run() {
+          const source = await read('lib/products.ts');
+
+          if (source === null) {
+            return { pass: false, detail: 'Could not read `lib/products.ts`.' };
+          }
+
+          // A `/** … */` immediately above the export, with only blank lines
+          // between — a comment three functions away is not documenting this one.
+          const pattern =
+            /\/\*\*[\s\S]*?\*\/\s*export\s+function\s+parsePriceCents/;
+
+          if (!pattern.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'No `/** … */` block directly above `export function parsePriceCents`.\n\nIt has to be `/**` with two stars — `/*` or `//` are ordinary comments and your editor will not show them on hover.',
+            };
+          }
+
+          return { pass: true, detail: 'Found it.' };
+        },
+      },
+      {
+        id: 'docblock-useful',
+        label: 'It says something the code cannot say for itself',
+        async run() {
+          const source = (await read('lib/products.ts')) ?? '';
+          const block = source.match(
+            /(\/\*\*[\s\S]*?\*\/)\s*export\s+function\s+parsePriceCents/,
+          );
+
+          if (!block) return { pass: false, detail: 'Write the docblock first.' };
+
+          const text = block[1].toLowerCase();
+          const words = block[1].replace(/[\s*/@]/g, '').length;
+
+          if (words < 90) {
+            return {
+              pass: false,
+              detail:
+                'That is very short. Say what the function is for, what a caller gets back in both cases, and one thing the code cannot explain on its own — such as why the price is in cents.',
+            };
+          }
+
+          const covers = [
+            ['what comes in', /raw|unknown|input|body|value|argument/],
+            ['what goes back', /return|ok|error|cents|result|refus/],
+          ].filter(([, pattern]) => !pattern.test(text));
+
+          if (covers.length > 0) {
+            return {
+              pass: false,
+              detail: `Your docblock does not mention **${covers.map(([name]) => name).join(' or ')}**.\n\nA reader hovering this needs both: what to hand it, and what they get back when it works and when it does not.`,
+            };
+          }
+
+          return { pass: true, detail: 'It documents what goes in and what comes back.' };
+        },
+      },
       onSandboxBranch,
       {
         id: 'prep-notes',
@@ -1978,85 +2134,6 @@ export const steps = [
             detail: `Not passing yet.${databaseHint(output)}\n\n\`\`\`\n${tail(output)}\n\`\`\``,
           };
         },
-      },
-    ],
-  },
-
-  {
-    id: 'docblock',
-    phase: 'Building a feature',
-    title: 'Write it down for the next person',
-    minutes: 25,
-    checks: [
-      onSandboxBranch,
-      {
-        id: 'has-docblock',
-        label: '`parsePriceCents` has a docblock above it',
-        async run() {
-          const source = await read('lib/products.ts');
-
-          if (source === null) {
-            return { pass: false, detail: 'Could not read `lib/products.ts`.' };
-          }
-
-          // A `/** … */` immediately above the export, with only blank lines
-          // between — a comment three functions away is not documenting this one.
-          const pattern =
-            /\/\*\*[\s\S]*?\*\/\s*export\s+function\s+parsePriceCents/;
-
-          if (!pattern.test(source)) {
-            return {
-              pass: false,
-              detail:
-                'No `/** … */` block directly above `export function parsePriceCents`.\n\nIt has to be `/**` with two stars — `/*` or `//` are ordinary comments and your editor will not show them on hover.',
-            };
-          }
-
-          return { pass: true, detail: 'Found it.' };
-        },
-      },
-      {
-        id: 'docblock-useful',
-        label: 'It says something the code cannot say for itself',
-        async run() {
-          const source = (await read('lib/products.ts')) ?? '';
-          const block = source.match(
-            /(\/\*\*[\s\S]*?\*\/)\s*export\s+function\s+parsePriceCents/,
-          );
-
-          if (!block) return { pass: false, detail: 'Write the docblock first.' };
-
-          const text = block[1].toLowerCase();
-          const words = block[1].replace(/[\s*/@]/g, '').length;
-
-          if (words < 90) {
-            return {
-              pass: false,
-              detail:
-                'That is very short. Say what the function is for, what a caller gets back in both cases, and one thing the code cannot explain on its own — such as why the price is in cents.',
-            };
-          }
-
-          const covers = [
-            ['what comes in', /raw|unknown|input|body|value|argument/],
-            ['what goes back', /return|ok|error|cents|result|refus/],
-          ].filter(([, pattern]) => !pattern.test(text));
-
-          if (covers.length > 0) {
-            return {
-              pass: false,
-              detail: `Your docblock does not mention **${covers.map(([name]) => name).join(' or ')}**.\n\nA reader hovering this needs both: what to hand it, and what they get back when it works and when it does not.`,
-            };
-          }
-
-          return { pass: true, detail: 'It documents what goes in and what comes back.' };
-        },
-      },
-    ],
-    attest: [
-      {
-        id: 'saw-hover',
-        label: 'I hovered over `parsePriceCents` somewhere it is called and saw my own words',
       },
     ],
   },

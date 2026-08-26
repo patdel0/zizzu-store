@@ -83,6 +83,25 @@ async function loadAssets(directory, prefix = '') {
 
 await loadAssets(join(here, 'public'));
 
+/**
+ * Reference pages, which are not steps.
+ *
+ * Conventions, command lists and lookup tables are consulted twenty times and
+ * read linearly once. Keeping them off the critical path is the point: course
+ * length predicts abandonment, and a reference read in sequence is length that
+ * teaches nothing.
+ */
+const reference = new Map();
+
+for (const name of await readdir(join(here, 'reference'))) {
+  if (name.endsWith('.md')) {
+    reference.set(
+      name.replace(/\.md$/, ''),
+      await readFile(join(here, 'reference', name), 'utf8'),
+    );
+  }
+}
+
 for (const name of await readdir(join(here, 'steps'))) {
   if (name.endsWith('.md')) {
     // `03-branch.md` holds the content for the step with id `branch`.
@@ -372,6 +391,14 @@ const server = createServer(async (request, response) => {
       request.on('close', () => listeners.delete(response));
 
       return;
+    }
+
+    if (request.method === 'GET' && path.startsWith('/api/reference/')) {
+      const markdown = reference.get(path.slice('/api/reference/'.length));
+
+      if (markdown === undefined) return json(response, 404, { error: 'Unknown page' });
+
+      return json(response, 200, { markdown });
     }
 
     if (request.method === 'GET' && path.startsWith('/api/content/')) {

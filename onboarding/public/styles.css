@@ -204,6 +204,29 @@ kbd {
   color: var(--faint);
 }
 
+.sidebar__reference {
+  padding: 0.5rem 1.25rem 0.75rem;
+}
+
+.reference-link {
+  width: 100%;
+  padding: 0.5rem 0.625rem;
+  border: 1px dashed var(--line);
+  border-radius: 6px;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.8125rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.reference-link:hover {
+  border-color: var(--accent);
+  border-style: solid;
+  color: var(--accent);
+}
+
 .sidebar__foot {
   padding: 1rem 1.25rem;
   border-top: 1px solid var(--line);
