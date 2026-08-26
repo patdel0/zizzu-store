@@ -91,9 +91,12 @@ recognising it and asking. There is a whole step on how to ask well.
 head. They know roughly where to look, and they look. This tutorial is trying to
 give you the "roughly where", not a memorised map.
 
-**You will not feel ready.** Not today, and not in a year — the feeling arrives
-late or not at all, and it is not information about whether you can do the work.
-Use the evidence instead: the tests pass, the check went green, someone reviewed
-it and said yes. That is what "ready" actually looks like from the inside.
+**Feeling lost never fully goes away.** Every developer feels it dropping into
+an unfamiliar codebase — on their first day, again at their next job, and again
+in the corner of this system they have not opened yet. What experience changes
+is not the feeling but how long it lasts: fundamentals let you recognise the
+shape of things faster, so the fog clears in an afternoon instead of a
+fortnight. Waiting to feel comfortable before you start is waiting for something
+that is not coming.
 
 That is the mindset. Next, get the thing running.
