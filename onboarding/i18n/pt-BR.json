@@ -433,5 +433,10 @@
   "ui.resetReally": "Tem certeza? Isso apaga tudo",
   "ui.resetting": "Recomeçando…",
   "ui.resetFailed": "Não foi possível recomeçar — tente de novo",
-  "ui.missedOne": "1 ponto que você não mencionou — vale uma segunda olhada."
+  "ui.missedOne": "1 ponto que você não mencionou — vale uma segunda olhada.",
+  "ui.runTests": "Rodar os testes",
+  "ui.running": "Rodando…",
+  "ui.answerToContinue": "Responda para continuar",
+  "ui.waitingToPass": "Esperando isto passar",
+  "ui.tickToContinue": "Marque para continuar"
 }

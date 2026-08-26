@@ -433,5 +433,10 @@
   "ui.resetReally": "Really? This clears everything",
   "ui.resetting": "Starting over…",
   "ui.resetFailed": "Could not reset — try again",
-  "ui.missedOne": "1 point you did not mention — worth a second look."
+  "ui.missedOne": "1 point you did not mention — worth a second look.",
+  "ui.runTests": "Run the tests",
+  "ui.running": "Running…",
+  "ui.answerToContinue": "Answer to continue",
+  "ui.waitingToPass": "Waiting for this to pass",
+  "ui.tickToContinue": "Tick to continue"
 }

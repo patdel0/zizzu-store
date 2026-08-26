@@ -793,7 +793,7 @@ function drawPanel(step, card) {
       button.type = 'button';
       button.className = 'button';
       button.id = 'run-checks';
-      button.textContent = 'Run the tests';
+      button.textContent = ui('ui.runTests');
       button.addEventListener('click', () => verifyCard());
       panel.append(button);
     }
@@ -818,7 +818,7 @@ async function verifyCard({ silent = false } = {}) {
 
     if (button) {
       button.disabled = true;
-      button.textContent = 'Running…';
+      button.textContent = ui('ui.running');
     }
   }
 
@@ -843,7 +843,7 @@ async function verifyCard({ silent = false } = {}) {
 
   if (button) {
     button.disabled = false;
-    button.textContent = 'Run the tests';
+    button.textContent = ui('ui.runTests');
   }
 
   drawSidebar();
@@ -961,11 +961,11 @@ function refreshCardNav() {
   if (!gated || satisfied) {
     note.textContent = '';
   } else if (currentCard.gate.quiz.length > 0) {
-    note.textContent = 'Answer to continue';
+    note.textContent = ui('ui.answerToContinue');
   } else if (currentCard.gate.check.length > 0) {
-    note.textContent = 'Waiting for this to pass';
+    note.textContent = ui('ui.waitingToPass');
   } else {
-    note.textContent = 'Tick to continue';
+    note.textContent = ui('ui.tickToContinue');
   }
 }
 
