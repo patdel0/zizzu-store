@@ -929,14 +929,20 @@ export const steps = [
         async run() {
           const source = (await read('PLAN.md')) ?? '';
           const lower = source.toLowerCase();
-          const model = lower.indexOf('model');
+          // "table" and "model" both count — the reader has not been taught the
+          // second word yet, and either one shows they got the ordering right.
+          const model = Math.min(
+            ...[lower.indexOf('model'), lower.indexOf('table'), lower.indexOf('database')]
+              .filter((at) => at !== -1),
+            Infinity,
+          );
           const page = Math.max(lower.indexOf('page'), lower.indexOf('form'));
 
-          if (model === -1) {
+          if (model === Infinity) {
             return {
               pass: false,
               detail:
-                'Nothing in your plan mentions the model. The database table has to exist before anything can read from it — that is the first task.',
+                'Nothing in your plan mentions the database, a table or a model. Somewhere to *put* a product has to exist before anything can read one back — that is the first task.',
             };
           }
 
@@ -944,11 +950,11 @@ export const steps = [
             return {
               pass: false,
               detail:
-                'Your plan puts the page before the model. Work upwards: the page needs the endpoint, and the endpoint needs the table. Building in that order means every piece has something real underneath it when you test it.',
+                'Your plan builds the page before the thing it reads from. Work upwards: the page needs an address to fetch from, and that address needs a table to read. Build it the other way round and you spend the day guessing whether any of it works.',
             };
           }
 
-          return { pass: true, detail: 'Model first, then what sits on top of it.' };
+          return { pass: true, detail: 'Storage first, then what sits on top of it.' };
         },
       },
     ],

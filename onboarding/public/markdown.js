@@ -255,11 +255,30 @@ function renderBlank(lines, heading) {
  */
 function renderOrder(lines, heading) {
   const steps = lines.filter((line) => line.trim() !== '');
-  // Shuffled deterministically, so the puzzle does not change under the reader
-  // when the page re-renders.
+
+  // Shuffled deterministically, so the puzzle does not rearrange itself under
+  // the reader when the card re-renders. Keyed on the text as well as the
+  // index, so the order is not the same shape every time — a pure arithmetic
+  // key on the index alone comes out as a plain reversal, or worse, for some
+  // lengths leaves the list already solved.
+  const hash = (text) => {
+    let h = 2166136261;
+
+    for (let i = 0; i < text.length; i += 1) {
+      h = Math.imul(h ^ text.charCodeAt(i), 16777619);
+    }
+
+    return h >>> 0;
+  };
+
   const shuffled = steps
-    .map((line, i) => ({ line, i, key: (i * 7919 + 104729) % steps.length }))
+    .map((line, i) => ({ line, i, key: hash(`${i}:${line}`) }))
     .sort((a, b) => a.key - b.key || a.i - b.i);
+
+  // A shuffle that happens to be the answer is not a puzzle.
+  if (shuffled.every((entry, i) => entry.i === i) && shuffled.length > 1) {
+    [shuffled[0], shuffled[1]] = [shuffled[1], shuffled[0]];
+  }
 
   const items = shuffled
     .map(

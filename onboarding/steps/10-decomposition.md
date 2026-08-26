@@ -1,158 +1,177 @@
-Here is the job:
+Before you build anything bigger, one skill: **taking a job that is too big to
+start and cutting it into pieces that are obvious.**
+
+You already did this once without noticing. Start there.
+
+===
+## The one you already did
+
+In step 5 you added a tagline to the home page. Written out, that job was:
+
+1. Switch to your branch
+2. Open `app/page.tsx`
+3. Add the paragraph
+4. Look at the browser to check it worked
+5. Commit it
+
+Five small things, each one you could finish and be sure about. You did not plan
+it, because it was small enough to hold in your head.
+
+The whole skill is doing that deliberately when the job is *not* small enough to
+hold in your head.
+
+:::why Why bother writing it down
+Three things it buys you, and only the first is obvious:
+
+- **You always know what to do next.** Sitting down tomorrow, the list tells you
+  where you were.
+- **You find out what you misunderstood while it is still cheap.** Writing down
+  "stop two products having the same name" makes you ask whether names have to
+  be unique — thirty seconds now, half a day after the code exists.
+- **You get to finish things.** Ticking off six small tasks feels completely
+  different from being 30% through one big one, and it shows in how much you get
+  done.
+:::
+
+===
+## What order?
+
+Some tasks have to come before others. Here are those five, jumbled. Put them
+back.
+
+:::order Put these back in a sensible order
+Switch to your branch
+Open app/page.tsx
+Add the paragraph
+Look at the browser to check it worked
+Commit it
+:::
+
+You cannot check it in the browser before you have written it, and you should
+not commit before you have checked.
+
+**That is all ordering is: each task needs the ones above it to be done already.**
+
+===
+## Now a bigger one
+
+Here is the next job:
 
 > Zizzu needs products. People should be able to see what is for sale and add
 > new items.
 
-Two sentences. Somewhere between here and there is a week of decisions, and if
-you open your editor now you will make them one at a time, in whatever order
-they happen to occur to you.
-
-So do not open your editor. The skill this step is teaching is the one that
-separates people who finish from people who thrash: **breaking a job into pieces
-small enough to be obvious.**
-
-===
-## Why it works
-
-A big task is frightening because you cannot hold it in your head. A small task
-is not frightening because you can see both ends of it.
-
-Decomposing buys three specific things:
-
-- **You find out what you misunderstood while it is still cheap.** Writing down
-  "reject a duplicate name" forces you to ask whether names have to be unique —
-  a question that costs thirty seconds now and half a day after the code exists.
-- **You always know what to do next.** Sitting down tomorrow, the list tells you
-  where you were. This matters more than it sounds.
-- **You get to finish things.** Ticking off six small tasks in a day feels
-  entirely different from being 30% through one large one, and the difference
-  shows up in how much you get done.
-
-===
-## How to do it
-
-**1. Say what "done" means, in one sentence.** If you cannot, you do not
-understand the job yet, and that is the thing to fix first.
-
-**2. Find the layers.** Almost every web feature is the same stack, and each
-layer needs the one below it:
+Too big to start. But the cut is easier than it looks, because almost every web
+feature is the same three layers:
 
 ```mermaid
 flowchart TD
-    P[Page — what a person looks at] --> A[Endpoint — how code fetches the data]
-    A --> M[Table — where the data lives]
+    P[The page a person looks at] --> A[An address that hands over the data]
+    A --> T[Somewhere to keep the data]
 ```
 
-**3. Work bottom-up.** Build the table first, then the thing that reads it, then
-the page a person looks at. Do it the other way and you spend the day building
-against things that do not exist yet, unable to check that any of it works.
+Read each arrow as "needs". The page needs the address. The address needs
+somewhere to read from.
 
-**4. Split each layer until each piece is one sitting's work.** A task is the
-right size when you could finish it, test it, and commit it — and describe it in
-a sentence without using the word "and".
+So you build them **bottom to top**: storage first, then the address, then the
+page. Do it the other way and you spend the day building against things that do
+not exist yet, with no way to tell whether any of it works.
+
+===
+## Cut each layer up
+
+One task should be one thing you could finish, check, and commit — and describe
+in a sentence without using the word "and".
+
+Take the middle layer, "an address that hands over the data". That is really two
+jobs, because reading and writing are different:
+
+- getting the list of products *out*
+- putting a new product *in*
+
+And each of those needs somebody to check it works, which is another task each.
 
 :::note The test for a good task
 After you finish it, is the project still working?
 
-"Add the Product model" passes: the table exists, nothing is broken. "Add half
-the validation" does not. Tasks that leave the project broken in the middle are
-tasks that were cut in the wrong place.
+"Make the database able to store a product" passes: the table exists, nothing is
+broken. "Do half the checking" does not. A task that leaves the project broken
+in the middle was cut in the wrong place.
 :::
 
 === check=sandbox-branch,plan-exists,plan-tasks,plan-ordered
-## Your turn
+## Write your list
 
 Make sure you are on your sandbox branch, then create a file called `PLAN.md` at
-the top of the project. Write out the products job as a checklist.
+the top of the project.
 
-Markdown checkboxes look like this, and GitHub renders them as real tick-boxes
-in an issue:
+Here is the start of it. **Copy this in, then add your own tasks underneath** —
+five or more in total.
 
 ```markdown
 # Products
 
-**Done when:** anyone can see the products list at /products and add a new one.
+**Done when:** anyone can see the products at /products and can add a new one.
 
-## Tasks
-
-- [ ] Add a `Product` model to the contract and regenerate
-- [ ] ...
+- [ ] Make the database able to store a product
+- [ ] Make an address that hands back the list of products
+- [ ] Check that it really does
 ```
 
-:::note Words you have not met yet
-The example above says "add a `Product` model to the contract". You have not
-been told what either of those is, and that is normal when planning — you can
-name a job before you know how to do it. Loosely: it means *make the database
-able to store products*. Step 12 does it properly.
+To keep going, ask yourself:
 
-Write your plan in whatever words you have. Nobody is marking the vocabulary.
-:::
-
-Write your own list before reading any further. Aim for at least five tasks, in
-the order you would do them. Think about:
-
-- What has to exist before anything else can work?
-- Reading and writing are two different jobs — should they be one task?
-- What happens when someone sends a price of `-5`? Is that a task?
+- What is still missing before someone can *add* a product?
+- What should happen if someone types a price of `-5`? Is dealing with that a task?
+- What about the page itself?
 - How does anyone know each piece works?
 
-:::warn Write yours first
-There is a worked answer below. It is worth much less to you if you read it
-before making your own attempt — the useful part is noticing the difference
-between the two lists.
+:::note You do not need the right words
+Write it in whatever language you have. "Make somewhere to keep products" is
+every bit as good as the same thing said in jargon you have not been taught yet.
+Nobody is marking the vocabulary.
 :::
 
----
-
 === quiz=too-big,why-decompose
-## One reasonable answer
+## Compare
+
+One reasonable version:
 
 ```markdown
 # Products
 
-**Done when:** anyone can see the products list at /products and add a new one.
+**Done when:** anyone can see the products at /products and can add a new one.
 
-## Tasks
-
-- [ ] Add a `Product` model to the contract, regenerate, create the table
-- [ ] Write a failing test for `GET /api/products`
-- [ ] Make it pass
-- [ ] Write a failing test for `POST /api/products` creating a product
-- [ ] Make it pass
-- [ ] Reject invalid input with 400 (missing name, bad price)
-- [ ] Reject a duplicate name with 422
-- [ ] Add the /products page listing products
-- [ ] Add the create form to the page
-- [ ] Add a browser test for the happy path
+- [ ] Make the database able to store a product
+- [ ] Make an address that hands back the list of products
+- [ ] Check that it really does
+- [ ] Make an address that accepts a new product
+- [ ] Check that it really saves one
+- [ ] Refuse bad input — no name, silly price
+- [ ] Refuse a product whose name is already taken
+- [ ] Build the /products page showing the list
+- [ ] Add the form for adding one
+- [ ] Check the whole thing in a browser
 ```
 
-Ten tasks. Notice what it does:
+Yours will not match, and does not need to. What is worth noticing:
 
-- **The model is first.** Everything else needs it.
-- **Read and write are separate.** Both are endpoints on the same file, but they
-  are different jobs and different tests, and doing them separately means each
-  one is finished before the next begins.
-- **Validation is its own task, not an afterthought.** Because it was on the
-  list, it will get done. Things that are not on the list get discovered at
-  review.
-- **Every task leaves the project working.** You could stop after any line and
-  the app still runs.
-- **Tests are not a task at the end.** They are half the lines, sitting next to
-  the thing they test.
+- **Storage is first.** Everything else needs it.
+- **Reading and writing are separate.** Different jobs, different checks.
+- **Refusing bad input is its own task.** Because it is on the list, it will get
+  done. Things not on the list get found by somebody else, later.
+- **Checking is half the lines**, sitting next to the thing being checked —
+  not saved up for the end.
 
-Your list will not match this one, and does not need to. Compare them and ask
-what each of you noticed that the other did not — that comparison *is* the
-exercise.
+Compare the two and ask what each of you spotted that the other did not. That
+comparison *is* the exercise.
 
 :::try
-Save your `PLAN.md`, then commit it:
+Commit your plan:
 
 ```bash
 git add PLAN.md
-git commit -m "Add a plan for the products feature"
+git commit -m "Add a plan for products"
 ```
 
-You will tick these off as you go. In real work this list lives in the GitHub
-issue instead, where the rest of the team can see it — you will meet that in
-step 19.
+You will tick these off as you go. In real work this list lives in the issue,
+where the team can see it — that comes in step 18.
 :::
