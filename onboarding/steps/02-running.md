@@ -7,7 +7,7 @@ and the database; Node runs the tests and the tooling from your own terminal.
 - Docker: [docs.docker.com/get-started/get-docker](https://docs.docker.com/get-started/get-docker/)
 - Node.js 20 or newer: [nodejs.org](https://nodejs.org)
 
-=== check=env,node-modules
+=== check=fixtures
 ## Set up
 
 In the project folder:

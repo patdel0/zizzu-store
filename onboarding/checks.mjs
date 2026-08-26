@@ -125,6 +125,41 @@ export const steps = [
     minutes: 20,
     checks: [
       {
+        id: 'fixtures',
+        label: 'This repository is set up for the tutorial',
+        async run() {
+          // The tutorial teaches from the `posts` feature and the test suite.
+          // If those are not committed, nothing downstream can work — and the
+          // failures land much later, looking like the reader's own mistakes.
+          const required = [
+            '.env.example',
+            'vitest.config.mts',
+            'playwright.config.ts',
+            'test/helpers.ts',
+            'test/database-url.ts',
+            '__tests__/api/posts.test.ts',
+            'e2e/posts.spec.ts',
+            'app/posts/page.tsx',
+            'app/posts/posts-board.tsx',
+            'app/api/posts/route.ts',
+          ];
+          const missing = [];
+
+          for (const path of required) {
+            if (!(await exists(path))) missing.push(path);
+          }
+
+          if (missing.length === 0) {
+            return { pass: true, detail: 'Everything this tutorial teaches from is here.' };
+          }
+
+          return {
+            pass: false,
+            detail: `This is not your fault, and nothing you do will fix it.\n\nThe tutorial teaches from the \`posts\` feature and the test suite, and this checkout does not have them:\n\n\`\`\`\n${missing.join('\n')}\n\`\`\`\n\nGo back to whoever set this up and tell them these files are missing from \`main\`. Stop here until they are — every step after this one depends on them.`,
+          };
+        },
+      },
+      {
         id: 'env',
         label: '`.env` exists',
         async run() {
