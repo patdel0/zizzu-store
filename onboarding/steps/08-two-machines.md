@@ -5,6 +5,7 @@ which is which.
 Rather than take that on trust, prove it. This step is one experiment, and it
 has a result you can see.
 
+=== check=server-log,browser-log
 ## Add two log lines
 
 `console.log(...)` prints a message. Where it prints is the entire point.
@@ -32,6 +33,7 @@ useEffect(() => {
 Do not worry about what `useEffect` is yet — you are only putting a line inside
 it. It comes up properly in the next step.
 
+===
 ## Open two windows
 
 You need to be able to see both at once:
@@ -45,6 +47,7 @@ docker compose logs -f app
 **The browser's output.** In your browser's developer tools, the **Console**
 tab.
 
+=== attest=saw-split quiz=where-logged
 ## Now reload
 
 Reload [localhost:3000/posts](http://localhost:3000/posts) and watch both.
@@ -53,6 +56,7 @@ Reload [localhost:3000/posts](http://localhost:3000/posts) and watch both.
 - `[browser]` appears **in the browser console**.
 - Neither one appears in the other.
 
+=== attest=found-source quiz=why-secret
 ## What you just proved
 
 `console.log` prints wherever it runs. These two lines are in the same folder,
@@ -86,6 +90,7 @@ that needs data has to *ask* the server for it — which is what `fetch('/api/po
 near the top of its `useEffect` is doing.
 :::
 
+===
 ## Leave the logs in for now
 
 The next step uses the same two files. You will clean up at the end of it.

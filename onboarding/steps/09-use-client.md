@@ -10,6 +10,7 @@ Look at the very first line of `app/posts/posts-board.tsx`:
 That is the whole mechanism. One line, [with a page of documentation to
 itself](https://react.dev/reference/rsc/use-client).
 
+=== check=counter
 ## Experiment 1: build something that needs the browser
 
 The clearest way to feel the difference is to add something that could only
@@ -37,6 +38,7 @@ Then, just above the closing `</div>` at the end of the component, add a button:
 
 Save, reload the page, and click it a few times. The number goes up.
 
+===
 ### What that line actually did
 
 ```tsx
@@ -79,6 +81,7 @@ posts is exactly that kind of work.
 Take the extra log out again when you have seen it.
 :::
 
+=== check=use-client-intact attest=removed-marker
 ## Experiment 2: take the marker away
 
 Now delete the `'use client';` line from the top of `posts-board.tsx`. Save.
@@ -96,6 +99,7 @@ number or hear a button.
 
 **Put the line back.** The page does not work without it.
 
+=== check=page-clean attest=state-on-server
 ## Experiment 3: the same thing, from the other side
 
 Now try it the other way round. In `app/posts/page.tsx` — the Server Component,
@@ -112,6 +116,7 @@ Reload. Same class of error, arriving from the opposite direction.
 
 **Take it back out.** The check below will tell you if you have left it in.
 
+=== quiz=what-marker-does,which-to-use
 ## What each side gives up
 
 | | Server Component | Client Component (`'use client'`) |
@@ -139,6 +144,7 @@ a form that adds to a list, a filter, a button that does something. That is the
 posts page, which is why it is built this way.
 :::
 
+===
 ## Tidy up
 
 Run the check while your counter is still in place. Then throw away everything

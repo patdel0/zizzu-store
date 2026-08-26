@@ -1,6 +1,7 @@
 You have built a feature. On a real team you would not have started until the
 work was written down and claimed, so let us do that part properly now.
 
+===
 ## Issues
 
 An **[issue](https://docs.github.com/en/issues)** is one piece of work: a bug, a feature, a question. It has a title,
@@ -13,6 +14,7 @@ decision was made.
 
 The issue is where the *why* lives. The code only ever shows the *what*.
 
+===
 ## The board
 
 The **[project board](https://docs.github.com/en/issues/planning-and-tracking-with-projects)** is every issue as a card in a column:
@@ -42,6 +44,7 @@ someone. That is its entire job.
 "To do" that you have been working on all week means someone else may pick it
 up, and your standup update is wrong before you have given it.
 
+=== attest=assigned,in-progress,commented
 ## Claiming work
 
 1. Find an issue in **To do** that is not assigned to anyone.
@@ -57,6 +60,7 @@ alternative is finding out in review, after two days of work.
 > Going to add a `Product` model and a `GET`/`POST /api/products` following the
 > pattern in `posts`. Shout if the price should be decimal rather than cents.
 
+===
 ## Branch names
 
 Name your branch after the work, and mention the issue number:
@@ -70,6 +74,7 @@ Then anyone looking at your branch knows what it is for and where the discussion
 is. (For this tutorial you are on `sandbox/your-name` — real work gets a real
 name.)
 
+=== quiz=stuck
 ## Asking for help
 
 You will get stuck. Everyone does, every week. The only mistake is being stuck

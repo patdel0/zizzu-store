@@ -15,6 +15,7 @@ const progressLabel = document.getElementById('progress-label');
 
 let state = null;
 let currentId = null;
+let currentCard = null;
 const markdownCache = new Map();
 
 // ------------------------------------------------------------------ diagrams
@@ -134,51 +135,87 @@ function drawSidebar() {
 
 // --------------------------------------------------------------------- step
 
-async function markdownFor(id) {
+async function cardsFor(id) {
   if (!markdownCache.has(id)) {
-    const { markdown } = await api(`/api/content/${id}`);
+    const { cards } = await api(`/api/content/${id}`);
 
-    markdownCache.set(id, markdown);
+    markdownCache.set(id, cards);
   }
 
   return markdownCache.get(id);
 }
 
-async function show(id) {
+/** The card the reader is on, per step, so going back to a step resumes it. */
+const cardPosition = new Map();
+
+async function show(id, cardIndex) {
   currentId = id;
-  location.hash = id;
 
   const step = stepById(id);
-  const markdown = await markdownFor(id);
+  const cards = await cardsFor(id);
+  const index = Math.min(
+    Math.max(cardIndex ?? cardPosition.get(id) ?? 0, 0),
+    cards.length - 1,
+  );
+
+  cardPosition.set(id, index);
+  location.hash = index === 0 ? id : `${id}/${index + 1}`;
+  currentCard = cards[index];
+
+  const card = cards[index];
 
   contentEl.innerHTML = '';
 
   const header = document.createElement('div');
 
   header.innerHTML =
-    `<p class="eyebrow">${escapeHtml(step.phase)}</p>` +
+    `<p class="eyebrow">${escapeHtml(step.phase)} · Step ${step.number} of ${state.steps.length}</p>` +
     `<h1>${escapeHtml(step.title)}</h1>` +
-    `<p class="meta">Step ${step.number} of ${state.steps.length} · about ${step.minutes} minutes</p>`;
+    `<div class="pips" role="img" aria-label="Card ${index + 1} of ${cards.length}">` +
+    cards
+      .map((_, i) => `<span class="pip${i === index ? ' pip--now' : i < index ? ' pip--done' : ''}"></span>`)
+      .join('') +
+    `<span class="pips__label">${index + 1} / ${cards.length}</span>` +
+    '</div>';
   contentEl.append(header);
 
   const body = document.createElement('div');
 
-  body.innerHTML = renderMarkdown(markdown);
+  body.innerHTML = renderMarkdown(card.markdown);
   contentEl.append(body);
   drawDiagrams(body);
 
-  for (const question of step.quiz) {
-    contentEl.append(drawQuestion(step, question));
+  // Only this card's gates are shown, so a failure points at the instruction
+  // immediately above it.
+  for (const questionId of card.gate.quiz) {
+    const question = step.quiz.find((q) => q.id === questionId);
+
+    if (question) contentEl.append(drawQuestion(step, question));
   }
 
-  if (step.checks.length > 0 || step.attest.length > 0) {
-    contentEl.append(drawPanel(step));
+  if (card.gate.check.length > 0 || card.gate.attest.length > 0) {
+    contentEl.append(drawPanel(step, card));
   }
 
-  contentEl.append(drawFooterNav(step));
+  contentEl.append(drawCardNav(step, cards, index));
   drawSidebar();
   contentEl.scrollTop = 0;
   contentEl.focus();
+
+  // A card whose checks are unmet is worth verifying on arrival: the reader may
+  // have already done it, and being told so immediately beats a stale prompt.
+  if (card.gate.check.length > 0) verifyCard({ silent: true });
+}
+
+/** True when everything this card gates on has passed. */
+function cardSatisfied(step, card) {
+  const results = state.progress.steps[step.id]?.lastResults ?? [];
+
+  return (
+    card.gate.check.every((id) => results.find((r) => r.id === id)?.pass === true) &&
+    card.gate.quiz.every((id) => state.progress.quiz[`${step.id}.${id}`] === true) &&
+    card.gate.attest.every((id) => state.progress.attest[`${step.id}.${id}`] === true)
+  );
 }
 
 // --------------------------------------------------------------------- quiz
@@ -230,7 +267,7 @@ function drawQuestion(step, question) {
           complete: result.complete,
         };
         drawSidebar();
-        refreshPanelStatus(step);
+        refreshCardNav();
       }
     });
 
@@ -257,28 +294,31 @@ function renderInlineSafe(text) {
 
 // ------------------------------------------------------------------- checks
 
-function drawPanel(step) {
+function drawPanel(step, card) {
   const panel = document.createElement('section');
 
   panel.className = 'panel';
   panel.id = 'panel';
 
-  const hasChecks = step.checks.length > 0;
+  const checks = step.checks.filter((c) => card.gate.check.includes(c.id));
+  const attests = step.attest.filter((a) => card.gate.attest.includes(a.id));
+  const slow = checks.some((c) => c.slow);
 
   panel.innerHTML =
-    '<h2 class="panel__title">Check your work</h2>' +
     `<p class="panel__hint">${
-      hasChecks
-        ? 'This runs against your actual repository — your branch, your files, your tests.'
-        : 'Tick these off once you have really done them. Nothing here can be checked automatically.'
+      checks.length > 0
+        ? slow
+          ? 'Checked against your repository. This one runs your tests, so it takes a minute.'
+          : 'Checked against your repository, automatically, as you save.'
+        : 'Tick these off once you have really done them.'
     }</p>`;
 
-  if (step.attest.length > 0) {
+  if (attests.length > 0) {
     const list = document.createElement('ul');
 
     list.className = 'attest';
 
-    for (const item of step.attest) {
+    for (const item of attests) {
       const li = document.createElement('li');
       const label = document.createElement('label');
       const input = document.createElement('input');
@@ -286,19 +326,10 @@ function drawPanel(step) {
       input.type = 'checkbox';
       input.checked = state.progress.attest[`${step.id}.${item.id}`] === true;
       input.addEventListener('change', async () => {
-        const result = await api('/api/attest', {
-          step: step.id,
-          item: item.id,
-          value: input.checked,
-        });
-
+        await api('/api/attest', { step: step.id, item: item.id, value: input.checked });
         state.progress.attest[`${step.id}.${item.id}`] = input.checked;
-        state.progress.steps[step.id] = {
-          ...state.progress.steps[step.id],
-          complete: result.complete,
-        };
         drawSidebar();
-        refreshPanelStatus(step);
+        refreshCardNav();
       });
 
       const text = document.createElement('span');
@@ -315,86 +346,84 @@ function drawPanel(step) {
     panel.append(list);
   }
 
-  if (hasChecks) {
+  if (checks.length > 0) {
     const list = document.createElement('ul');
 
     list.className = 'check-list';
     list.id = 'check-list';
-
-    const previous = state.progress.steps[step.id]?.lastResults;
-
-    drawCheckResults(list, step, previous);
+    drawCheckResults(list, checks, state.progress.steps[step.id]?.lastResults ?? null);
     panel.append(list);
+
+    // Fast checks re-run on their own when a file changes, so only the slow
+    // ones — the ones that shell out to `npm test` — need asking for.
+    if (slow) {
+      const button = document.createElement('button');
+
+      button.type = 'button';
+      button.className = 'button';
+      button.id = 'run-checks';
+      button.textContent = 'Run the tests';
+      button.addEventListener('click', () => verifyCard());
+      panel.append(button);
+    }
   }
-
-  const actions = document.createElement('div');
-
-  actions.className = 'actions';
-
-  if (hasChecks) {
-    const runButton = document.createElement('button');
-
-    runButton.type = 'button';
-    runButton.className = 'button';
-    runButton.textContent = 'Check my work';
-
-    const status = document.createElement('span');
-
-    status.className = 'status';
-    status.id = 'panel-status';
-
-    runButton.addEventListener('click', async () => {
-      runButton.disabled = true;
-      runButton.textContent = 'Checking…';
-
-      const slow = step.checks.some((check) => check.slow);
-
-      status.textContent = slow
-        ? 'Running your tests. This takes a minute or so.'
-        : 'Looking…';
-
-      const list = document.getElementById('check-list');
-
-      drawCheckResults(list, step, null, { running: true });
-
-      try {
-        const result = await api('/api/check', { step: step.id });
-
-        drawCheckResults(list, step, result.results);
-        state.progress.steps[step.id] = {
-          checksPassed: result.results.every((entry) => entry.pass),
-          lastResults: result.results,
-          complete: result.complete,
-        };
-        drawSidebar();
-      } finally {
-        runButton.disabled = false;
-        runButton.textContent = 'Check my work';
-        refreshPanelStatus(step);
-      }
-    });
-
-    actions.append(runButton, status);
-  } else {
-    const status = document.createElement('span');
-
-    status.className = 'status';
-    status.id = 'panel-status';
-    actions.append(status);
-  }
-
-  panel.append(actions);
-  queueMicrotask(() => refreshPanelStatus(step));
 
   return panel;
 }
 
-function drawCheckResults(list, step, results, { running = false } = {}) {
+/** Runs the current card's checks and repaints the panel. */
+async function verifyCard({ silent = false } = {}) {
+  const step = stepById(currentId);
+  const card = currentCard;
+
+  if (!step || !card || card.gate.check.length === 0) return;
+
+  const checks = step.checks.filter((c) => card.gate.check.includes(c.id));
+  const list = document.getElementById('check-list');
+  const button = document.getElementById('run-checks');
+
+  if (!silent) {
+    drawCheckResults(list, checks, null, { running: true });
+
+    if (button) {
+      button.disabled = true;
+      button.textContent = 'Running…';
+    }
+  }
+
+  const result = await api('/api/check', { step: step.id, only: card.gate.check });
+
+  // Merge into what we already knew, so other cards' results survive.
+  const previous = state.progress.steps[step.id]?.lastResults ?? [];
+
+  state.progress.steps[step.id] = {
+    ...state.progress.steps[step.id],
+    lastResults: [
+      ...previous.filter((r) => !result.results.some((n) => n.id === r.id)),
+      ...result.results,
+    ],
+    complete: result.complete,
+  };
+
+  if (currentCard === card) {
+    drawCheckResults(list, checks, result.results);
+    refreshCardNav();
+  }
+
+  if (button) {
+    button.disabled = false;
+    button.textContent = 'Run the tests';
+  }
+
+  drawSidebar();
+}
+
+function drawCheckResults(list, checks, results, { running = false } = {}) {
   if (!list) return;
 
   list.innerHTML = '';
 
-  for (const check of step.checks) {
+  for (const check of checks) {
     const result = results?.find((entry) => entry.id === check.id);
     const status = running
       ? 'running'
@@ -412,10 +441,10 @@ function drawCheckResults(list, step, results, { running = false } = {}) {
       '<div class="check__head">' +
       `<span class="check__icon" aria-hidden="true">${icon}</span>` +
       `<span>${renderInlineSafe(check.label)}</span>` +
-      (check.slow && status !== 'pass' ? '<span class="check__slow">slow</span>' : '') +
       '</div>';
 
-    if (result?.detail) {
+    // A passing check does not need to explain itself at length.
+    if (result?.detail && !result.pass) {
       const detail = document.createElement('div');
 
       detail.className = 'check__detail';
@@ -427,93 +456,161 @@ function drawCheckResults(list, step, results, { running = false } = {}) {
   }
 }
 
-function refreshPanelStatus(step) {
-  const status = document.getElementById('panel-status');
+// --------------------------------------------------------------------- cards
 
-  if (!status) return;
-
-  if (isDone(step.id)) {
-    status.textContent = 'Step complete.';
-    status.className = 'status status--done';
-
-    return;
-  }
-
-  const outstanding = [];
-  const progress = state.progress;
-
-  if (step.checks.length > 0 && progress.steps[step.id]?.checksPassed !== true) {
-    outstanding.push('checks');
-  }
-
-  const quizLeft = step.quiz.filter(
-    (question) => progress.quiz[`${step.id}.${question.id}`] !== true,
-  ).length;
-
-  if (quizLeft > 0) outstanding.push(`${quizLeft} question${quizLeft === 1 ? '' : 's'}`);
-
-  const attestLeft = step.attest.filter(
-    (item) => progress.attest[`${step.id}.${item.id}`] !== true,
-  ).length;
-
-  if (attestLeft > 0) outstanding.push(`${attestLeft} to confirm`);
-
-  status.className = 'status';
-  status.textContent = outstanding.length > 0 ? `Still open: ${outstanding.join(', ')}.` : '';
-}
-
-// --------------------------------------------------------------------- nav
-
-function drawFooterNav(step) {
+function drawCardNav(step, cards, index) {
   const nav = document.createElement('div');
 
-  nav.className = 'footer-nav';
+  nav.className = 'card-nav';
+  nav.id = 'card-nav';
 
-  const index = state.steps.findIndex((entry) => entry.id === step.id);
-  const previous = state.steps[index - 1];
-  const next = state.steps[index + 1];
+  const back = document.createElement('button');
 
-  for (const [target, label, align] of [
-    [previous, previous ? `← ${previous.title}` : null, 'left'],
-    [next, next ? `${next.title} →` : null, 'right'],
-  ]) {
-    const slot = document.createElement('div');
+  back.type = 'button';
+  back.className = 'button button--ghost';
+  back.textContent = '← Back';
+  back.disabled = index === 0 && step.number === 1;
+  back.addEventListener('click', () => {
+    if (index > 0) return show(step.id, index - 1);
 
-    if (target) {
-      const button = document.createElement('button');
+    const previous = state.steps[step.number - 2];
 
-      button.type = 'button';
-      button.className = 'button button--ghost';
-      button.textContent = label;
-      button.addEventListener('click', () => show(target.id));
-      slot.append(button);
-    }
+    if (previous) show(previous.id, Number.MAX_SAFE_INTEGER);
+  });
 
-    slot.style.textAlign = align;
-    nav.append(slot);
-  }
+  const next = document.createElement('button');
+  const last = index === cards.length - 1;
+  const nextStep = state.steps[step.number];
+
+  next.type = 'button';
+  next.className = 'button';
+  next.id = 'card-next';
+  next.textContent = last ? (nextStep ? `Next: ${nextStep.title} →` : 'Finish') : 'Next →';
+  next.addEventListener('click', () => {
+    if (!last) return show(step.id, index + 1);
+    if (nextStep) return show(nextStep.id, 0);
+  });
+
+  const note = document.createElement('span');
+
+  note.className = 'card-nav__note';
+  note.id = 'card-nav-note';
+
+  nav.append(back, note, next);
+  queueMicrotask(refreshCardNav);
 
   return nav;
+}
+
+/** Enables or disables `Next` according to whether the card's gate is met. */
+function refreshCardNav() {
+  const next = document.getElementById('card-next');
+  const note = document.getElementById('card-nav-note');
+  const step = stepById(currentId);
+
+  if (!next || !step || !currentCard) return;
+
+  const satisfied = cardSatisfied(step, currentCard);
+  const gated =
+    currentCard.gate.check.length +
+    currentCard.gate.quiz.length +
+    currentCard.gate.attest.length >
+    0;
+
+  next.disabled = gated && !satisfied;
+
+  if (!gated || satisfied) {
+    note.textContent = '';
+  } else if (currentCard.gate.quiz.length > 0) {
+    note.textContent = 'Answer to continue';
+  } else if (currentCard.gate.check.length > 0) {
+    note.textContent = 'Waiting for this to pass';
+  } else {
+    note.textContent = 'Tick to continue';
+  }
+}
+
+// ------------------------------------------------------- live file watching
+
+/**
+ * The server pushes a line whenever anything a check reads changes, and the
+ * current card re-verifies itself. Saving in the editor is enough; there is
+ * nothing to press.
+ */
+function listenForChanges() {
+  const events = new EventSource('/api/events');
+
+  events.addEventListener('message', () => {
+    if (pendingFastChecks()) verifyCard({ silent: true });
+  });
+
+  events.addEventListener('error', () => {
+    // EventSource reconnects on its own; nothing to do.
+  });
+
+  // Watching files is not enough on its own. Some checks read things no file
+  // watcher sees — `git config --global` writes outside the repo, `app-up`
+  // makes an HTTP request, `db-up` opens a socket. Polling while a card is
+  // unsatisfied means no card can ever dead-end waiting for an event that is
+  // never coming.
+  setInterval(() => {
+    if (document.hidden) return;
+    if (pendingFastChecks()) verifyCard({ silent: true });
+  }, 3000);
+}
+
+/** True when the current card is waiting on checks that are cheap to re-run. */
+function pendingFastChecks() {
+  const step = stepById(currentId);
+
+  if (!step || !currentCard || currentCard.gate.check.length === 0) return false;
+  if (cardSatisfied(step, currentCard)) return false;
+
+  const checks = step.checks.filter((c) => currentCard.gate.check.includes(c.id));
+
+  // Never fire `npm test` off a timer or a keystroke.
+  return checks.length > 0 && !checks.some((c) => c.slow);
 }
 
 document.getElementById('reset').addEventListener('click', async () => {
   if (!confirm('Clear all your tutorial progress and start from step 1?')) return;
 
   await api('/api/reset', {});
+  cardPosition.clear();
   await loadState();
-  show(state.steps[0].id);
+  show(state.steps[0].id, 0);
 });
 
-window.addEventListener('hashchange', () => {
-  const id = location.hash.slice(1);
+/** `#step` or `#step/3` — the card number in the URL is 1-based. */
+function fromHash() {
+  const [id, card] = location.hash.slice(1).split('/');
 
-  if (id && id !== currentId && stepById(id)) show(id);
+  return { id, index: card ? Number(card) - 1 : undefined };
+}
+
+window.addEventListener('hashchange', () => {
+  const { id, index } = fromHash();
+
+  if (!id || !stepById(id)) return;
+  if (id === currentId && index === cardPosition.get(id)) return;
+
+  show(id, index);
+});
+
+// Left and right arrows page through cards, as long as the reader is not typing.
+document.addEventListener('keydown', (event) => {
+  if (event.metaKey || event.ctrlKey || event.altKey) return;
+  if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName ?? '')) return;
+
+  if (event.key === 'ArrowRight') document.getElementById('card-next')?.click();
+  if (event.key === 'ArrowLeft') document.querySelector('.card-nav .button--ghost')?.click();
 });
 
 await loadState();
+listenForChanges();
 
+const target = fromHash();
 // Resume where the trainee left off: the first step that is not finished.
-const fromHash = location.hash.slice(1);
 const firstOpen = state.steps.find((step) => !isDone(step.id)) ?? state.steps[0];
 
-show(stepById(fromHash) ? fromHash : firstOpen.id);
+show(stepById(target.id) ? target.id : firstOpen.id, target.index);

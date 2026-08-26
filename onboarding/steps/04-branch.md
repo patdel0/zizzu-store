@@ -1,5 +1,6 @@
 Everything from here happens on a branch of your own.
 
+===
 ## What git is actually doing
 
 [Git](https://git-scm.com/docs) records your project's history as a series of snapshots called **commits**.
@@ -23,6 +24,7 @@ gitGraph
 Nothing you commit on your branch can affect anyone else until it is merged.
 That is the whole reason branches exist: you get to be wrong in private.
 
+=== check=sandbox-branch,from-main
 ## Make yours
 
 ```bash
@@ -45,6 +47,7 @@ and git will not let you have a branch called `onboarding` *and* a branch called
 folder.
 :::
 
+===
 ## Commands you will use constantly
 
 | Command | What it tells you |

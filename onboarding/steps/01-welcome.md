@@ -6,6 +6,7 @@ So it starts at the beginning: what a server is, what happens when you open a
 website, what an API is, what a database is for. Only then does it touch this
 project's code.
 
+===
 ## What you will end up doing
 
 By the end you will have added a working feature to a real codebase — a
@@ -17,6 +18,7 @@ Expect two days, and longer is common — the estimates on each step assume you
 are not stopping to understand anything, which you should be. There is no prize
 for rushing, and nobody is timing you.
 
+=== quiz=sandbox
 ## Nothing you do here counts
 
 You will work on your own throwaway branch, and at the end you will close your
@@ -32,6 +34,7 @@ nothing, asking permission for everything. Delete things. See what happens.
 tells you how to undo it. Nothing in this tutorial is one-way.
 :::
 
+===
 ## How it works
 
 Each step explains an idea, asks you to do something in your editor and your
@@ -54,6 +57,7 @@ Your progress is saved outside the project, so closing the browser tab, or your
 laptop, loses nothing.
 :::
 
+===
 ## What you will be using
 
 You do not need to know these. You need to know they exist, so that when one
@@ -76,6 +80,7 @@ stops and a real question starts.
 
 Each one is introduced where you first need it, not before.
 
+===
 ## Two things worth knowing up front
 
 **Being stuck is the job.** Not a phase you get through. People with twenty

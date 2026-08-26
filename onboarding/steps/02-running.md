@@ -7,6 +7,7 @@ and the database; Node runs the tests and the tooling from your own terminal.
 - Docker: [docs.docker.com/get-started/get-docker](https://docs.docker.com/get-started/get-docker/)
 - Node.js 20 or newer: [nodejs.org](https://nodejs.org)
 
+=== check=env,node-modules
 ## Set up
 
 In the project folder:
@@ -20,6 +21,7 @@ settings that differ per machine — database passwords, that sort of thing. It 
 deliberately never committed, which is why there is an `.env.example` to copy
 from.
 
+=== check=app-up
 ## Start it
 
 ```bash
@@ -37,6 +39,7 @@ everyone on the team gets the same version. `docker compose` starts them
 together.
 :::
 
+=== check=db-up,suite-green
 ## Run the tests
 
 ```bash
@@ -53,6 +56,7 @@ database must never be the one you are developing against. That is why `.env`
 has both `DATABASE_URL` and `TEST_DATABASE_URL`.
 :::
 
+===
 ## When something goes wrong
 
 | What you see | What it means |

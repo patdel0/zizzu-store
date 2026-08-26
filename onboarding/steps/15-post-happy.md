@@ -4,6 +4,7 @@ This step does only the happy path: a valid product goes in, a **201** comes
 back. The next one deals with everything that can go wrong, which is most of the
 work.
 
+=== check=sandbox-branch,asserts-201
 ## What POST looks like in a test
 
 A POST request carries a body. `test/request.ts` builds one for you:
@@ -45,6 +46,7 @@ Write it, run it, watch it fail:
 npm test -- __tests__/api/products.test.ts
 ```
 
+=== check=post-exported,green
 ## Make it pass
 
 Add a `POST` export next to your `GET`:
@@ -75,6 +77,7 @@ Leave it like this for now. Fixing it is the next step, and doing it in that
 order is the point: you have a working thing, and now you make it correct.
 :::
 
+===
 ## Prove it really saved
 
 One test worth writing now, because it catches a whole class of fake

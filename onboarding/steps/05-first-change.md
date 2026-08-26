@@ -3,6 +3,7 @@ Time to change something and watch it appear in the browser.
 Open `app/page.tsx`. That is the home page — the thing at
 [localhost:3000](http://localhost:3000).
 
+===
 ## Why *that* file is the home page
 
 Before you edit it, one rule that will save you a lot of hunting. In
@@ -36,6 +37,7 @@ wrong on `/posts`? The file is `app/posts/page.tsx`. It is the fastest way to
 get from a URL to the code behind it.
 :::
 
+===
 ## This is not quite HTML
 
 What you see inside the `return (...)` looks like HTML, and mostly behaves like
@@ -49,6 +51,7 @@ into real elements. Three differences will trip you up:
 
 Everything else — `<h1>`, `<p>`, `<a href>` — is exactly what you already know.
 
+===
 ## And the styling is not quite CSS
 
 There is no stylesheet with rules in it. Instead each class does one small
@@ -79,6 +82,7 @@ A few patterns worth recognising as you read:
 Those last two are why some class lists get long: one element is describing how
 it looks in several situations at once.
 
+=== check=sandbox-branch,heading,tagline,served
 ## Your change
 
 In `app/page.tsx`:

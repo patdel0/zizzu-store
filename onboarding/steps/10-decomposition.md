@@ -11,6 +11,7 @@ So do not open your editor. The skill this step is teaching is the one that
 separates people who finish from people who thrash: **breaking a job into pieces
 small enough to be obvious.**
 
+===
 ## Why it works
 
 A big task is frightening because you cannot hold it in your head. A small task
@@ -27,6 +28,7 @@ Decomposing buys three specific things:
   entirely different from being 30% through one large one, and the difference
   shows up in how much you get done.
 
+===
 ## How to do it
 
 **1. Say what "done" means, in one sentence.** If you cannot, you do not
@@ -58,6 +60,7 @@ the validation" does not. Tasks that leave the project broken in the middle are
 tasks that were cut in the wrong place.
 :::
 
+=== check=sandbox-branch,plan-exists,plan-tasks,plan-ordered
 ## Your turn
 
 Make sure you are on your sandbox branch, then create a file called `PLAN.md` at
@@ -71,6 +74,7 @@ in an issue:
 
 **Done when:** anyone can see the products list at /products and add a new one.
 
+===
 ## Tasks
 
 - [ ] Add a `Product` model to the contract and regenerate
@@ -93,6 +97,7 @@ between the two lists.
 
 ---
 
+=== quiz=too-big,why-decompose
 ## One reasonable answer
 
 ```markdown
@@ -100,6 +105,7 @@ between the two lists.
 
 **Done when:** anyone can see the products list at /products and add a new one.
 
+===
 ## Tasks
 
 - [ ] Add a `Product` model to the contract, regenerate, create the table

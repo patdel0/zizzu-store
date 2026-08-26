@@ -2,6 +2,7 @@ Now make it pass. The rule for this step: **write the simplest thing that turns
 the test green.** Not the endpoint you imagine you will need. The one the test
 asks for.
 
+=== check=sandbox-branch,route-exists,runtime,green
 ## The file
 
 Create `app/api/products/route.ts`:
@@ -39,6 +40,7 @@ npm test -- __tests__/api/products.test.ts
 
 Green.
 
+===
 ## What each part is doing
 
 **`export async function GET`** — the name is the HTTP method. Next.js looks for
@@ -77,6 +79,7 @@ explains the reasoning: some branches cost more to test than they are worth, and
 saying so out loud is better than pretending the gap is not there.
 :::
 
+=== check=order quiz=envelope
 ## Now commit — separately
 
 The test is already committed. Commit the route as its own change, so the
@@ -96,6 +99,7 @@ Then `git restore --staged app/api/products/route.ts`, commit the test, and
 commit the route. The check below will tell you if the order is wrong.
 :::
 
+===
 ## Try it for real
 
 ```bash

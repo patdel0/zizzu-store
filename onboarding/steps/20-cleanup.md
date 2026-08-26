@@ -1,6 +1,7 @@
 Last step. Close the loop, put the repository back how you found it, and take
 the cheat sheet with you.
 
+=== check=back-on-main,main-untouched attest=closed,issue-done
 ## Finish up
 
 1. **Close your pull request without merging it.** On the PR page: "Close pull
@@ -36,6 +37,7 @@ in `main`; the label is just clutter.
 
 ---
 
+===
 ## The loop, from here on
 
 Every piece of work you do looks like this:
@@ -54,6 +56,7 @@ flowchart TD
     I --> A
 ```
 
+===
 ## Commands
 
 **Every day**
@@ -96,6 +99,7 @@ docker compose exec app npx prisma-cli db init --no-interactive --yes
 docker compose restart app                                     # reload the contract
 ```
 
+===
 ## Where to look things up
 
 | Question | Where |
@@ -112,6 +116,7 @@ docker compose restart app                                     # reload the cont
 
 When those do not answer it, ask. Two hours is enough.
 
+===
 ## What to actually remember
 
 Most of what you did today was mechanics, and mechanics you will absorb without

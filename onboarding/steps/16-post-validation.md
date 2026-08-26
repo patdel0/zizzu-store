@@ -3,6 +3,7 @@ Your endpoint works, and trusts everything it is told. Now make it correct.
 Work in small loops here: one test, make it pass, commit, next test. Five short
 cycles, not one long one.
 
+===
 ## The rule
 
 **Anything that arrives over HTTP is untrusted.** Not because everyone is
@@ -12,6 +13,7 @@ the same door and look identical from the server's side.
 Your job is to decide, for every field, what counts as valid — and to answer
 clearly when it is not.
 
+===
 ## What to build
 
 | Situation | Status | Body |
@@ -25,6 +27,7 @@ clearly when it is not.
 Remember the distinction from step 7 — and [MDN has the full list](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status): **400** means "I cannot make sense of
 this"; **422** means "I understood you perfectly and it still cannot be done".
 
+===
 ## How this project does it
 
 Open `parseCreatePost` in `app/api/posts/route.ts`. It is a plain function that
@@ -54,6 +57,7 @@ what it is — which is the point. `any` would switch those checks off and let t
 bug through silently.
 :::
 
+=== check=sandbox-branch,cases
 ## The loops
 
 **1. A body that is not JSON.** `postRawRequest('/api/products', 'not json')`
@@ -157,6 +161,7 @@ A database error can contain table names, the query, sometimes the connection
 string. Log the detail where your team can see it; return the summary.
 :::
 
+===
 ## One `it` per case
 
 Five separate tests, not one test with five assertions. When a test fails, its
@@ -169,6 +174,7 @@ name should tell you what broke without opening it:
 ✓ rejects a duplicate name
 ```
 
+=== check=suite,live-400 quiz=validation
 ## Then run everything
 
 ```bash

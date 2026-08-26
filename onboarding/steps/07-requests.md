@@ -1,9 +1,11 @@
+=== check=app-up
 You have changed a page and committed it. Now find out what is actually
 happening when that page appears — by watching it, not by being told.
 
 Everything in this step is a command you run. Have a terminal open, and the app
 running.
 
+===
 ## 1. What your browser is really doing
 
 Open [localhost:3000/posts](http://localhost:3000/posts). Now open your
@@ -26,6 +28,7 @@ Look for the row whose path is `/api/posts`. Click it, then click **Response**.
 That is data, not a page — hold that thought for thirty seconds.
 :::
 
+===
 ## 2. The same conversation, without a browser
 
 [`curl`](https://curl.se/docs/manpage.html) is a program that makes one request and prints the answer. Nothing else.
@@ -50,6 +53,7 @@ curl -s http://localhost:3000/api/posts
 {"data":[]}
 ```
 
+=== quiz=html-vs-json
 ## 3. Pages are for people, APIs are for programs
 
 You just asked the same server for the same information twice and got two
@@ -80,6 +84,7 @@ Text is quoted, numbers are not, and `null` means "deliberately nothing" — whi
 is different from a field being absent. Endpoints are allowed to treat those
 differently, and this one does.
 
+=== quiz=empty-post,missing-path
 ## 4. Status codes: provoke a few
 
 The `-i` flag makes curl print the response's first line, which is where the
@@ -146,6 +151,7 @@ Every caller then has to read the body to find out whether it worked — which i
 exactly the job the status code was there to do.
 :::
 
+=== quiz=get-repeat
 ## 5. Why GET and POST are not interchangeable
 
 Run this three times:

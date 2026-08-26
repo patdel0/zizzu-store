@@ -13,6 +13,7 @@ git diff
 Red lines were removed, green lines added. Read your own diff before every
 commit — it is the cheapest way to catch the stray `console.log` you left in.
 
+=== check=sandbox-branch,has-commit,clean-tree
 ## Staging, then committing
 
 Git records in two moves, which feels like one too many until you need it.
@@ -37,6 +38,7 @@ unfamiliar one, that is [vim](https://www.vim.org/docs.php) and you skipped step
 git commit -m "Rename the home page heading to Zizzu Store"
 ```
 
+=== check=message-style
 ## Writing the message
 
 The message is the only part of your work someone reads in six months. The
@@ -82,6 +84,7 @@ The useful side effect is the one that matters. If your subject will not fit in
 to be two commits.
 :::
 
+===
 ## Small commits
 
 One commit should be one idea. Not "a day's work" and not "one line" — one

@@ -2,6 +2,7 @@ Now you build. The feature is **products** â€” a store needs something to sell â
 and you will build it the same way the `posts` feature is built, one layer at a
 time, starting with the database.
 
+===
 ## Tables, and where they come from
 
 A database holds **tables**. A table has **columns** with types, and each row is
@@ -43,6 +44,7 @@ Reading the field types:
 `.optional()` is the one to think about. It is a decision, not a formality:
 required means every row must have it forever, including the ones already there.
 
+=== check=sandbox-branch,model,exported
 ## Add the Product model
 
 In `lib/prisma/contract.ts`, next to `Post`, add:
@@ -84,6 +86,7 @@ lands in someone's invoice. Store cents as an integer, divide by 100 when you
 show it, and the problem never exists.
 :::
 
+=== check=emitted
 ## Regenerate
 
 ```bash
@@ -98,6 +101,7 @@ Run it every time you change the contract. Forgetting is the most common way to
 produce an error that makes no sense: your editor insists `Product` does not
 exist, while you are looking straight at it.
 
+=== check=reset
 ## One more file knows about your models
 
 Open `test/helpers.ts` and look at `resetDatabase`:
@@ -131,6 +135,7 @@ different files.** When something fails in code you did not change, ask what you
 *did* change that it depends on.
 :::
 
+===
 ## And the real tables?
 
 Describing a table is not the same as creating one. There are two databases, and

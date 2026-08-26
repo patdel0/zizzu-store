@@ -12,6 +12,7 @@ fatal: unable to auto-detect email address
 
 Five minutes now saves hitting that wall in three steps' time.
 
+===
 ## Why git wants this
 
 Every commit records **who made it and when**, permanently. That is not
@@ -21,6 +22,7 @@ wrote a confusing line and ask them about it.
 Because it is permanent, and because this project is on GitHub, use your real
 name and a real address.
 
+=== check=name,email
 ## Tell it who you are
 
 ```bash
@@ -43,6 +45,7 @@ If you ever need a different identity for one project — a work address on work
 repositories — run the same command without `--global` inside that project.
 :::
 
+=== check=editor
 ## Choose an editor you can escape
 
 `git commit` opens a text editor for the commit message. On many machines the
@@ -68,6 +71,7 @@ and quit — or `:q!` to quit without saving. That really is the escape hatch
 people search for.
 :::
 
+===
 ## Two more worth setting
 
 ```bash
@@ -86,6 +90,7 @@ Tells git how to combine your work with other people's when you `git pull`.
 Without it, git nags on every pull until you choose. `false` is the
 straightforward option, and matches what this project expects.
 
+=== check=identity-check
 ## Check your work
 
 ```bash

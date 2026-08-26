@@ -1,6 +1,7 @@
 There is a table. There is no endpoint. The obvious next move is to write the
 endpoint — and you are going to do the opposite.
 
+===
 ## Write the test first
 
 Test-driven development is three steps, repeated:
@@ -33,6 +34,7 @@ elbow-deep in how it works. You end up designing the thing from the outside,
 which is where it is actually used.
 :::
 
+===
 ## What a test looks like here
 
 A Route Handler is just a function — it takes a request, returns a response. So
@@ -71,6 +73,7 @@ And one thing happens invisibly: **every test starts with empty tables.** You
 never clean up after yourself, and no test can be affected by one that ran
 before it.
 
+=== check=sandbox-branch,test-exists,no-route-yet
 ## Your test
 
 Create `__tests__/api/products.test.ts` with one test: `GET /api/products`
@@ -98,6 +101,7 @@ means `test/request` from the top of the project — so a file can move between
 folders without every import in it breaking.
 :::
 
+=== check=red,test-committed
 ## Run it and read the failure
 
 ```bash

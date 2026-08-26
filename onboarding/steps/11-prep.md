@@ -18,11 +18,13 @@ any code, and it takes about two minutes.
 You are going to apply it to one small function, and end up with a real, tested
 piece of code that the endpoint uses later.
 
+===
 ## The function
 
 `parsePriceCents` takes something that arrived over HTTP — so it could be
 literally anything — and decides whether it is a usable price.
 
+===
 ### P — Parameters
 
 **What goes in:** one value, from a JSON body. Its type is `unknown`.
@@ -51,6 +53,7 @@ Writing that list is most of the work. Every line of it is a decision waiting to
 be made, and you have now seen all of them at once rather than discovering them
 one crash at a time.
 
+===
 ### R — Returns
 
 Two outcomes: a valid price, or a reason it is not. This project already has a
@@ -70,6 +73,7 @@ not `ok`, answer 400 with the message — and it means the reason is a string yo
 can put in front of a person.
 :::
 
+===
 ### E — Examples
 
 Now the decisions. Write down what each input produces:
@@ -94,6 +98,7 @@ with the syntax not written yet. You do not have to invent test cases later,
 because you already have them.
 :::
 
+===
 ### P — Pseudocode
 
 Now, and only now, the steps:
@@ -108,6 +113,7 @@ otherwise it is fine
 Four lines, and every one of them traces back to a row in the examples table.
 Notice how short it turned out. That is normal: the thinking was the work.
 
+=== check=sandbox-branch,prep-notes,exported,examples-are-tests,passes
 ## Write it
 
 **1. Create `lib/products.ts`** with your PREP as the comment, then the
@@ -179,6 +185,7 @@ whole), for `undefined`, for `null`, and for `Infinity`. One check covers most
 of your table — which you can only see *because* you wrote the table.
 :::
 
+===
 ## This is the habit
 
 You just did test-driven development, without the phrase being used. Examples

@@ -542,8 +542,8 @@ th {
 /* ---------------------------------------------------------------- checks */
 
 .panel {
-  margin: 3rem 0 0;
-  padding: 1.25rem 1.5rem 1.5rem;
+  margin: 2rem 0 0;
+  padding: 1.125rem 1.25rem 1.25rem;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--panel);
@@ -555,14 +555,14 @@ th {
 }
 
 .panel__hint {
-  margin: 0 0 1rem;
+  margin: 0 0 0.875rem;
   font-size: 0.875rem;
   color: var(--muted);
 }
 
 .check-list {
   list-style: none;
-  margin: 0 0 1.25rem;
+  margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -724,6 +724,55 @@ th {
 .status--done {
   color: var(--accent);
   font-weight: 600;
+}
+
+/* ----------------------------------------------------------------- cards */
+
+.pips {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0 0 2.5rem;
+}
+
+.pip {
+  width: 1.25rem;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--line);
+}
+
+.pip--done {
+  background: color-mix(in srgb, var(--accent) 45%, var(--line));
+}
+
+.pip--now {
+  background: var(--accent);
+}
+
+.pips__label {
+  margin-left: 0.625rem;
+  font-size: 0.75rem;
+  color: var(--faint);
+  font-variant-numeric: tabular-nums;
+}
+
+.card-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.card-nav .button--ghost {
+  margin-right: auto;
+}
+
+.card-nav__note {
+  font-size: 0.8125rem;
+  color: var(--faint);
 }
 
 .footer-nav {

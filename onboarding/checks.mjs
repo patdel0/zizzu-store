@@ -879,86 +879,6 @@ export const steps = [
   },
 
   {
-    id: 'how-it-works',
-    phase: 'Seeing how it works',
-    title: 'How a request travels through the app',
-    minutes: 25,
-    quiz: [
-      {
-        id: 'server-vs-client',
-        prompt:
-          "Why does `app/posts/posts-board.tsx` start with `'use client'`, when `app/posts/page.tsx` does not?",
-        options: [
-          { id: 'a', label: 'Because it is faster.' },
-          {
-            id: 'b',
-            label:
-              'Because it uses state and event handlers, which only exist in the browser.',
-          },
-          { id: 'c', label: 'Because it is in a subfolder.' },
-          { id: 'd', label: 'Because it talks to the database.' },
-        ],
-        answer: 'b',
-        explain:
-          'Components render on the server by default — the browser gets HTML. `useState`, `useEffect` and `onClick` need a running browser, so a component that uses them has to be marked as a Client Component. Note what that rules out: a Client Component cannot query the database, which is exactly why `posts-board.tsx` goes through `/api/posts`.',
-      },
-      {
-        id: 'why-route',
-        prompt:
-          'The posts page could query the database directly in a Server Component. Why does it go through `/api/posts` instead?',
-        options: [
-          { id: 'a', label: 'Route Handlers are the only way to reach the database.' },
-          { id: 'b', label: 'It is the Next.js convention for all pages.' },
-          {
-            id: 'c',
-            label:
-              'The list has to change after the page has loaded, when the user submits the form.',
-          },
-          { id: 'd', label: 'Server Components cannot be tested.' },
-        ],
-        answer: 'c',
-        explain:
-          'For read-only rendering, a Server Component querying the database directly is simpler and faster — one round trip instead of two. You need a Route Handler when data has to change on a page that is already on screen, which is what the create form does.',
-      },
-      {
-        id: 'envelope',
-        prompt:
-          'Every handler in this project answers with `{ data }` or `{ error }`. What does that buy you?',
-        options: [
-          { id: 'a', label: 'It makes responses smaller.' },
-          {
-            id: 'b',
-            label:
-              'Client code needs one way of reading a response, instead of a different shape per endpoint.',
-          },
-          { id: 'c', label: 'It is required by Next.js.' },
-          { id: 'd', label: 'It makes the database faster.' },
-        ],
-        answer: 'b',
-        explain:
-          'Conventions like this are worth more than they look. Every consumer checks `response.ok`, then reads `body.data` or `body.error` — and that will be true of the endpoint you write next, without anyone having to ask.',
-      },
-      {
-        id: 'validation',
-        prompt: 'Why does `POST /api/posts` look up the author before creating the post?',
-        options: [
-          { id: 'a', label: 'To warm up the database connection.' },
-          { id: 'b', label: 'To copy the author name onto the post.' },
-          {
-            id: 'c',
-            label:
-              'So a bad author id answers 422 with a clear message instead of an opaque database error.',
-          },
-          { id: 'd', label: 'It is left over and should be deleted.' },
-        ],
-        answer: 'c',
-        explain:
-          'The database would reject it anyway — the foreign key sees to that. But the error would arrive as a constraint violation, get caught by the `catch`, and reach the caller as a generic 500. Checking first turns "something broke" into "this author does not exist".',
-      },
-    ],
-  },
-
-  {
     id: 'decomposition',
     phase: 'Building a feature',
     title: 'Break the problem down',
@@ -1501,6 +1421,26 @@ export const steps = [
         },
       },
     ],
+    quiz: [
+      {
+              id: 'envelope',
+              prompt:
+                'Every handler in this project answers with `{ data }` or `{ error }`. What does that buy you?',
+              options: [
+                { id: 'a', label: 'It makes responses smaller.' },
+                {
+                  id: 'b',
+                  label:
+                    'Client code needs one way of reading a response, instead of a different shape per endpoint.',
+                },
+                { id: 'c', label: 'It is required by Next.js.' },
+                { id: 'd', label: 'It makes the database faster.' },
+              ],
+              answer: 'b',
+              explain:
+                'Conventions like this are worth more than they look. Every consumer checks `response.ok`, then reads `body.data` or `body.error` — and that will be true of the endpoint you write next, without anyone having to ask.',
+            },
+    ],
   },
 
   {
@@ -1680,6 +1620,25 @@ export const steps = [
           };
         },
       },
+    ],
+    quiz: [
+      {
+              id: 'validation',
+              prompt: 'Why does `POST /api/posts` look up the author before creating the post?',
+              options: [
+                { id: 'a', label: 'To warm up the database connection.' },
+                { id: 'b', label: 'To copy the author name onto the post.' },
+                {
+                  id: 'c',
+                  label:
+                    'So a bad author id answers 422 with a clear message instead of an opaque database error.',
+                },
+                { id: 'd', label: 'It is left over and should be deleted.' },
+              ],
+              answer: 'c',
+              explain:
+                'The database would reject it anyway — the foreign key sees to that. But the error would arrive as a constraint violation, get caught by the `catch`, and reach the caller as a generic 500. Checking first turns "something broke" into "this author does not exist".',
+            },
     ],
   },
 
@@ -2023,15 +1982,21 @@ export function publicSteps() {
   }));
 }
 
-/** Runs every check for a step, in order. */
-export async function runChecks(stepId) {
+/**
+ * Runs a step's checks, in order.
+ *
+ * `only` limits the run to the given check ids, which is how a card verifies
+ * just its own instruction instead of the whole step.
+ */
+export async function runChecks(stepId, only = null) {
   const step = stepsById.get(stepId);
 
   if (!step?.checks) return [];
 
+  const wanted = only ? step.checks.filter((c) => only.includes(c.id)) : step.checks;
   const results = [];
 
-  for (const check of step.checks) {
+  for (const check of wanted) {
     try {
       const outcome = await check.run();
 

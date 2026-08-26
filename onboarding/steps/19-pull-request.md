@@ -1,6 +1,7 @@
 Your work is on your branch, on your machine. Two things have to happen: it has
 to reach GitHub, and someone has to read it.
 
+===
 ## First: let GitHub know it is you
 
 In step 3 you told git *who you are*, which is what stamps your name on a
@@ -33,6 +34,7 @@ minutes that most people have once. Password authentication for git was turned
 off years ago — that prompt wants a **token**.
 :::
 
+=== check=sandbox-branch,pushed,readable-history
 ## Push
 
 ```bash
@@ -47,6 +49,7 @@ If it fails, read the error before trying again. "Permission denied
 (publickey)" means the authentication above is not set up yet, not that you did
 the push wrong.
 
+=== attest=opened
 ## Open the pull request
 
 A **[pull request](https://docs.github.com/en/pull-requests)** is a request to merge your branch into `main`. It is where
@@ -56,21 +59,25 @@ in one place.
 On GitHub, your freshly pushed branch appears with a "Compare & pull request"
 button. Base: `main`. Compare: your branch.
 
+=== attest=description,linked
 ## Writing it
 
 The description is the first thing a reviewer reads and it decides how good your
 review is. Three things:
 
 ```markdown
+===
 ## What
 
 Adds `GET` and `POST /api/products`, a `Product` model, and a page at
 `/products`.
 
+===
 ## Why
 
 Closes #12. The store needs products before anything can be sold.
 
+===
 ## How to check it
 
 1. `./script/server`
@@ -95,6 +102,7 @@ Real work is easier to review, and lands faster, when split: the model and
 endpoint in one PR, the page in the next.
 :::
 
+=== attest=reviewer,responded quiz=review-feedback
 ## Being reviewed
 
 Someone will comment on your code. Some things they say will be right, some will
@@ -117,6 +125,7 @@ as ignored, and the reviewer has to decide whether to raise it again.
 Then push more commits to the same branch — the PR updates itself. Do not open a
 new one.
 
+===
 ## Reviewing others
 
 You will be asked to review before you feel qualified. Do it anyway. "I do not

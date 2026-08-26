@@ -3,7 +3,9 @@ import { readFile, readdir, writeFile, mkdir } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join, extname } from 'node:path';
 import { gradeQuiz, publicSteps, runChecks, stepsById } from './checks.mjs';
+import { splitCards } from './lib/cards.mjs';
 import { currentBranch, repoRoot } from './lib/shell.mjs';
+import { watchRepo } from './lib/watch.mjs';
 
 /**
  * The onboarding tutorial server.
@@ -114,11 +116,13 @@ function isStepComplete(stepId, checkResults) {
 
   if (!step) return false;
 
+  // Every declared check must be present *and* passing. Cards run subsets, so
+  // "all the results I have are green" is not the same as "the step is done".
+  const declared = step.checks ?? [];
+  const results = checkResults ?? progress.steps[stepId]?.lastResults ?? [];
   const checksPass =
-    (step.checks ?? []).length === 0 ||
-    (checkResults !== undefined
-      ? checkResults.every((result) => result.pass)
-      : progress.steps[stepId]?.checksPassed === true);
+    declared.length === 0 ||
+    declared.every((check) => results.find((r) => r.id === check.id)?.pass === true);
 
   const quizPass = (step.quiz ?? []).every(
     (question) => progress.quiz[`${stepId}.${question.id}`] === true,
@@ -178,6 +182,23 @@ async function readBody(request) {
   return JSON.parse(Buffer.concat(chunks).toString('utf8'));
 }
 
+/**
+ * Open Server-Sent Events connections. The repository watcher pushes a line
+ * down each of these when anything a check reads changes, and the page re-runs
+ * the current card's fast checks on its own.
+ */
+const listeners = new Set();
+
+watchRepo((reason) => {
+  for (const response of listeners) {
+    try {
+      response.write(`data: ${JSON.stringify({ changed: reason })}\n\n`);
+    } catch {
+      listeners.delete(response);
+    }
+  }
+});
+
 const routes = {
   async 'GET /api/state'() {
     return {
@@ -193,13 +214,23 @@ const routes = {
 
     if (!stepsById.has(stepId)) return { error: 'Unknown step' };
 
-    const results = await runChecks(stepId);
-    const checksPassed = results.every((result) => result.pass);
+    // A card asks only for its own checks, so a failure points at the
+    // instruction above it rather than at the whole step.
+    const only = Array.isArray(body.only) ? body.only.map(String) : null;
+    const results = await runChecks(stepId, only);
 
-    progress.steps[stepId] = { checksPassed, lastResults: results };
+    // Results are merged into whatever the step already knew, so running one
+    // card's checks does not discard another card's passes.
+    const previous = progress.steps[stepId]?.lastResults ?? [];
+    const merged = [...previous.filter((r) => !results.some((n) => n.id === r.id)), ...results];
+    const every = stepsById.get(stepId).checks ?? [];
+    const checksPassed =
+      every.length > 0 && every.every((c) => merged.find((r) => r.id === c.id)?.pass === true);
+
+    progress.steps[stepId] = { checksPassed, lastResults: merged };
     await saveProgress();
 
-    return { results, complete: isStepComplete(stepId, results) };
+    return { results, complete: isStepComplete(stepId, merged) };
   },
 
   async 'POST /api/quiz'(body) {
@@ -270,13 +301,26 @@ const server = createServer(async (request, response) => {
       return;
     }
 
+    if (request.method === 'GET' && path === '/api/events') {
+      response.writeHead(200, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-store',
+        Connection: 'keep-alive',
+      });
+      response.write('retry: 2000\n\n');
+      listeners.add(response);
+      request.on('close', () => listeners.delete(response));
+
+      return;
+    }
+
     if (request.method === 'GET' && path.startsWith('/api/content/')) {
       const stepId = path.slice('/api/content/'.length);
       const markdown = content.get(stepId);
 
       if (markdown === undefined) return json(response, 404, { error: 'Unknown step' });
 
-      return json(response, 200, { markdown });
+      return json(response, 200, { cards: splitCards(markdown) });
     }
 
     const handler = routes[`${request.method} ${path}`];
@@ -304,6 +348,8 @@ server.listen(PORT, '127.0.0.1', async () => {
   console.log(`  Watching:  ${repoRoot}`);
   console.log(`  Branch:    ${branch}`);
   console.log(`  Progress:  ${PROGRESS_FILE}`);
+  console.log('');
+  console.log('  Watching your files — checks re-run as you save.');
   console.log('');
   console.log('  Leave this running. You can switch branches freely — the');
   console.log('  tutorial has already loaded everything it needs.');
