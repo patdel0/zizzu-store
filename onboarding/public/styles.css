@@ -153,6 +153,10 @@ kbd {
 }
 
 .phase {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
   padding: 1.25rem 1.25rem 0.375rem;
   font-size: 0.6875rem;
   font-weight: 600;
@@ -1120,4 +1124,13 @@ input.blank[data-state="wrong"] {
   * {
     transition: none !important;
   }
+}
+
+.phase__meta {
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--faint);
+  white-space: nowrap;
 }

@@ -24,18 +24,24 @@ trainee can start it before `npm install` has ever finished.
 
 ## What it covers
 
-Twenty-seven steps, around fourteen hours of focused work — so two days for most
-people, and longer is normal. It assumes no prior knowledge, and
-introduces each idea **at the point it is needed, attached to something the
-trainee runs** — there is no theory phase to sit through.
+Twenty-seven steps in seven parts, about sixteen hours of focused work — three
+days for most people, and longer is normal. Each part is sized to be finished in
+a sitting, and shows its own budget in the sidebar, because the thing that ends
+a tutorial is looking at how much is left.
 
-| Phase | Steps |
-|---|---|
-| Getting started | The app running in Docker; configuring git so `git commit` works |
-| Your first change | Branching; a JSX and Tailwind edit; the first commit |
-| Seeing how it works | HTTP by `curl`; proving server and browser are different machines; `'use client'`; the request lifecycle |
-| Building a feature | Decomposition; PREP; a `Product` model; TDD red/green; `POST`; validation; a page and a browser test |
-| Working with the team | Issues and the board, pull requests, review, cleanup |
+It assumes no prior knowledge, and introduces each idea **at the point it is
+needed, attached to something the trainee runs** — there is no theory phase to
+sit through.
+
+| Part | | Steps |
+|---|---|---|
+| Getting set up | 1½ hr | Docker; git identity and GitHub auth; dependencies and the lockfile; branch names |
+| Your first change | 1½ hr | A JSX and Tailwind edit; the first commit; a conflict, made and resolved |
+| How the app works | 2 hr | Everyday JavaScript; HTTP by `curl`; proving server and browser are different machines; `'use client'` |
+| Taking on a task | 1½ hr | Using AI without outsourcing the thinking; decomposition; claiming an issue and moving the card |
+| The tools of the trade | 3¼ hr | A `Product` model, a schema change and a foreign key; TypeScript; naming; promises; debugging by breaking three things |
+| Building it, tested | 4 hr | What a test is for; red/green; PREP and docblocks; `POST`; validation, injection and secrets |
+| Shipping it | 2½ hr | React and three planted bugs; a browser test; lint and CI; being reviewed and reviewing; what merging does |
 
 Concepts are taught by experiment rather than assertion. "Code in the browser
 cannot keep a secret" is a paragraph anyone can skim past; finding your own

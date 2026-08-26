@@ -96,6 +96,19 @@ function stepById(id) {
   return state.steps.find((step) => step.id === id);
 }
 
+/** Minutes as something you can decide about: "an hour and a half", not "95m". */
+function describe(minutes) {
+  if (minutes < 60) return `${minutes} min`;
+
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+
+  if (rest === 0) return `${hours} hr`;
+  if (rest === 30) return `${hours}\u00bd hr`;
+
+  return `${hours} hr ${rest}`;
+}
+
 function isDone(id) {
   return state.progress.steps[id]?.complete === true;
 }
@@ -116,10 +129,21 @@ function drawSidebar() {
     if (step.phase !== phase) {
       phase = step.phase;
 
+      // Each part carries its own budget and its own progress. Course length
+      // predicts abandonment, and one bar reading "3 of 27" is a wall; seven
+      // parts with a finishable one in front of you is a sequence of arrivals.
+      const inPhase = state.steps.filter((other) => other.phase === phase);
+      const doneHere = inPhase.filter((other) => isDone(other.id)).length;
+      const minutes = inPhase.reduce((total, other) => total + other.minutes, 0);
+
       const heading = document.createElement('li');
 
       heading.className = 'phase';
-      heading.textContent = phase;
+      heading.innerHTML =
+        `<span class="phase__name">${escapeHtml(phase)}</span>` +
+        `<span class="phase__meta">${
+          doneHere === inPhase.length ? 'done' : `${describe(minutes)}`
+        }</span>`;
       stepsEl.append(heading);
     }
 

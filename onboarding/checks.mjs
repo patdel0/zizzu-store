@@ -95,8 +95,8 @@ function databaseHint(output) {
 export const steps = [
   {
     id: 'welcome',
-    phase: 'Getting started',
     title: 'Start here',
+    phase: 'Getting set up',
     minutes: 10,
     quiz: [
       {
@@ -120,9 +120,9 @@ export const steps = [
 
   {
     id: 'running',
-    phase: 'Getting started',
     title: 'Get it running',
-    minutes: 20,
+    phase: 'Getting set up',
+    minutes: 25,
     checks: [
       {
         id: 'fixtures',
@@ -276,9 +276,9 @@ export const steps = [
 
   {
     id: 'git-setup',
-    phase: 'Getting started',
     title: 'Tell git who you are',
-    minutes: 20,
+    phase: 'Getting set up',
+    minutes: 25,
     checks: [
       {
         id: 'name',
@@ -379,8 +379,8 @@ export const steps = [
 
   {
     id: 'branch',
-    phase: 'Your first change',
     title: 'Make yourself a branch',
+    phase: 'Getting set up',
     minutes: 25,
     quiz: [
       {
@@ -431,8 +431,8 @@ export const steps = [
 
   {
     id: 'first-change',
-    phase: 'Your first change',
     title: 'Change something you can see',
+    phase: 'Your first change',
     minutes: 30,
     checks: [
       onSandboxBranch,
@@ -514,8 +514,8 @@ export const steps = [
 
   {
     id: 'first-commit',
-    phase: 'Your first change',
     title: 'Your first commit',
+    phase: 'Your first change',
     minutes: 30,
     checks: [
       onSandboxBranch,
@@ -628,8 +628,8 @@ export const steps = [
 
   {
     id: 'conflicts',
-    phase: 'Your first change',
     title: 'When two changes collide',
+    phase: 'Your first change',
     minutes: 30,
     attest: [
       {
@@ -712,8 +712,8 @@ export const steps = [
 
   {
     id: 'javascript',
-    phase: 'Seeing how it works',
     title: 'The JavaScript this project assumes',
+    phase: 'How the app works',
     minutes: 30,
     quiz: [
       {
@@ -752,8 +752,8 @@ export const steps = [
 
   {
     id: 'requests',
-    phase: 'Seeing how it works',
     title: 'Watch the conversation',
+    phase: 'How the app works',
     minutes: 35,
     ask: [
       {
@@ -839,8 +839,8 @@ export const steps = [
 
   {
     id: 'two-machines',
-    phase: 'Seeing how it works',
     title: 'Which machine is this running on?',
+    phase: 'How the app works',
     minutes: 25,
     ask: [
       {
@@ -952,8 +952,8 @@ export const steps = [
 
   {
     id: 'use-client',
-    phase: 'Seeing how it works',
     title: 'The line that decides',
+    phase: 'How the app works',
     minutes: 30,
     ask: [
       {
@@ -1066,8 +1066,8 @@ export const steps = [
 
   {
     id: 'using-ai',
-    phase: 'Building a feature',
     title: 'Using AI without it using you',
+    phase: 'Taking on a task',
     minutes: 30,
     ask: [
       {
@@ -1131,8 +1131,8 @@ export const steps = [
 
   {
     id: 'decomposition',
-    phase: 'Building a feature',
     title: 'Break the problem down',
+    phase: 'Taking on a task',
     minutes: 35,
     ask: [
       {
@@ -1275,8 +1275,8 @@ export const steps = [
 
   {
     id: 'issues',
-    phase: 'Working with the team',
     title: 'Issues and the board',
+    phase: 'Taking on a task',
     minutes: 20,
     attest: [
       { id: 'assigned', label: 'I assigned an issue to myself' },
@@ -1311,9 +1311,9 @@ export const steps = [
 
   {
     id: 'database',
-    phase: 'Building a feature',
     title: 'Add a model to the database',
-    minutes: 40,
+    phase: 'The tools of the trade',
+    minutes: 55,
     attest: [
       {
         id: 'dry-run-read',
@@ -1533,8 +1533,8 @@ export const steps = [
 
   {
     id: 'typescript',
-    phase: 'Building a feature',
     title: 'TypeScript, the parts you need',
+    phase: 'The tools of the trade',
     minutes: 35,
     attest: [
       {
@@ -1607,8 +1607,8 @@ export const steps = [
 
   {
     id: 'naming',
-    phase: 'Building a feature',
     title: 'What to call things',
+    phase: 'The tools of the trade',
     minutes: 30,
     quiz: [
       {
@@ -1657,8 +1657,8 @@ export const steps = [
 
   {
     id: 'async',
-    phase: 'Seeing how it works',
     title: 'Nothing happens immediately',
+    phase: 'The tools of the trade',
     minutes: 35,
     attest: [
       {
@@ -1720,8 +1720,8 @@ export const steps = [
 
   {
     id: 'debugging',
-    phase: 'Seeing how it works',
     title: 'When it breaks',
+    phase: 'The tools of the trade',
     minutes: 40,
     attest: [
       {
@@ -1796,8 +1796,8 @@ export const steps = [
 
   {
     id: 'what-tests-are',
-    phase: 'Building a feature',
     title: 'What a test actually is',
+    phase: 'Building it, tested',
     minutes: 30,
     attest: [
       {
@@ -1865,8 +1865,8 @@ export const steps = [
 
   {
     id: 'tdd',
-    phase: 'Building a feature',
     title: 'Write a test, then make it pass',
+    phase: 'Building it, tested',
     minutes: 60,
     ask: [
       {
@@ -2138,8 +2138,8 @@ export const steps = [
 
   {
     id: 'prep',
-    phase: 'Building a feature',
     title: 'PREP — think before you type',
+    phase: 'Building it, tested',
     minutes: 50,
     ask: [
       {
@@ -2338,8 +2338,8 @@ export const steps = [
 
   {
     id: 'post-happy',
-    phase: 'Building a feature',
     title: 'POST — creating something',
+    phase: 'Building it, tested',
     minutes: 45,
     ask: [
       {
@@ -2429,9 +2429,9 @@ export const steps = [
 
   {
     id: 'post-validation',
-    phase: 'Building a feature',
     title: 'Refusing bad input',
-    minutes: 45,
+    phase: 'Building it, tested',
+    minutes: 60,
     checks: [
       {
         id: 'bad-json',
@@ -2657,9 +2657,9 @@ export const steps = [
 
   {
     id: 'ui',
-    phase: 'Building a feature',
     title: 'Put a page on top of it',
-    minutes: 60,
+    phase: 'Shipping it',
+    minutes: 75,
     ask: [
       {
         id: 'client-again',
@@ -2915,9 +2915,9 @@ export const steps = [
 
   {
     id: 'pull-request',
-    phase: 'Working with the team',
     title: 'Open a pull request',
-    minutes: 45,
+    phase: 'Shipping it',
+    minutes: 60,
     ask: [
       {
         id: 'history-recall',
@@ -3033,8 +3033,8 @@ export const steps = [
 
   {
     id: 'cleanup',
-    phase: 'Working with the team',
     title: 'Close the loop and tidy up',
+    phase: 'Shipping it',
     minutes: 15,
     attest: [
       {
