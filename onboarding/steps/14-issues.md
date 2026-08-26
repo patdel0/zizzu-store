@@ -1,5 +1,8 @@
-You have built a feature. On a real team you would not have started until the
-work was written down and claimed, so let us do that part properly now.
+You have a plan. On a real team you would not start typing yet — the work gets
+written down and claimed first, so that everyone can see it exists and who has
+it.
+
+That is this step. Twenty minutes of it, and then you build.
 
 ===
 ## Issues
@@ -60,6 +63,8 @@ alternative is finding out in review, after two days of work.
 > Going to add a `Product` model and a `GET`/`POST /api/products` following the
 > pattern in `posts`. Shout if the price should be decimal rather than cents.
 
+Your `PLAN.md` from the last step is most of that comment already.
+
 ===
 ## Branch names
 
@@ -76,6 +81,19 @@ knows what it is for and where the discussion is.
 
 (For this tutorial you stay on `sandbox/your-name` — the work is not real, so it
 does not get a real name.)
+
+So the order on a real day is:
+
+```mermaid
+flowchart LR
+    I["Issue exists"] --> C["You assign it<br/>to yourself"]
+    C --> M["Move to<br/>In progress"]
+    M --> B["Branch named<br/>after it"]
+    B --> W["Then you write<br/>the first line of code"]
+```
+
+You have now done the first four for the work you are about to do. Everything
+from here is the last box.
 
 === quiz=stuck
 ## Asking for help

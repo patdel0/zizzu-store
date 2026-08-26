@@ -106,3 +106,46 @@ is a separate job with its own choices. That comes in {{step:pull-request}}, at 
 actually need it — there is no sense setting up credentials for a push you are
 not making for another few hours.
 :::
+
+===
+## And let GitHub know it is you
+
+You have just told git *who you are*. That is what stamps your name on a commit,
+and it is not the same as being allowed to send commits to GitHub.
+
+**Identity is not permission.** Do the second half now, while you are here —
+finding this out for the first time at the moment you are trying to push is a
+bad hour, and it is the single most common place a first day stalls.
+
+If you have never pushed from this machine, pick one:
+
+**GitHub CLI — easiest.** Install [`gh`](https://cli.github.com/manual/), then:
+
+```bash
+gh auth login
+```
+
+Answer the prompts and it handles everything, including configuring git.
+
+**SSH keys — the usual choice for daily work.** You generate a key, give GitHub
+the public half, and never type a password again. GitHub's
+[step-by-step guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
+is genuinely good; follow it start to finish.
+
+**A personal access token over HTTPS.** Create a token in GitHub's settings and
+use it in place of your password when git asks. [The
+instructions](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+cover which scopes it needs.
+
+:::warn Your GitHub password will not work
+Git asking for a "password" and rejecting the right one is a confusing five
+minutes that most people have once. Password authentication for git was turned
+off years ago — that prompt wants a **token**.
+:::
+
+:::note You can carry on without this
+Nothing before {{step:pull-request}} needs it — commits are local until you push.
+If `gh auth login` is going to mean installing something, note it down and keep
+going; just do not leave it until the moment you need it.
+:::
+

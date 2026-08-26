@@ -1274,6 +1274,42 @@ export const steps = [
   },
 
   {
+    id: 'issues',
+    phase: 'Working with the team',
+    title: 'Issues and the board',
+    minutes: 20,
+    attest: [
+      { id: 'assigned', label: 'I assigned an issue to myself' },
+      { id: 'in-progress', label: 'I moved it to In progress on the project board' },
+      {
+        id: 'commented',
+        label: 'I commented on the issue saying how I plan to approach it',
+        hint: 'Even one sentence. It is the cheapest possible way to find out you misread the issue.',
+      },
+    ],
+    quiz: [
+      {
+        id: 'stuck',
+        prompt:
+          'You have been stuck on the same problem for two hours. What is the right move?',
+        options: [
+          { id: 'a', label: 'Keep going — asking makes you look like you cannot do the job.' },
+          {
+            id: 'b',
+            label:
+              'Say where you are stuck: what you expected, what happened, what you have already tried.',
+          },
+          { id: 'c', label: 'Move the issue back to To do and pick another one.' },
+          { id: 'd', label: 'Open a PR and let the reviewer work it out.' },
+        ],
+        answer: 'b',
+        explain:
+          'Two hours is roughly where a question stops being cheaper to avoid. Nobody is impressed by a silent week. Asking well is a skill in itself, and that three-part shape — expected, actual, tried — is most of it: it shows you did the work, and it lets someone help you in one reply instead of five.',
+      },
+    ],
+  },
+
+  {
     id: 'database',
     phase: 'Building a feature',
     title: 'Add a model to the database',
@@ -2635,42 +2671,6 @@ export const steps = [
         id: 'e2e-passes',
         label: 'I ran `npm run test:e2e` and my products test passes',
         hint: 'Stop the containerised app first (`docker compose stop app`). Playwright starts its own dev server pointed at the *test* database, and it will reuse whatever is already on port 3000 if you leave it up.',
-      },
-    ],
-  },
-
-  {
-    id: 'issues',
-    phase: 'Working with the team',
-    title: 'Issues and the board',
-    minutes: 20,
-    attest: [
-      { id: 'assigned', label: 'I assigned an issue to myself' },
-      { id: 'in-progress', label: 'I moved it to In progress on the project board' },
-      {
-        id: 'commented',
-        label: 'I commented on the issue saying how I plan to approach it',
-        hint: 'Even one sentence. It is the cheapest possible way to find out you misread the issue.',
-      },
-    ],
-    quiz: [
-      {
-        id: 'stuck',
-        prompt:
-          'You have been stuck on the same problem for two hours. What is the right move?',
-        options: [
-          { id: 'a', label: 'Keep going — asking makes you look like you cannot do the job.' },
-          {
-            id: 'b',
-            label:
-              'Say where you are stuck: what you expected, what happened, what you have already tried.',
-          },
-          { id: 'c', label: 'Move the issue back to To do and pick another one.' },
-          { id: 'd', label: 'Open a PR and let the reviewer work it out.' },
-        ],
-        answer: 'b',
-        explain:
-          'Two hours is roughly where a question stops being cheaper to avoid. Nobody is impressed by a silent week. Asking well is a skill in itself, and that three-part shape — expected, actual, tried — is most of it: it shows you did the work, and it lets someone help you in one reply instead of five.',
       },
     ],
   },
