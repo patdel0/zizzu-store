@@ -1,6 +1,7 @@
-You are about to build the products endpoint. Before that, a two-minute
-experiment about tests — because the order you do things in turns out to matter
-more than it sounds.
+You know what a test is now, and you have watched one catch a real break.
+
+One question left before you write your own: how do you know a test you wrote is
+any good? Start with a two-minute experiment.
 
 === check=limit-restored attest=green-but-broken
 ## Break something on purpose

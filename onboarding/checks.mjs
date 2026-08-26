@@ -1322,6 +1322,79 @@ export const steps = [
   },
 
   {
+    id: 'what-tests-are',
+    phase: 'Building a feature',
+    title: 'What a test actually is',
+    minutes: 30,
+    attest: [
+      {
+        id: 'saw-it-catch',
+        label: 'I broke the ordering and watched a test fail and name it',
+      },
+    ],
+    checks: [
+      {
+        id: 'ordering-restored',
+        label: 'You put the ordering back',
+        async run() {
+          const source = await read('app/api/posts/route.ts');
+
+          if (source === null) {
+            return { pass: false, detail: 'Could not read `app/api/posts/route.ts`.' };
+          }
+
+          if (/createdAt\.desc\(\)/.test(source)) {
+            return { pass: true, detail: 'Back to `.desc()` — newest first.' };
+          }
+
+          return {
+            pass: false,
+            detail:
+              'The ordering in `app/api/posts/route.ts` is still changed. Put `.desc()` back, or undo the whole file:\n\n```\ngit restore app/api/posts/route.ts\n```',
+          };
+        },
+      },
+    ],
+    quiz: [
+      {
+        id: 'what-a-test-is',
+        prompt: 'What is a test, in one line?',
+        options: [
+          { id: 'a', label: 'A tool that finds bugs in your code automatically.' },
+          {
+            id: 'b',
+            label:
+              'Code that sets up a situation, runs your code, and checks the answer is what you said it would be.',
+          },
+          { id: 'c', label: 'A check that your code compiles and has no syntax errors.' },
+          { id: 'd', label: 'A report showing how much of your code has been run.' },
+        ],
+        answer: 'b',
+        explain:
+          'It is ordinary code, and it is not clever. It arranges a situation, calls your function, and compares what came back with what you claimed. A test cannot find a bug you never described — which is why the suite stayed green when the title limit broke.',
+      },
+      {
+        id: 'what-tests-buy',
+        prompt:
+          'Six months from now someone changes a line near your endpoint. What have the tests bought them?',
+        options: [
+          { id: 'a', label: 'Proof that their change is correct.' },
+          {
+            id: 'b',
+            label:
+              'A fast answer to "did I break anything that somebody wrote down" — so they can change it at all.',
+          },
+          { id: 'c', label: 'Faster code.' },
+          { id: 'd', label: 'Permission to skip code review.' },
+        ],
+        answer: 'b',
+        explain:
+          'That is the real return, and it is not about finding bugs today. Code nobody dares touch is where projects go to die. A suite that answers in thirty seconds is what makes an unfamiliar codebase editable by someone who was not there when it was written — which, in six months, includes you.',
+      },
+    ],
+  },
+
+  {
     id: 'tdd',
     phase: 'Building a feature',
     title: 'Write a test, then make it pass',
