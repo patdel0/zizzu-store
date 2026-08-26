@@ -102,6 +102,20 @@ for (const name of await readdir(join(here, 'reference'))) {
   }
 }
 
+/**
+ * Files a reader copies into their own repository.
+ *
+ * These have to be served rather than sitting on disk beside the step that
+ * mentions them: the reader is on `sandbox/<name>`, branched from `main`, where
+ * nothing under `onboarding/` exists. Held in memory like everything else, so a
+ * branch switch cannot take them away mid-step.
+ */
+const fixtures = new Map();
+
+for (const name of await readdir(join(here, 'fixtures'))) {
+  fixtures.set(name, await readFile(join(here, 'fixtures', name), 'utf8'));
+}
+
 for (const name of await readdir(join(here, 'steps'))) {
   if (name.endsWith('.md')) {
     // `03-branch.md` holds the content for the step with id `branch`.
@@ -396,6 +410,21 @@ const server = createServer(async (request, response) => {
       request.on('close', () => listeners.delete(response));
 
       return;
+    }
+
+    if (request.method === 'GET' && path.startsWith('/fixtures/')) {
+      const file = fixtures.get(decodeURIComponent(path.slice('/fixtures/'.length)));
+
+      if (file === undefined) return json(response, 404, { error: 'Unknown file' });
+
+      // text/plain so a curl straight to a file is the obvious thing, and a
+      // browser shows it rather than offering to download it.
+      response.writeHead(200, {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'no-store',
+      });
+
+      return response.end(file);
     }
 
     if (request.method === 'GET' && path.startsWith('/api/reference/')) {

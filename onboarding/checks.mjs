@@ -1314,6 +1314,13 @@ export const steps = [
     phase: 'Building a feature',
     title: 'Add a model to the database',
     minutes: 40,
+    attest: [
+      {
+        id: 'dry-run-read',
+        label: 'I read the `--dry-run` output before applying it',
+        hint: 'Run `docker compose exec app npx prisma-cli db update --dry-run`. It prints what it would do and changes nothing. On a database with real customers in it, that is the difference between a change and an incident.',
+      },
+    ],
     checks: [
       {
         id: 'seller-field',
@@ -2562,6 +2569,126 @@ export const steps = [
       },
     ],
     checks: [
+      {
+        id: 'board-copied',
+        label: 'The products board is in place',
+        async run() {
+          const source = await read('app/products/products-board.tsx');
+
+          if (source === null) {
+            return {
+              pass: false,
+              detail:
+                'No `app/products/products-board.tsx` yet. The `curl` above writes it \u2014 make sure `app/products/` exists first.',
+            };
+          }
+
+          if (!/export function ProductsBoard/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'That file does not export `ProductsBoard`. Did the `curl` write an error page into it? Open it and look.',
+            };
+          }
+
+          return { pass: true, detail: 'Found `ProductsBoard`.' };
+        },
+      },
+      {
+        id: 'key-fixed',
+        label: 'Bug one: list items have a `key`',
+        async run() {
+          const source = await read('app/products/products-board.tsx');
+
+          if (source === null) {
+            return { pass: false, detail: 'No products board to check yet.' };
+          }
+
+          const item = source.match(/<li[^>]*>/);
+
+          if (!item) {
+            return { pass: false, detail: 'No `<li>` found in the board.' };
+          }
+
+          if (!/key=/.test(item[0])) {
+            return {
+              pass: false,
+              detail:
+                'The `<li>` still has no `key`. The browser console names this one.',
+            };
+          }
+
+          // The index is the wrong stable identity, and it is the fix people
+          // reach for first — so it gets its own answer.
+          if (/key=\{\s*(index|i)\s*\}/.test(item[0])) {
+            return {
+              pass: false,
+              detail:
+                'A `key` is there, but it is the array index \u2014 which changes the moment anything is inserted or removed, so React matches up the wrong rows. Use something stable: `key={product.id}`.',
+            };
+          }
+
+          return { pass: true, detail: 'The `<li>` has a stable `key`.' };
+        },
+      },
+      {
+        id: 'deps-fixed',
+        label: 'Bug two: the effect runs once, not forever',
+        async run() {
+          const source = await read('app/products/products-board.tsx');
+
+          if (source === null) {
+            return { pass: false, detail: 'No products board to check yet.' };
+          }
+
+          if (!/useEffect\(/.test(source)) {
+            return { pass: false, detail: 'No `useEffect` found in the board.' };
+          }
+
+          // The effect ends `}, []);` when fixed and `});` while broken.
+          if (!/\n\s*\},\s*\[\s*\]\s*\);/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'The `useEffect` still has no dependency list, so it runs after every render \u2014 and it sets state, which causes another render. Watch the network tab. It ends `});`; it should end `}, []);`.',
+            };
+          }
+
+          return {
+            pass: true,
+            detail: 'The effect has an empty dependency list, so it runs once.',
+          };
+        },
+      },
+      {
+        id: 'price-fixed',
+        label: 'Bug three: the price is not a hundred times too big',
+        async run() {
+          const source = await read('app/products/products-board.tsx');
+
+          if (source === null) {
+            return { pass: false, detail: 'No products board to check yet.' };
+          }
+
+          if (!/priceCents\s*\/\s*100/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'The price is still rendered straight from `priceCents`, so 899 shows as 899 rather than 8.99. Nothing errors \u2014 it is just wrong. Divide by 100 where you display it.',
+            };
+          }
+
+          if (!/toFixed\(\s*2\s*\)/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'Dividing is right, but `900 / 100` renders as `9`, not `9.00`. Money always shows both decimal places \u2014 `.toFixed(2)`.',
+            };
+          }
+
+          return { pass: true, detail: 'Cents are converted where they are shown.' };
+        },
+      },
       onSandboxBranch,
       {
         id: 'page',
@@ -2667,6 +2794,11 @@ export const steps = [
       },
     ],
     attest: [
+      {
+        id: 'three-found',
+        label: 'I found all three, and I know where each one showed itself',
+        hint: 'One is a console warning, one is visible in the network tab, and one shows nothing anywhere \u2014 the page just says the wrong number. If you have only found two, the third is the silent one.',
+      },
       {
         id: 'e2e-passes',
         label: 'I ran `npm run test:e2e` and my products test passes',
