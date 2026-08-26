@@ -50,11 +50,23 @@ up, and your standup update is wrong before you have given it.
 === attest=assigned,in-progress,commented
 ## Claiming work
 
+Open the repository on GitHub — the same one you cloned — and find its
+**Issues** tab, and the **Projects** tab next to it. The board is there.
+
 1. Find an issue in **To do** that is not assigned to anyone.
 2. Read it properly. All of it, including the comments.
 3. Assign it to yourself. That is the flag that says *this one is taken*.
 4. Move it to **In progress**.
 5. Comment with how you plan to approach it — one or two sentences.
+
+:::note If there is nothing there
+Someone was supposed to put the practice issues on the board before you
+started, and if the board is empty or has no Projects tab, that is a setup step
+that got missed — not something you did wrong.
+
+Ask whoever set you up. While you wait, carry on to {{step:database}} and come
+back: nothing after this step depends on the board.
+:::
 
 That last one feels unnecessary and is the most valuable. If you have misread
 the issue, this is where you find out, at a cost of thirty seconds. The

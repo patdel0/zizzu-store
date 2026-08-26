@@ -13,6 +13,7 @@ import { useActionState, useEffect, useState } from 'react';
 export type SerializedProduct = {
   id: string;
   name: string;
+  description: string | null;
   priceCents: number;
   sellerId: string | null;
   createdAt: string;

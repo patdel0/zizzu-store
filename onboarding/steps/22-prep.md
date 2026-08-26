@@ -205,7 +205,18 @@ Then tick the line off your `PLAN.md`.
 :::
 
 ===
-## See what one does first
+## Now write down what you decided
+
+PREP is done. You have a tested function, and — this is the part that
+evaporates — a set of decisions nobody else can see. Why `"899"` is refused.
+Why zero is not a price. You reasoned it out an hour ago and the code does not
+say any of it.
+
+The rest of this step is about leaving that where the next person finds it,
+which in this codebase means a **docblock**: the `/** … */` comment above a
+function.
+
+Start by seeing what one buys you.
 
 Open `__tests__/api/posts.test.ts` and find a call to `createPost`. Hover over
 the word `createPost`.

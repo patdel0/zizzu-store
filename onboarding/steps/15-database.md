@@ -203,21 +203,15 @@ missing.
 That matters, because almost every schema change you make from now on will be to
 a table that is already there, often with rows in it. So do one now.
 
-Products need a seller. Open `lib/prisma/contract.ts` and change your `Product`
-model:
+Products need a seller. Open `lib/prisma/contract.ts` and add **one field** to
+the `Product` model you already wrote — leave everything else exactly as it is:
 
 ```typescript
-const Product = model('Product', {
-  fields: {
-    id: field.id.uuidv7String(),
-    name: field.text(),
-    priceCents: field.int(),
     sellerId: field.uuidString().optional(),
-    createdAt: field.temporal.createdAt(),
-    updatedAt: field.temporal.updatedAt(),
-  },
-});
 ```
+
+Put it after `priceCents`. Your model should now have `id`, `name`,
+`description`, `priceCents`, `sellerId`, `createdAt` and `updatedAt`.
 
 And in the `models` block at the bottom, give it the other half:
 

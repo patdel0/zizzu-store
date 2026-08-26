@@ -1561,7 +1561,7 @@ export const steps = [
     id: 'typescript',
     title: 'TypeScript, the parts you need',
     phase: 'The tools of the trade',
-    minutes: 45,
+    minutes: 55,
     attest: [
       {
         id: 'saw-editor-error',

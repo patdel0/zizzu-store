@@ -12,9 +12,11 @@ the cheat sheet with you.
    repository:
 
 ```bash
-git rm PLAN.md
-git commit -m "Remove the working plan"
+rm PLAN.md
 ```
+
+(If you committed it at some point, `git rm PLAN.md` and commit the removal
+instead. `git status` will tell you which case you are in.)
 
    `lib/products.ts` and its tests you keep. That is real, tested code.
 

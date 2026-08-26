@@ -47,8 +47,34 @@ if (!input.ok) {
 }
 ```
 
-Borrow that shape. It keeps the handler readable, and the parsing ends up in a
-plain function you can test on its own, with no request and no database.
+**You are writing `parseCreateProduct`.** The loops below each add one rule to
+it — not to the handler. That is the point of the shape: the handler stays four
+lines, and every rule ends up in a plain function you can test with no request
+and no database.
+
+Start it now, because the first two lines are the ones people get wrong:
+
+```typescript
+type CreateProductInput = { name: string; description: string | null; priceCents: number };
+
+function parseCreateProduct(body: unknown): Parsed<CreateProductInput> {
+  if (typeof body !== 'object' || body === null || Array.isArray(body)) {
+    return { ok: false, error: 'Request body must be a JSON object' };
+  }
+
+  const { name, description, priceCents } = body as Record<string, unknown>;
+
+  // your rules go here
+
+  return { ok: true, value: { name: '', description: null, priceCents: 0 } };
+}
+```
+
+Those two lines are load-bearing, and `parseCreatePost` has the same pair.
+`typeof body !== 'object'` is the check; `as Record<string, unknown>` is you
+telling TypeScript what you just proved. Without it, `body.name` will not
+compile at all — `body` is `unknown`, and `unknown` refuses everything until
+you narrow it. See {{step:typescript}} for what `as` is doing there.
 
 :::note Why the body is `unknown`
 [`request.json()`](https://nextjs.org/docs/app/api-reference/functions/next-request)
@@ -78,7 +104,13 @@ Write the test, watch it fail, make it pass, commit. Then come back.
 === check=missing-name
 ## Loop two: a missing name
 
-`typeof name !== 'string' || name.trim() === ''`.
+Inside `parseCreateProduct`, after the destructure:
+
+```typescript
+if (typeof name !== 'string' || name.trim() === '') {
+  return { ok: false, error: '`name` is required' };
+}
+```
 
 Trim before saving, so `"  Mug  "` and `"Mug"` do not become two products.
 
@@ -92,10 +124,11 @@ checks a second time:
 ```typescript
 import { parsePriceCents } from '@/lib/products';
 
-const price = parsePriceCents(body.priceCents);
+// inside parseCreateProduct, on the destructured value — not on `body`
+const price = parsePriceCents(priceCents);
 
 if (!price.ok) {
-  return Response.json({ error: price.error }, { status: 400 });
+  return { ok: false, error: price.error };
 }
 ```
 

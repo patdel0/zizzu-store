@@ -102,16 +102,12 @@ looks for it.
 Save. Look at the browser.
 
 :::warn If the page has not changed
-The app is running inside a container built from a *copy* of the code, so it
-does not see your edits by itself. In a second terminal, run:
+`docker compose watch` is not running. That is the command from
+{{step:running}} that syncs your edits into the container — without it the app
+keeps serving the copy it was built with, and your change is invisible with no
+error to explain why.
 
-```bash
-docker compose watch
-```
-
-Leave that running for the rest of the tutorial. It syncs your edits into the
-container, and Next.js reloads the page on its own. This is worth knowing about
-rather than working around — you will be editing files all day.
+Start it in a second terminal and leave it there for the rest of the tutorial.
 :::
 
 :::note When you break the page

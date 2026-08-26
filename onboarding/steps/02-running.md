@@ -70,6 +70,17 @@ That starts two containers: the app on port 3000 and Postgres on port 5432.
 Give Next.js a few seconds to compile, then open
 [localhost:3000](http://localhost:3000). You should see the starter page.
 
+Now a second command, in another terminal tab, and leave it running:
+
+```bash
+docker compose watch
+```
+
+**You need this from the first edit onwards.** The container was built with a
+*copy* of your code, so without it nothing you type on your laptop reaches the
+app — you edit a file, reload, and see the old page with no error to explain
+it. `watch` syncs your edits in as you save.
+
 :::note What a container is
 A container is a small, sealed box holding a program and everything it needs.
 The database runs in one, so you never install Postgres on your laptop and

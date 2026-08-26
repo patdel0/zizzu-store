@@ -1,6 +1,6 @@
 ## Getting Started
 
-Everything runs in Docker containers — you don't need Node installed locally.
+The app and its database run in Docker containers. You also need Node 20+ on your machine, for `npm test`, the linter, and the Prisma CLI.
 This means you should have Docker installed on your machine.
 
 See https://docs.docker.com/get-started/get-docker/ for installation instructions on your OS.

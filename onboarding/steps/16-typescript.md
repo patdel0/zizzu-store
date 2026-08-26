@@ -62,6 +62,57 @@ underline go away without making the problem go away, which is why you will
 almost never see it in this project.
 :::
 
+===
+## Getting out of `unknown`
+
+`unknown` refuses everything, so at some point you have to convince TypeScript
+you have checked. That takes two steps, and you will write this exact pair
+whenever a request body arrives.
+
+Open `parseCreatePost` in `app/api/posts/route.ts` and find them:
+
+```typescript
+if (typeof body !== 'object' || body === null || Array.isArray(body)) {
+  return { ok: false, error: 'Request body must be a JSON object' };
+}
+
+const { title, content, authorId } = body as Record<string, unknown>;
+```
+
+**The `if` is the real check.** It runs, and it rejects anything that is not a
+JSON object — a string, a number, `null`, an array.
+
+**The `as` is not a check.** `as` is a *type assertion*: you telling the
+compiler "I know more than you do about this value, treat it as this type". It
+generates no code and tests nothing at runtime.
+
+Which makes it the one construct here you can use to lie. Say `body as string`
+and TypeScript will believe you, and your code will break at runtime with a
+type error you disabled the machine that finds. The pair above is safe only
+because the `if` above it did the work.
+
+| | Checks at runtime? | Safe? |
+| --- | --- | --- |
+| `typeof x === 'string'` | Yes | Yes |
+| `x as string` | No | Only if you already proved it |
+| `x as any` | No | Never — this switches off the checking |
+
+Note what the assertion says: `Record<string, unknown>` — an object whose keys
+are strings and whose **values are still `unknown`**. It claims only what the
+`if` proved. Every field then gets checked individually, which is exactly what
+{{step:post-validation}} has you do.
+
+:::note Two more you will see and should leave alone
+`Char<36>` in `route.ts` and `test/helpers.ts` is a *branded type* — a string
+the library has marked as a UUID so a plain string cannot be passed by mistake.
+You do not need to write one. When a function asks for it, pass the id you were
+given and it works.
+
+And a `!` after a value — `user!.name` — is another assertion, meaning "this is
+not null, trust me". Same warning as `as`: it silences the compiler without
+checking anything.
+:::
+
 === attest=saw-editor-error
 ## See it catch something
 

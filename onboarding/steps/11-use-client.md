@@ -103,11 +103,15 @@ number or hear a button.
 ## Experiment 3: the same thing, from the other side
 
 Now try it the other way round. In `app/posts/page.tsx` — the Server Component,
-with no `'use client'` — add these two lines inside the function:
+with no `'use client'` — add an import at the top of the file:
 
 ```tsx
 import { useState } from 'react';
+```
 
+and one line inside the function:
+
+```tsx
 export default function PostsPage() {
   const [x, setX] = useState(0);
 ```

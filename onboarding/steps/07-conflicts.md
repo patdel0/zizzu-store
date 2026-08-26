@@ -91,13 +91,21 @@ Your options are the usual three:
 - keep theirs
 - write something that takes from both
 
-Keep yours, this time. Edit the file until it reads:
+Keep yours, this time. Delete the other branch's version and all three marker
+lines, so the heading reads what it read before the merge:
 
 ```tsx
           Zizzu Store
 ```
 
-No `<<<<<<<`, no `=======`, no `>>>>>>>`. Just the line you want.
+**Keep everything else you wrote.** Depending on how close your edits were to
+each other, git may have swept your tagline into the conflicted block too. If it
+did, it belongs in the file — put it back exactly as you had it. Resolving a
+conflict means deciding what the file *should say*, not restoring it to some
+earlier state.
+
+When you are done: no `<<<<<<<`, no `=======`, no `>>>>>>>`, and the page still
+has your tagline on it.
 
 :::warn The markers are not magic
 They are ordinary text that git typed into your file. Leave one in by accident

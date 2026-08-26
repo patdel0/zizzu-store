@@ -81,6 +81,15 @@ jobs:
 2. `git pull` — get everyone else's latest work, so you branch from current code.
 3. `git switch -c <name>` — create a new branch and move onto it.
 
+:::note The `onboarding` folder just vanished, and that is fine
+This tutorial lives on its own branch, so switching to `main` removes the
+folder from your disk. The page you are reading is unaffected — the server
+loaded everything into memory at startup.
+
+If you ever need to restart it, `git switch onboarding` brings the folder back.
+That is the command from {{step:welcome}} you were told to write down.
+:::
+
 :::warn The prefix matters
 Name it `sandbox/…`. This tutorial itself lives on a branch called `onboarding`,
 and git will not let you have a branch called `onboarding` *and* a branch called

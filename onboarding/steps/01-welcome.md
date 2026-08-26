@@ -58,10 +58,21 @@ Some steps ask questions instead. Those are not an exam; you can answer as many
 times as you like. They exist because reading something and
 having understood it are different, and it is better to find out now.
 
-:::warn Leave this running
-Keep the tutorial server running in its own terminal tab for the whole day. It
-loaded everything it needs when it started, so you can switch git branches
-freely without disturbing it.
+:::warn Leave this running — and note how to restart it
+Keep the tutorial server in its own terminal tab. It loaded everything it needs
+when it started, so you can switch git branches freely without disturbing it.
+
+This takes a few days, so at some point you will close that tab or restart your
+machine. **Write this down somewhere outside the project**, because the command
+lives on a branch you are about to switch away from:
+
+```bash
+git switch onboarding && ./onboarding/start
+```
+
+Then reopen [localhost:4000](http://localhost:4000). Set `ONBOARDING_PORT` if
+4000 is taken. Switch back to your own branch afterwards — the server does not
+care which branch you are on once it is running.
 
 Your progress is saved outside the project, so closing the browser tab, or your
 laptop, loses nothing.
