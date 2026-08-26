@@ -26,13 +26,13 @@ While that runs, here is what the second half of it is doing.
 ===
 ## The code you did not write
 
-`npm install` just downloaded around three hundred folders into
-`node_modules/`. Two files decide what lands there.
+`npm install` just downloaded several hundred folders into `node_modules/`. Two files decide what lands there.
 
 **`package.json`** is the list you maintain. Open it — `dependencies` are what
 the app needs to run, `devDependencies` are what only you need while working
-(the test runner, the linter, the TypeScript compiler). Versions are written as
-ranges: `^15.5.4` means "15.5.4 or any later 15.x".
+(the test runner, the linter, the TypeScript compiler). Versions may be written as
+ranges: `^4.1.0` means "4.1.0 or any later 4.x", while a bare `16.3.2` pins one
+exact version.
 
 **`package-lock.json`** is generated, enormous, and the one that actually
 matters. It records the exact version of every package, and every package those

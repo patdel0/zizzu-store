@@ -57,12 +57,17 @@ than "typing is good for you".
 Two findings, one strong and one narrower than people usually claim.
 
 **Producing beats reading.** The generation effect: people remember material
-they generated far better than material they read.
+they generated better than material they read.
 [Bertsch et al. (2007)](https://link.springer.com/article/10.3758/BF03193441)
-pooled 86 studies and found **d = 0.40** overall — and, importantly for you,
-**d = 0.64** when the test came more than a day later. The advantage grows with
-delay, which is exactly the case you care about: writing this again next week
-without help.
+pooled 86 studies and found **d = 0.40** overall, rising to **d = 0.64** when
+the test came more than a day later — though that last figure rests on the
+smallest slice of their data, 30 effect sizes, so treat it as suggestive.
+
+Two honest caveats, since this is the box that promised them. Those studies are
+mostly word lists — remembering items you produced, not writing code from a
+pattern you understood, which is a bigger leap than the number makes it sound.
+And harder generation is not automatically better: their anagram studies, the
+most effortful reconstruction of the lot, showed no benefit at all.
 
 **But the effect is in the generating, not in the keystrokes.** There is no good
 evidence that typing something out while looking at it does much. Transcription
@@ -72,10 +77,12 @@ That is why the rule here is "look away", and not just "do not paste".
 
 **And the counterweight, which is why the examples exist.** Cognitive load
 research finds novices learn *better* from studying worked examples than from
-being made to solve problems unaided — the
-[worked example effect](https://link.springer.com/article/10.1007/s10648-011-9181-8),
-which reverses only once you are experienced. So: study the example, then
-generate from it. Doing only one of those is the mistake in either direction.
+being made to solve problems unaided —
+[Sweller & Cooper, 1985](https://doi.org/10.1207/s1532690xci0201_3) — an
+advantage that shrinks and then reverses as you gain expertise
+([Kalyuga et al., 2003](https://doi.org/10.1207/s15326985ep3801_4)). So: study
+the example, then generate from it. Doing only one of those is the mistake in
+either direction.
 :::
 
 === quiz=find-the-bug
@@ -111,11 +118,11 @@ produce and what you need, which feels like progress and is why the gap stops
 closing on its own.
 
 :::note You will not feel this happening
-In the study on the next card, motivation and enjoyment were measured and came
-out **unchanged**. Students who were quietly learning less enjoyed it exactly as
-much.
+The study on the next card asked students afterwards how they thought they had
+done. The ones who had been harmed **did not know**: they did not report
+performing worse or learning less than anyone else.
 
-So you cannot detect this by checking how you feel. You detect it later, sitting
+So you cannot detect this by checking how it felt. You detect it later, sitting
 down to do something similar unaided and finding that you cannot.
 :::
 
@@ -141,11 +148,17 @@ Breaking even was the best result available.
 [Bastani et al., *Generative AI without guardrails can harm learning*, PNAS
 2025](https://www.pnas.org/doi/10.1073/pnas.2422633122)
 
-:::note This is the whole argument for both rules
-Rule one is the guardrail — cs50.ai is the hint-giving version, and it is the
-only condition in that experiment that did not go backwards.
+:::note What this does and does not prove
+It shows that an assistant which hands over answers can leave you worse off than
+having none, and that hints instead of answers removed the harm in that setting.
 
-Rule two is because a guardrail you can paste around is not one.
+It does **not** prove cs50.ai specifically is safe. The guardrailed condition
+there was built per problem by the teachers, who wrote the hints in advance for
+mistakes they expected. cs50.ai is a general Socratic assistant with no
+knowledge of this codebase — closer in spirit, not the same thing. Treat rule
+one as the best available bet, not a proven result.
+
+Rule two needs no study: a guardrail you can paste around is not one.
 :::
 
 === attest=write-not-copy ask=why-type-it

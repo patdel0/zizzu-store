@@ -182,8 +182,17 @@ Every hand-written type in this codebase follows that. There are four:
 | --- | --- | --- |
 | `Parsed<T>` | `app/api/posts/route.ts` | No — only that file parses |
 | `CreatePostInput` | `app/api/posts/route.ts` | No |
-| `SerializedPost` | `app/posts/posts-board.tsx` | Yes — the page uses it too |
+| `SerializedPost` | `app/posts/posts-board.tsx` | Exported — see below |
 | `CreateState` | `app/posts/posts-board.tsx` | No |
+
+`SerializedPost` is the interesting row: it is exported, and right now nothing
+outside that file imports it. Check for yourself — `grep -rn SerializedPost app`
+finds two hits, both in `posts-board.tsx`.
+
+So it is exported speculatively, which is a small mess: an exported type is part
+of a file's public surface, and a reader has to assume something depends on it.
+Export when something needs it, not in case. (You will meet this again in
+{{step:ui}}, where the products page genuinely does need one.)
 
 Two house rules go with it.
 

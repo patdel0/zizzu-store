@@ -87,9 +87,10 @@ fine.
 **A test is that manual check, written down once, so a computer does it every
 time instead of you doing it never.**
 
-:::why Which is why the suite stayed green earlier
-When you changed the title limit to 5, every test passed, because a test can
-only check a behaviour somebody described. Nobody had described the title limit.
+:::why Which is why a green suite proves less than it looks
+In {{step:tdd}} you will change the title limit to 5, break the app for every
+real user, and watch every test still pass — because a test can only check a
+behaviour somebody described, and nobody described the title limit.
 
 Tests are not a safety net that catches everything. They are exactly as good as
 the list of things people bothered to write down — which is a reason to write

@@ -243,6 +243,20 @@ not fixed by deleting it in the next commit — it is in the history, and the
 history is what gets pushed. The fix is to rotate the secret, which means telling
 someone. Do that quickly rather than quietly.
 
+:::warn The biggest one is what this endpoint does not have
+Anyone who can reach `POST /api/products` can create a product. There is no
+sign-in, no check of who is asking, no limit on how often. That is deliberate
+for a sandbox and it would not survive review anywhere else.
+
+Two words worth having straight, because they get confused constantly:
+**authentication** is *who are you*, **authorisation** is *are you allowed to do
+this*. Validation — everything you just wrote — is a third thing, and having it
+does not give you either of the others.
+
+On a real ticket, "who is allowed to call this?" is the first question a
+reviewer asks. Ask it yourself first.
+:::
+
 :::note The pattern under all three
 Somewhere, a string you were given gets read as something with power — a query,
 markup, a command. Every time you hand user input to something that interprets

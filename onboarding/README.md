@@ -92,10 +92,13 @@ Some checks are less obvious than they look:
 ## Written answers, and the optional AI comment
 
 Sixteen questions across the course ask the trainee to produce an answer rather
-than pick one — free recall rather than recognition, which is the stronger
-instrument by some distance (Rowland's meta-analysis puts recall at g=0.81
-against recognition at g=0.36). Three of them are deliberately spaced: they ask
-for something learned hours earlier, at the moment it comes up again.
+than pick one. The case for that is the testing effect: retrieving something is
+itself a learning event, and producing an answer is a stronger one than
+recognising it among four. Rowland's meta-analysis reports free recall at g=0.81
+against recognition at g=0.36 — though those come from his high-exposure subset;
+in the full data set the two are level, so read it as a reason to prefer recall,
+not a settled margin. Three of the sixteen are deliberately spaced: they ask for
+something learned hours earlier, at the moment it comes up again.
 
 The answer is **recorded the moment it is submitted**, and the author's model
 answer is always revealed to compare against. Two things then comment on it,
@@ -116,8 +119,11 @@ of what reading a file can tell you. That question sets `structural: true`,
 which turns the offline word match off: its rubric describes the shape of a task
 list, and a good answer is a list that never uses those words.
 
-**The AI verdict never gates anything.** The card unlocks on having written a
-substantive answer — checked server-side, offline, deterministically. A trainee
+**The AI verdict never gates anything.** The card unlocks on having written an
+answer of at least 40 characters — checked server-side, offline. That is a
+liveness check, not a grade, and it is deliberately not one: the retrieval
+benefit comes from attempting, and a gate that can strand somebody on their
+first morning is worse than a gate that lets a weak answer through. A trainee
 with no key, no wifi, an expired key, a rate limit, or a retired model id
 progresses exactly as anyone else does. There is no path where a third party
 can stop somebody on their first morning.

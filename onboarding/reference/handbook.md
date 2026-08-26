@@ -1,6 +1,6 @@
 # Handbook
 
-Everything you would otherwise have to remember. Everything you would otherwise have to remember. Nothing here is on the critical
+Everything you would otherwise have to remember. Nothing here is on the critical
 path of the course.
 
 ---

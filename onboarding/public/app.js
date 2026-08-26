@@ -839,10 +839,14 @@ function refreshCardNav() {
   if (!next || !step || !currentCard) return;
 
   const satisfied = cardSatisfied(step, currentCard);
+  // Every gate kind, or a card gated only by a written answer looks ungated:
+  // Next stays enabled, the reader walks past, and the step can never complete
+  // because `isStepComplete` on the server does count `ask`.
   const gated =
     currentCard.gate.check.length +
     currentCard.gate.quiz.length +
-    currentCard.gate.attest.length >
+    currentCard.gate.attest.length +
+    currentCard.gate.ask.length >
     0;
 
   next.disabled = gated && !satisfied;

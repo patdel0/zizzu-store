@@ -83,8 +83,8 @@ supported. Worth separating them, because you will be told to do both.
 **Watching it fail is not optional.** You proved that to yourself a moment ago.
 Red first takes one second and there is no substitute for it.
 
-**Writing the test *before* the code is a preference, not a law.** The largest
-careful study of this — [Fucci et al., 2017](https://arxiv.org/abs/1611.05994) —
+**Writing the test *before* the code is a preference, not a law.** A careful
+study of this — [Fucci et al., 2017](https://arxiv.org/abs/1611.05994) —
 took developers doing test-first and test-last and found the ordering "had no
 important influence" on how much they got done or how correct it was. What
 *did* predict better results was something else in the same data: working in
@@ -251,9 +251,13 @@ exports called `GET`, `POST`, `PATCH`, `DELETE` and calls whichever matches the
 request. One function per method, no routing code to write.
 
 **`export const runtime = 'nodejs'`** — Next.js can run a handler in a stripped
-down "Edge" environment that has no Node APIs. The Postgres driver needs them,
-so the runtime is pinned. Leave it out and this works on your machine and fails
-in production, which is the worst way to find a bug.
+down ["Edge" environment](https://nextjs.org/docs/app/api-reference/edge) that
+has no Node APIs. The Postgres driver needs them.
+
+Node is already the default, so this line changes nothing today. It is a
+**house convention**: `docs/api-routes.md` asks for it on every handler that
+touches the database, so that anyone adding `runtime = 'edge'` later has to
+delete a line that says why they should not.
 
 **`db.orm.public.Product`** — the query builder [Prisma](https://www.prisma.io/docs) generated from your
 contract. Type `db.orm.public.Product.` in your editor and let autocomplete show

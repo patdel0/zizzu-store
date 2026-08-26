@@ -35,6 +35,24 @@ const SLOW = true;
 // Shared checks
 // ---------------------------------------------------------------------------
 
+/**
+ * The trainee's sandbox branch, wherever they happen to be standing.
+ *
+ * `currentBranch()` is no use by the cleanup step, which has just told them to
+ * switch back to `main`. Returns null if they never made one.
+ */
+async function sandboxBranch() {
+  const listed = await gitOut(
+    'for-each-ref',
+    '--format=%(refname:short)',
+    `refs/heads/${SANDBOX_PREFIX}*`,
+  );
+
+  const [first] = listed.split('\n').filter((line) => line.trim() !== '');
+
+  return first ?? null;
+}
+
 const onSandboxBranch = {
   id: 'sandbox-branch',
   label: 'You are on your sandbox branch',
@@ -2074,7 +2092,7 @@ export const steps = [
           return {
             pass: false,
             detail:
-              "Add `export const runtime = 'nodejs';` near the top.\n\nWithout it, Next.js may run the handler on the Edge runtime, which has no Node APIs — and the Postgres driver needs them. It would work locally and fail in production, which is the worst kind of bug.",
+              "Add `export const runtime = 'nodejs';` near the top.\n\nNode is already the default, so this changes nothing today \u2014 it is the house convention from `docs/api-routes.md`, so that anyone who later switches this handler to the Edge runtime has to delete a line explaining why the Postgres driver cannot go there.",
           };
         },
       },
@@ -2777,8 +2795,30 @@ export const steps = [
             return { pass: false, detail: 'No `useEffect` found in the board.' };
           }
 
-          // The effect ends `}, []);` when fixed and `});` while broken.
-          if (!/\n\s*\},\s*\[\s*\]\s*\);/.test(source)) {
+          // Scoped to the fetching effect itself. Matching `}, []);` anywhere
+          // in the file passes on an unrelated `useCallback` while the broken
+          // effect stays broken.
+          const at = source.indexOf('useEffect(');
+          let depth = 0;
+          let end = at;
+
+          for (let i = at; i < source.length; i += 1) {
+            if (source[i] === '(') depth += 1;
+            else if (source[i] === ')') {
+              depth -= 1;
+
+              if (depth === 0) {
+                end = i;
+                break;
+              }
+            }
+          }
+
+          const call = source.slice(at, end + 1);
+
+          // A second argument at all — `[]`, `[foo]`, a named array — means the
+          // reader has said when it should re-run. No comma means they have not.
+          if (!/,\s*\[[^\]]*\]\s*\)$/.test(call.trim())) {
             return {
               pass: false,
               detail:
@@ -2802,7 +2842,12 @@ export const steps = [
             return { pass: false, detail: 'No products board to check yet.' };
           }
 
-          if (!/priceCents\s*\/\s*100/.test(source)) {
+          // Comments would otherwise satisfy every pattern below.
+          const code = source
+            .replace(/\/\*[\s\S]*?\*\//g, ' ')
+            .replace(/(^|[^:])\/\/[^\n]*/g, '$1 ');
+
+          if (!/priceCents\s*\/\s*100/.test(code)) {
             return {
               pass: false,
               detail:
@@ -2810,11 +2855,19 @@ export const steps = [
             };
           }
 
-          if (!/toFixed\(\s*2\s*\)/.test(source)) {
+          // Any formatter that fixes the decimals counts. `Intl.NumberFormat`
+          // is the better answer than `toFixed`, and must not be punished.
+          const formatted =
+            /toFixed\(\s*2\s*\)/.test(code) ||
+            /Intl\.NumberFormat/.test(code) ||
+            /toLocaleString/.test(code) ||
+            /minimumFractionDigits/.test(code);
+
+          if (!formatted) {
             return {
               pass: false,
               detail:
-                'Dividing is right, but `900 / 100` renders as `9`, not `9.00`. Money always shows both decimal places \u2014 `.toFixed(2)`.',
+                'Dividing is right, but `900 / 100` renders as `9`, not `9.00`. Money shows both decimal places \u2014 `.toFixed(2)` is the quick way, and `Intl.NumberFormat` with `style: \'currency\'` is the better one, because it gets the symbol and the separators right too.',
             };
           }
 
@@ -3089,18 +3142,42 @@ export const steps = [
         id: 'main-untouched',
         label: '`main` is exactly as you found it',
         async run() {
-          const ahead = await gitOut('rev-list', '--count', 'origin/main..main');
+          const branch = await sandboxBranch();
 
-          if (ahead === '' || Number(ahead) === 0) {
+          if (branch === null) {
             return {
               pass: true,
-              detail: 'No commits of yours on `main`. The sandbox stayed a sandbox.',
+              detail: 'No sandbox branch found, so nothing could have leaked into `main`.',
             };
           }
 
+          // Against the fork point, not `origin/main`. Comparing to the remote
+          // fails on any checkout whose `main` is legitimately ahead of it —
+          // this tutorial's own fixture commit does exactly that — and then
+          // accuses the reader of a mistake they did not make.
+          const forkPoint = await gitOut('merge-base', 'main', branch);
+          const tip = await gitOut('rev-parse', 'main');
+
+          if (forkPoint === '' || tip === '') {
+            return {
+              pass: true,
+              detail: 'Could not compare `main` with your branch, so nothing to report.',
+            };
+          }
+
+          if (forkPoint === tip) {
+            return {
+              pass: true,
+              detail: '`main` is exactly where it was when you branched off it.',
+            };
+          }
+
+          const extra = await gitOut('rev-list', '--count', `${forkPoint}..main`);
+          const short = forkPoint.slice(0, 8);
+
           return {
             pass: false,
-            detail: `\`main\` has ${ahead} commit(s) that are not on \`origin/main\`, so some of your work landed there by mistake.\n\nNothing is lost. \`git log main\` shows you what they are, and \`git reset --hard origin/main\` puts \`main\` back — do that only once you are sure the work you want is on your branch.`,
+            detail: `\`main\` has moved on by ${extra} commit(s) since you branched from it, so something may have been committed there by mistake.\n\nSee what: \`git log --oneline ${short}..main\`\n\nIf those commits are yours and are also on your branch, \`git switch main && git reset --keep ${short}\` puts \`main\` back. \`--keep\` refuses rather than throwing away uncommitted work, which \`--hard\` would not. If you are not certain, ask before running anything.`,
           };
         },
       },
