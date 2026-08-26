@@ -124,13 +124,13 @@ this.
 
 :::blank Finish these branch names
 Issue #310, the login page rejects valid emails
-   {{fix}}/310-login-email-validation
+   {{fix|bug|bugfix}}/310-login-email-validation
 
 Issue #312, add a "recently viewed" list
-   {{feature}}/312-recently-viewed
+   {{feature|feat}}/312-recently-viewed
 
 Issue #315, the README still says Node is not required
-   {{docs}}/315-readme-node-requirement
+   {{docs|doc}}/315-readme-node-requirement
 :::
 
 :::warn One name you cannot use

@@ -226,13 +226,24 @@ function renderBlank(lines, heading) {
   let n = 0;
   const body = escapeHtml(lines.join('\n')).replace(
     /\{\{([^}]+)\}\}/g,
-    (_, answer) => {
+    (_, spec) => {
       n += 1;
+
+      // `{{shape:answer|other}}` — the shape is what the lesson is usually
+      // about, and the listed answers are the wordings we would pick. An
+      // answer of the right shape but a different word is not a failure; it
+      // gets told what this project would have called it.
+      const [shape, answers] = /^[a-z]+:/.test(spec)
+        ? [spec.slice(0, spec.indexOf(':')), spec.slice(spec.indexOf(':') + 1)]
+        : ['', spec];
+      const accepted = answers.split('|');
+      const width = Math.max(...accepted.map((a) => a.length)) + 1;
 
       return (
         `<input class="blank" type="text" spellcheck="false" autocomplete="off"` +
-        ` aria-label="Blank ${n}" data-answer="${escapeHtml(answer)}"` +
-        ` style="width:${Math.max(answer.length + 1, 4)}ch">`
+        ` aria-label="Blank ${n}" data-answers="${escapeHtml(accepted.join('|'))}"` +
+        ` data-shape="${escapeHtml(shape)}"` +
+        ` style="width:${Math.max(width, 4)}ch">`
       );
     },
   );

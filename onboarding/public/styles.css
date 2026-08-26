@@ -572,6 +572,11 @@ input.blank[data-state="right"] {
   background: var(--accent-soft);
 }
 
+input.blank[data-state="close"] {
+  border-color: var(--warn);
+  background: var(--warn-soft);
+}
+
 input.blank[data-state="wrong"] {
   border-color: var(--fail);
   background: var(--fail-soft);

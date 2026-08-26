@@ -142,6 +142,12 @@ public/vendor/    Mermaid, committed rather than installed
 ISSUES.md         seed issues to paste into GitHub before a trainee starts
 ```
 
+A `:::blank` marks its answers as `{{shape:answer|other}}`. The shape — `kebab`,
+`camel`, `pascal`, `screaming`, `bool` — is graded when the exact wording is not
+the lesson: a name of the right shape is accepted and told what this project
+would have called it. Requiring one exact string marks correct answers wrong,
+which is the worst thing a practice exercise can do.
+
 Diagrams are ```mermaid fences in the step markdown, rendered in the browser by
 the vendored bundle. If Mermaid ever fails to load, the diagram source stays
 visible in a `pre` rather than leaving a hole in the page.

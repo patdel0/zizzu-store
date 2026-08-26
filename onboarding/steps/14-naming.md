@@ -154,19 +154,29 @@ called here.
 
 :::blank Name these the way this project would
 A file holding the products board component
-   app/products/{{products-board}}.tsx
+   app/products/{{kebab:products-board|product-board|products-list}}.tsx
 
 The component it exports
-   export function {{ProductsBoard}}()
+   export function {{pascal:ProductsBoard|ProductBoard|ProductsList}}()
 
 A function that turns an unknown value into a valid price or a reason
-   export function {{parsePriceCents}}(raw: unknown)
+   export function {{camel:parsePriceCents|parsePrice}}(raw: unknown)
 
 The largest price the endpoint will accept, at the top of the file
-   const {{MAX_PRICE_CENTS}} = 100000;
+   const {{screaming:MAX_PRICE_CENTS|MAX_PRICE}} = 100000;
 
 Whether a form is mid-submit
-   const [{{isSaving}}, setIsSaving] = useState(false)
+   const [{{bool:isSaving|isSubmitting|isCreating}}, setIsSaving] = useState(false)
+:::
+
+:::note What is being marked
+The **shape**, not the exact word. There is more than one sensible name for most
+of these, and any name in the right casing counts — it will just tell you what
+we would have called it here.
+
+A name in the wrong casing does not count, because that is the part that is a
+convention rather than a judgement.
+
 :::
 
 :::note When you are unsure, go and look

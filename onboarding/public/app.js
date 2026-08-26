@@ -355,6 +355,25 @@ function renderAskResult(reply) {
  * they followed, at the moment they read it, instead of discovering it later
  * when a check goes red.
  */
+/** The casing conventions a blank can ask for, when the shape is the lesson. */
+const SHAPES = {
+  kebab: /^[a-z0-9]+(-[a-z0-9]+)*$/,
+  camel: /^[a-z][a-zA-Z0-9]*$/,
+  pascal: /^[A-Z][a-zA-Z0-9]*$/,
+  screaming: /^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$/,
+  // Booleans are camelCase *and* start with a question word — `saving` is the
+  // right casing and still the wrong name.
+  bool: /^(is|has|should|can)[A-Z][a-zA-Z0-9]*$/,
+};
+
+const SHAPE_NAMES = {
+  kebab: 'kebab-case (lowercase, hyphens between words)',
+  camel: 'camelCase (starts lowercase, no separators)',
+  pascal: 'PascalCase (starts with a capital, no separators)',
+  screaming: 'SCREAMING_SNAKE_CASE (capitals, underscores)',
+  bool: 'a boolean name — start it with `is` or `has`',
+};
+
 function wireExercises(container) {
   for (const box of container.querySelectorAll('.exercise--blank')) {
     const inputs = [...box.querySelectorAll('.blank')];
@@ -363,6 +382,7 @@ function wireExercises(container) {
     const grade = () => {
       let filled = 0;
       let right = 0;
+      const notes = [];
 
       for (const input of inputs) {
         const value = input.value.trim();
@@ -375,20 +395,42 @@ function wireExercises(container) {
 
         filled += 1;
 
-        const ok = value === input.dataset.answer;
+        const accepted = input.dataset.answers.split('|');
+        const shape = input.dataset.shape;
 
-        input.dataset.state = ok ? 'right' : 'wrong';
+        if (accepted.includes(value)) {
+          input.dataset.state = 'right';
+          right += 1;
 
-        if (ok) right += 1;
+          continue;
+        }
+
+        // The convention is usually the thing being taught, and there is more
+        // than one reasonable word for most things. Something of the right
+        // shape counts; it just gets told what we would have called it.
+        if (shape && SHAPES[shape]?.test(value)) {
+          input.dataset.state = 'close';
+          right += 1;
+          notes.push(`\u201c${value}\u201d works — here we would say \u201c${accepted[0]}\u201d.`);
+
+          continue;
+        }
+
+        input.dataset.state = 'wrong';
+
+        if (shape && SHAPE_NAMES[shape]) {
+          notes.push(`\u201c${value}\u201d is not ${SHAPE_NAMES[shape]}.`);
+        }
       }
 
-      status.textContent =
-        right === inputs.length
-          ? 'That is it.'
-          : filled === 0
-            ? ''
-            : `${right} of ${inputs.length}.`;
-      status.dataset.state = right === inputs.length ? 'right' : '';
+      const all = right === inputs.length;
+
+      status.innerHTML = all
+        ? `That is it.${notes.length ? ` ${escapeHtml(notes.join(' '))}` : ''}`
+        : filled === 0
+          ? ''
+          : `${right} of ${inputs.length}.${notes.length ? ` ${escapeHtml(notes[0])}` : ''}`;
+      status.dataset.state = all ? 'right' : '';
     };
 
     for (const input of inputs) input.addEventListener('input', grade);
