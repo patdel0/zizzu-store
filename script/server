@@ -1,14 +1,4 @@
 #!/usr/bin/env sh
 
 docker compose down
-docker compose up -d
-
-# The image is built with a copy of the code, so edits do not reach the running
-# container on their own. Anyone who misses this edits a file, reloads, and sees
-# the old page with no error to explain it.
-echo
-echo "App:      http://localhost:3000"
-echo "Postgres: postgresql://zizzu:zizzu@localhost:5432/zizzu"
-echo
-echo "Your edits will NOT reach the container until you also run:"
-echo "  docker compose watch      (or ./script/dev instead of this script)"
+docker compose watch
