@@ -1499,7 +1499,7 @@ export const steps = [
     title: 'React: server and client components',
     week: 1,
     phase: 'How the app works',
-    minutes: 30,
+    minutes: 35,
     ask: [
       {
         id: 'which-to-use',
@@ -1552,6 +1552,27 @@ export const steps = [
         },
       },
       {
+        id: 'deps-intact',
+        label: 'The dependency list is back on the effect',
+        async run() {
+          const source = await read('app/posts/posts-board.tsx');
+
+          if (source === null) {
+            return { pass: false, detail: 'Could not read `app/posts/posts-board.tsx`.' };
+          }
+
+          if (!/\n\s*\},\s*\[\s*\]\s*\);/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'The `useEffect` still has no dependency list, so it is running after every render and fetching forever. Put the `[]` back:\n\n```\n  return () => controller.abort();\n}, []);\n```',
+            };
+          }
+
+          return { pass: true, detail: 'Back to running once.' };
+        },
+      },
+      {
         id: 'use-client-intact',
         label: "`'use client'` is back on the first line",
         async run() {
@@ -1591,6 +1612,12 @@ export const steps = [
       },
     ],
     attest: [
+      {
+        id: 'saw-the-loop',
+        label: 'I removed the `[]` and watched the network tab fetch forever',
+        hint: 'Sort the network tab by time and watch the row count climb. It is not subtle \u2014 dozens of requests a second, all answering 200. Then put the `[]` back.',
+      },
+
       {
         id: 'removed-marker',
         label: "I removed `'use client'`, read the error, and put it back",

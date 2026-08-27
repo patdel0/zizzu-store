@@ -472,5 +472,8 @@
   "attest.javascript.ran-the-operators.label": "I ran the `??` / `||` and `?.` lines and read what came back",
   "attest.javascript.ran-the-operators.hint": "`node -e \"console.log(0 ?? 5, 0 || 5)\"` prints `0 5`. Thirty seconds, and it is the difference between knowing that `||` discards zero and having watched it happen.",
   "attest.naming.saw-the-404.label": "I renamed `page.tsx` to `Page.tsx`, got a 404 with no error anywhere, and put it back",
-  "attest.naming.saw-the-404.hint": "On macOS and Windows nothing will happen — those filesystems treat the two names as one file. That is the point: the bug only appears on Linux, which is what production runs. Tick it if you tried."
+  "attest.naming.saw-the-404.hint": "On macOS and Windows nothing will happen — those filesystems treat the two names as one file. That is the point: the bug only appears on Linux, which is what production runs. Tick it if you tried.",
+  "check.use-client.deps-intact": "The dependency list is back on the effect",
+  "attest.use-client.saw-the-loop.label": "I removed the `[]` and watched the network tab fetch forever",
+  "attest.use-client.saw-the-loop.hint": "Sort the network tab by time and watch the row count climb. It is not subtle — dozens of requests a second, all answering 200. Then put the `[]` back."
 }

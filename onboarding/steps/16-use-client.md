@@ -120,8 +120,57 @@ is not a loop you can see in the code; it is one you see in the network tab.
 Take the extra log out again when you have seen it.
 :::
 
+=== check=deps-intact attest=saw-the-loop
+## Experiment 2: take the dependency list away
+
+The `:::try` above said an effect with no dependency list runs after every
+render, and that if it sets state you get a loop. That is worth seeing rather
+than believing, because you have to find exactly this bug, unaided, in
+{{step:ui}}.
+
+**1.** In `posts-board.tsx`, find the end of the `useEffect` — around line 56 —
+and delete the `, []`:
+
+```tsx
+    return () => controller.abort();
+  });
+```
+
+**2.** Open your browser's **Network** tab, then reload
+[localhost:3000/posts](http://localhost:3000/posts).
+
+**3.** Watch the row count.
+
+Requests to `/api/posts`, dozens a second, every one answering **200 OK**. The
+page looks fine. Nothing is red. Nothing is in the console. The server is
+cheerfully answering as fast as it is asked.
+
+Here is the cycle, and it is only three steps:
+
+```mermaid
+flowchart LR
+    E["effect runs<br/>fetch /api/posts"] --> S["setPosts(new array)"]
+    S --> R["state changed<br/>→ re-render"]
+    R --> E
+```
+
+The array is new every time — `response.json()` parses a fresh one — so React
+compares old and new, sees a different object, and re-renders. With no
+dependency list, a re-render runs the effect. Which fetches. Which sets state.
+
+**4.** Put the `, []` back and reload. One request.
+
+:::warn This is what a slow page often is
+No error, no crash, nothing to search for. Just a server being asked the same
+question a thousand times a minute by a page that looks perfectly normal, until
+somebody opens the network tab or the bill arrives.
+
+The network tab is the only window this shows up in. That is why
+{{step:debugging}} has four of them.
+:::
+
 === check=use-client-intact attest=removed-marker
-## Experiment 2: take the marker away
+## Experiment 3: take the marker away
 
 Now delete the `'use client';` line from the top of `posts-board.tsx`. Save.
 Reload.
@@ -144,7 +193,7 @@ number or hear a button.
 **Put the line back.**
 
 === check=page-clean attest=state-on-server
-## Experiment 3: the same thing, from the other side
+## Experiment 4: the same thing, from the other side
 
 Now try it the other way round. In `app/posts/page.tsx` — the Server Component,
 with no `'use client'` — add an import at the top of the file:

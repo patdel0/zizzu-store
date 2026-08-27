@@ -472,5 +472,8 @@
   "attest.javascript.ran-the-operators.label": "Rodei as linhas de `??` / `||` e `?.` e li o que voltou",
   "attest.javascript.ran-the-operators.hint": "`node -e \"console.log(0 ?? 5, 0 || 5)\"` imprime `0 5`. Trinta segundos, e é a diferença entre saber que o `||` descarta zero e ter visto acontecer.",
   "attest.naming.saw-the-404.label": "Renomeei `page.tsx` para `Page.tsx`, recebi um 404 sem erro em lugar nenhum, e devolvi",
-  "attest.naming.saw-the-404.hint": "No macOS e no Windows nada vai acontecer — aqueles sistemas tratam os dois nomes como um arquivo só. É esse o ponto: o bug só aparece no Linux, que é o que roda em produção. Marque se você tentou."
+  "attest.naming.saw-the-404.hint": "No macOS e no Windows nada vai acontecer — aqueles sistemas tratam os dois nomes como um arquivo só. É esse o ponto: o bug só aparece no Linux, que é o que roda em produção. Marque se você tentou.",
+  "check.use-client.deps-intact": "A lista de dependências voltou ao efeito",
+  "attest.use-client.saw-the-loop.label": "Removi o `[]` e vi a aba de rede buscar para sempre",
+  "attest.use-client.saw-the-loop.hint": "Ordene a aba de rede por tempo e veja a contagem de linhas subir. Não é sutil — dezenas de requisições por segundo, todas respondendo 200. Depois recoloque o `[]`."
 }

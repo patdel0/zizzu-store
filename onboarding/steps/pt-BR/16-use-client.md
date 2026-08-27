@@ -122,8 +122,58 @@ novo. Não é um laço que dá para ver no código; é um que se vê na aba de r
 Tire o log extra depois de ver.
 :::
 
+=== check=deps-intact attest=saw-the-loop
+## Experimento 2: tire a lista de dependências
+
+O `:::try` acima disse que um efeito sem lista de dependências roda depois de
+toda renderização, e que, se ele muda estado, você tem um laço. Isso vale ver em
+vez de acreditar, porque você vai ter que achar exatamente esse bug, sozinho, na
+etapa {{step:ui}}.
+
+**1.** Em `posts-board.tsx`, ache o fim do `useEffect` — por volta da linha 56 —
+e apague o `, []`:
+
+```tsx
+    return () => controller.abort();
+  });
+```
+
+**2.** Abra a aba **Network** do seu navegador e recarregue
+[localhost:3000/posts](http://localhost:3000/posts).
+
+**3.** Observe a contagem de linhas.
+
+Requisições para `/api/posts`, dezenas por segundo, cada uma respondendo **200
+OK**. A página parece bem. Nada está vermelho. Nada no console. O servidor está
+respondendo alegremente tão rápido quanto perguntam.
+
+Aqui está o ciclo, e ele tem só três passos:
+
+```mermaid
+flowchart LR
+    E["o efeito roda<br/>fetch /api/posts"] --> S["setPosts(array novo)"]
+    S --> R["estado mudou<br/>→ re-renderiza"]
+    R --> E
+```
+
+O array é novo toda vez — o `response.json()` faz o parse de um novo — então o
+React compara o antigo com o novo, vê um objeto diferente e re-renderiza. Sem
+lista de dependências, uma re-renderização roda o efeito. Que busca. Que muda o
+estado.
+
+**4.** Recoloque o `, []` e recarregue. Uma requisição.
+
+:::warn É isto que uma página lenta muitas vezes é
+Sem erro, sem quebra, sem nada para pesquisar. Só um servidor sendo perguntado a
+mesma coisa mil vezes por minuto por uma página que parece perfeitamente normal,
+até alguém abrir a aba de rede ou a conta chegar.
+
+A aba de rede é a única janela em que isso aparece. É por isso que a etapa
+{{step:debugging}} tem quatro delas.
+:::
+
 === check=use-client-intact attest=removed-marker
-## Experimento 2: tire o marcador
+## Experimento 3: tire o marcador
 
 Agora apague a linha `'use client';` do topo de `posts-board.tsx`. Salve.
 Recarregue.
@@ -146,7 +196,7 @@ botão.
 **Recoloque a linha.**
 
 === check=page-clean attest=state-on-server
-## Experimento 3: a mesma coisa, pelo outro lado
+## Experimento 4: a mesma coisa, pelo outro lado
 
 Agora tente ao contrário. Em `app/posts/page.tsx` — o Server Component, sem
 `'use client'` — adicione um import no topo do arquivo:
