@@ -11,7 +11,8 @@
     "contract:emit": "prisma-cli contract emit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "check:translations": "node onboarding/script/check-translations.mjs"
   },
   "dependencies": {
     "@prisma/orm-postgres": "^8.0.0-rc.5",

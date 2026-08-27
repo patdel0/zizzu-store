@@ -100,6 +100,28 @@ Some checks are less obvious than they look:
 - The `tdd-green` check compares commit ancestry to confirm the test was
   committed *before* the code that makes it pass.
 
+## Keeping a translation honest
+
+```bash
+npm run check:translations
+```
+
+Compares every translated step against its English source and fails on
+anything that drifted: card counts, the gates on each card, the contents of
+every code block, links, callout types, table rows, bullets and bold spans.
+
+It exists because the check before it compared only card counts and gates, and
+two separate edits walked straight past — both added paragraphs *inside* an
+existing card, so nothing it looked at changed, and the Portuguese silently went
+stale. Structure is not content.
+
+What it deliberately ignores is everything a translation is supposed to change:
+prose, placeholder names like `sandbox/your-name`, comments inside code, text
+between JSX tags, mermaid diagram labels, and locale variants of the same
+documentation link. When it flags something, the answer is either "fix the
+drift" or "teach the script that this one is meant to differ" — and the second
+answer belongs in `normalise()` with a comment saying why.
+
 ## Written answers, and the optional AI comment
 
 Sixteen questions across the course ask the trainee to produce an answer rather
