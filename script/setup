@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
 
 cp .env.example .env
+
 npm i
+npx playwright install chromium
