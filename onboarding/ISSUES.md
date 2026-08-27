@@ -17,6 +17,16 @@ The first three are the work the tutorial actually walks through, split the way
 a real team would split it. The rest are genuine small jobs in this repository —
 good second tasks, and none of them are invented busywork.
 
+Nothing here is a defect planted for somebody to find. The repository's known
+problems were fixed rather than left lying around: the Playwright run had its
+own port so it can no longer read development data, `script/dev` syncs your
+edits, and the README's setup instructions and service list are correct.
+
+One thing that looks like a defect is not. `app/page.tsx` is still close to what
+`create-next-app` generated, because {{step:first-change}} asks the trainee to
+change its heading — it is that step's exercise, and replacing it beforehand
+would take the exercise away.
+
 ---
 
 ## 1. Add a Product model and `GET /api/products`
@@ -97,77 +107,7 @@ A page at `/products` that lists products and has a form to add one. Model it on
 
 ---
 
-## 4. The home page is still the Next.js starter
-
-**Labels:** `good first issue`
-
-`app/page.tsx` is whatever `create-next-app` generated — Vercel logo, "Deploy
-Now", links to the Next.js templates gallery. Replace it with something that
-says what this site is.
-
-No new dependencies, and keep it working in dark mode.
-
----
-
-## 5. `README.md` says Node is not needed, but it is
-
-**Labels:** `good first issue`, `documentation`
-
-The README opens with "you don't need Node installed locally". That is not true:
-`./script/setup` runs `npm i`, and both `npm test` and `npm run test:e2e` run on
-the host.
-
-Fix the setup instructions to say Docker **and** Node, with the version we
-expect.
-
----
-
-## 6. `./script/server` does not pick up code changes
-
-**Labels:** `bug`, `developer-experience`
-
-`script/server` runs `docker compose up -d`. The image is built with `COPY . .`,
-and `up -d` does not start the `develop.watch` sync — so editing a file does
-nothing until the container is rebuilt. Every new person hits this within an
-hour and has no way to know why.
-
-`docker compose watch` does the right thing. Either make `script/server` use it,
-or add a `script/dev` that does and say which is which in the README.
-
----
-
-## 7. The README has an empty Postgres line
-
-**Labels:** `good first issue`, `documentation`
-
-Under "Services":
-
-```
-- PostgresSQL:
-```
-
-No value, and "PostgresSQL" is a typo for "PostgreSQL". Should read
-`postgresql://zizzu:zizzu@localhost:5432/zizzu`.
-
----
-
-## 8. `npm run test:e2e` can silently run against the development database
-
-**Labels:** `bug`, `testing`
-
-`playwright.config.ts` sets `reuseExistingServer: !process.env.CI`. If the
-containerised app is up on port 3000, Playwright reuses it — and that server is
-pointed at `DATABASE_URL`, not `TEST_DATABASE_URL`. The suite then seeds
-fixtures into the test database while the browser reads development data, so
-tests fail confusingly. Worse, a destructive test would be pointed at real data.
-
-Options: fail fast if the server on 3000 is not the one Playwright started, use
-a different port for the test server, or document `docker compose stop app` as a
-required step. The first is the only one that cannot be forgotten.
-
----
-
-## 9. There is no CI
+## 4. There is no CI
 
 **Labels:** `infrastructure`
 
@@ -180,7 +120,7 @@ that catches most things.
 
 ---
 
-## 10. Products cannot be deleted
+## 5. Products cannot be deleted
 
 **Labels:** `enhancement`
 **Blocked by:** #2

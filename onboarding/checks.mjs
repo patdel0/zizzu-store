@@ -2987,7 +2987,7 @@ export const steps = [
       {
         id: 'e2e-passes',
         label: 'I ran `npm run test:e2e` and my products test passes',
-        hint: 'Stop the containerised app first (`docker compose stop app`). Playwright starts its own dev server pointed at the *test* database, and it will reuse whatever is already on port 3000 if you leave it up.',
+        hint: 'Playwright starts its own dev server on port 3100, pointed at the test database, so you can leave the app on 3000 running. The first run needs a browser: `npx playwright install chromium` \u2014 though `script/setup` does that for you now.',
       },
     ],
   },

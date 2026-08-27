@@ -176,7 +176,7 @@
   "attest.ui.three-found.label": "Eu encontrei os três, e sei onde cada um se manifestou",
   "attest.ui.three-found.hint": "Um é um aviso no console, um aparece na aba de rede, e um não aparece em lugar nenhum — a página só mostra o número errado. Se você só achou dois, o que falta é o silencioso.",
   "attest.ui.e2e-passes.label": "Eu rodei `npm run test:e2e` e meu teste de produtos passa",
-  "attest.ui.e2e-passes.hint": "Pare antes o app em contêiner (`docker compose stop app`). O Playwright sobe o próprio servidor apontando para o banco de *teste*, e vai reaproveitar o que já estiver na porta 3000 se você deixar de pé.",
+  "attest.ui.e2e-passes.hint": "O Playwright sobe o próprio servidor na porta 3100, apontando para o banco de teste, então você pode deixar o app da 3000 rodando. A primeira execução precisa de um navegador: `npx playwright install chromium` — embora o `script/setup` já faça isso por você.",
   "attest.pull-request.reviewed-one.label": "Eu li o pull request de outra pessoa e deixei um comentário de verdade",
   "attest.pull-request.reviewed-one.hint": "De um colega, ou de qualquer repositório público que você use — pull requests open source são públicos e podem ser lidos. Leia a descrição, depois os testes, depois o código, e faça uma pergunta genuína. Revisar é metade do trabalho e chega já na sua primeira quinzena.",
   "attest.pull-request.green-before-push.label": "`npm test` e `npm run lint` passam os dois",
