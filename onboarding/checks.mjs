@@ -115,7 +115,7 @@ export const steps = [
     id: 'welcome',
     title: 'Start here',
     phase: 'Getting set up',
-    minutes: 8,
+    minutes: 10,
     quiz: [
       {
         id: 'sandbox',

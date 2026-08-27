@@ -79,6 +79,28 @@ laptop, loses nothing.
 :::
 
 ===
+## What you will be using
+
+You do not need to know these — only that they exist, so that when one appears
+in an error message you know which part of the system is complaining. The
+handbook has this table too, for when you need it later.
+
+| | |
+|---|---|
+| [Next.js](https://nextjs.org/docs) | The web framework. Serves pages *and* answers API requests. |
+| [React](https://react.dev) | How pages are described, as components. |
+| [TypeScript](https://www.typescriptlang.org/docs/) | JavaScript with types, so mistakes are caught before you run anything. |
+| [Tailwind CSS](https://tailwindcss.com/docs/styling-with-utility-classes) | Styling, written as small classes on the markup. |
+| [PostgreSQL](https://www.postgresql.org/docs/) | The database. |
+| [Prisma](https://www.prisma.io/docs) | How the code queries the database, in typed TypeScript. |
+| [Vitest](https://vitest.dev/) | Tests for functions and API endpoints. |
+| [Playwright](https://playwright.dev/) | Tests that drive a real browser. |
+| [Docker](https://docs.docker.com/) | Runs the app and the database, so everyone's machine matches. |
+| [git](https://git-scm.com/docs) | Records the history of the project. |
+
+Each one is introduced where you first need it.
+
+===
 ## Three things worth knowing up front
 
 **Being stuck is the job.** Not a phase you get through. People with twenty
@@ -89,9 +111,9 @@ recognising it and asking. There is a whole step on how to ask well.
 head. They know roughly where to look, and they look. This tutorial is trying to
 give you the "roughly where", not a memorised map.
 
-The handbook in the sidebar is the rest of that: the ten tools this project
-uses and what each one is for, every convention, and the commands. It is there
-to be consulted, not read — nothing in it is on the path through the course.
+The handbook in the sidebar holds the rest: every convention, the commands, and
+this same list. It is there to be consulted, not read — nothing in it is on the
+path through the course.
 
 **Feeling lost never fully goes away.** Every developer feels it dropping into
 an unfamiliar codebase — on their first day, again at their next job, and again
