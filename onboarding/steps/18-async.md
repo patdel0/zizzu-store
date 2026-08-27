@@ -1,6 +1,6 @@
-Nearly every line you are about to write starts with `await`. It appears 31
-times in the code this course asks you to type, and so far nobody has told you
-what it means.
+Nearly every line you are about to write starts with `await`. It appears forty
+times in the code blocks this course asks you to type, and so far nobody has
+told you what it means.
 
 It is also the single easiest thing to get wrong in a way that produces **no
 error at all**.
