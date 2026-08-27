@@ -440,5 +440,22 @@
   "ui.waitingToPass": "Waiting for this to pass",
   "ui.tickToContinue": "Tick to continue",
   "attest.tdd.wrote-too-much.label": "I added a feature no test asked for, saw the suite stay green, and deleted it",
-  "attest.tdd.wrote-too-much.hint": "Both halves matter. Green with the code proves nothing was watching it; green without it proves the same thing from the other side. If you only ran it once you have seen half the point."
+  "attest.tdd.wrote-too-much.hint": "Both halves matter. Green with the code proves nothing was watching it; green without it proves the same thing from the other side. If you only ran it once you have seen half the point.",
+  "step.first-pull-request.title": "Your first pull request",
+  "phase.your-first-pull-request": "Your first pull request",
+  "phase.reading-the-code": "Reading the code",
+  "phase.storing-it": "Storing it",
+  "phase.putting-a-page-on-it": "Putting a page on it",
+  "check.first-pull-request.sandbox-branch": "You are on your sandbox branch",
+  "check.first-pull-request.pushed-small": "Your branch is on GitHub",
+  "check.first-pull-request.nothing-unpushed": "Everything you have committed is pushed",
+  "attest.first-pull-request.opened-small.label": "I opened a pull request for my home page change",
+  "attest.first-pull-request.opened-small.hint": "Base `main`, compare your `sandbox/…` branch. GitHub offers a \"Compare & pull request\" button on a freshly pushed branch.",
+  "attest.first-pull-request.described-small.label": "Its description says what changed and how to check it",
+  "attest.first-pull-request.described-small.hint": "Two sentences is plenty for a change this size. The habit is what matters — a reviewer should never have to reverse-engineer your intent from the diff.",
+  "attest.first-pull-request.reviewed-small.label": "Somebody reviewed it, and I replied to what they said",
+  "attest.first-pull-request.reviewed-small.hint": "Ask your onboarding buddy or your lead. Reply to every comment — changed it, or said why not. An unanswered comment reads as ignored.",
+  "attest.first-pull-request.closed-small.label": "I closed it without merging",
+  "attest.first-pull-request.closed-small.hint": "On the pull request page, \"Close pull request\" below the comment box. The work was real; `main` stays exactly as you found it.",
+  "ui.week": "Week {n}"
 }

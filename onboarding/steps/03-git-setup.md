@@ -101,9 +101,9 @@ run the same `git config` command again — the last one wins.
 
 :::warn Not covered yet: pushing to GitHub
 Sending your work *to* GitHub needs authentication as well as identity, and it
-is a separate job with its own choices. That comes in {{step:pull-request}}, at the point you
-actually need it — there is no sense setting up credentials for a push you are
-not making for another few hours.
+is a separate job with its own choices. That comes in {{step:first-pull-request}}, at the end of this week — but it is
+the next card, because finding out your authentication does not work at the
+moment you are trying to push is a bad hour.
 :::
 
 ===
@@ -143,7 +143,7 @@ off years ago — that prompt wants a **token**.
 :::
 
 :::note You can carry on without this
-Nothing before {{step:pull-request}} needs it — commits are local until you push.
+Nothing before {{step:first-pull-request}} needs it — commits are local until you push.
 If `gh auth login` is going to mean installing something, note it down and keep
 going; just do not leave it until the moment you need it.
 :::

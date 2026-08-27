@@ -221,8 +221,30 @@ function drawSidebar() {
 
   stepsEl.innerHTML = '';
   let phase = null;
+  let week = null;
 
   for (const step of state.steps) {
+    // Weeks sit above phases: two arrivals rather than seven, so a reader can
+    // see where a natural stopping point is without counting steps.
+    if (step.week !== week) {
+      week = step.week;
+
+      const inWeek = state.steps.filter((other) => other.week === week);
+      const doneHere = inWeek.filter((other) => isDone(other.id)).length;
+      const minutes = inWeek.reduce((total, other) => total + other.minutes, 0);
+      const heading = document.createElement('li');
+
+      heading.className = 'week';
+      heading.innerHTML =
+        `<span class="week__name">${escapeHtml(ui('ui.week', { n: week }))}</span>` +
+        `<span class="week__meta">${
+          doneHere === inWeek.length
+            ? escapeHtml(ui('ui.done'))
+            : `${doneHere}/${inWeek.length} · ${escapeHtml(describe(minutes))}`
+        }</span>`;
+      stepsEl.append(heading);
+    }
+
     if (step.phase !== phase) {
       phase = step.phase;
 

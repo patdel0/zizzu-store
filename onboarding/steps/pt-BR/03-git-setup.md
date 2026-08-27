@@ -104,9 +104,9 @@ mesmo comando `git config` de novo — o último vence.
 :::warn Ainda não coberto: enviar para o GitHub
 Mandar seu trabalho *para* o GitHub exige autenticação além de identidade, e é
 um assunto separado com escolhas próprias. Isso vem na etapa
-{{step:pull-request}}, no ponto em que você realmente precisa — não faz sentido
-configurar credenciais para um push que você não vai fazer por mais algumas
-horas.
+{{step:first-pull-request}}, no fim desta semana — mas está no próximo card,
+porque descobrir que sua autenticação não funciona no momento em que você está
+tentando dar push é uma hora ruim.
 :::
 
 ===
@@ -147,7 +147,7 @@ anos atrás — aquele prompt quer um **token**.
 :::
 
 :::note Você pode seguir sem isto
-Nada antes da etapa {{step:pull-request}} precisa disso — commits são locais até
-você dar push. Se o `gh auth login` vai significar instalar alguma coisa, anote e
+Nada antes da etapa {{step:first-pull-request}} precisa disso — commits são
+locais até você dar push. Se o `gh auth login` vai significar instalar alguma coisa, anote e
 siga em frente; só não deixe para a hora em que você precisar.
 :::

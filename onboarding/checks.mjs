@@ -114,6 +114,7 @@ export const steps = [
   {
     id: 'welcome',
     title: 'Start here',
+    week: 1,
     phase: 'Getting set up',
     minutes: 10,
     quiz: [
@@ -139,6 +140,7 @@ export const steps = [
   {
     id: 'running',
     title: 'Get it running',
+    week: 1,
     phase: 'Getting set up',
     minutes: 25,
     checks: [
@@ -295,6 +297,7 @@ export const steps = [
   {
     id: 'git-setup',
     title: 'Tell git who you are',
+    week: 1,
     phase: 'Getting set up',
     minutes: 25,
     checks: [
@@ -398,6 +401,7 @@ export const steps = [
   {
     id: 'branch',
     title: 'Make yourself a branch',
+    week: 1,
     phase: 'Getting set up',
     minutes: 25,
     quiz: [
@@ -450,6 +454,7 @@ export const steps = [
   {
     id: 'first-change',
     title: 'Change something you can see',
+    week: 1,
     phase: 'Your first change',
     minutes: 30,
     checks: [
@@ -533,6 +538,7 @@ export const steps = [
   {
     id: 'first-commit',
     title: 'Your first commit',
+    week: 1,
     phase: 'Your first change',
     minutes: 30,
     checks: [
@@ -647,6 +653,7 @@ export const steps = [
   {
     id: 'conflicts',
     title: 'When two changes collide',
+    week: 1,
     phase: 'Your first change',
     minutes: 30,
     attest: [
@@ -731,7 +738,8 @@ export const steps = [
   {
     id: 'javascript',
     title: 'The JavaScript this project assumes',
-    phase: 'How the app works',
+    week: 1,
+    phase: 'Reading the code',
     minutes: 30,
     quiz: [
       {
@@ -769,8 +777,268 @@ export const steps = [
   },
 
   {
+    id: 'typescript',
+    title: 'TypeScript, the parts you need',
+    week: 1,
+    phase: 'Reading the code',
+    minutes: 55,
+    attest: [
+      {
+        id: 'saw-editor-error',
+        label: 'I saw my editor mark the mistake before I ran anything',
+      },
+    ],
+    ask: [
+      {
+        id: 'why-annotations',
+        prompt:
+          'Your editor underlined the mistake before you ran anything. Nothing executed. How did it know?',
+        lookFor: [
+          'the function declares what type it takes',
+          'passing something else contradicts what is already written',
+          'a contradiction can be found by reading, without running',
+        ],
+        modelAnswer:
+          'Nothing ran. `createPost` says in its own signature that `title` is a string, so handing it a number contradicts something already written down. A contradiction is findable by reading the code, which needs no database, no server and no test run \u2014 that is why it is instant.',
+      },
+    ],
+    checks: [
+      {
+        id: 'tsc-clean',
+        label: 'The project type-checks, and your experiment is cleaned up',
+        slow: SLOW,
+        async run() {
+          const dirty = await gitOut('status', '--porcelain', '--', '__tests__/api/posts.test.ts');
+
+          if (dirty !== '') {
+            return {
+              pass: false,
+              detail:
+                'You still have the deliberate mistake in `__tests__/api/posts.test.ts`. Take that line out again:\n\n```\ngit restore __tests__/api/posts.test.ts\n```',
+            };
+          }
+
+          const result = await run('npx', ['tsc', '--noEmit'], { timeout: 180_000 });
+
+          if (result.ok) {
+            return {
+              pass: true,
+              detail: 'No type errors. Nothing was run to find that out.',
+            };
+          }
+
+          return {
+            pass: false,
+            detail: `\`npx tsc --noEmit\` is reporting errors:\n\n\`\`\`\n${tail(result.stdout || result.stderr, 10)}\n\`\`\``,
+          };
+        },
+      },
+    ],
+    quiz: [
+            {
+        id: 'union-meaning',
+        prompt: 'What does `string | null` mean when you see it on a field?',
+        options: [
+          { id: 'a', label: 'The field is a string that might be empty.' },
+          { id: 'b', label: 'Either a string or nothing — and you must handle both.' },
+          { id: 'c', label: 'The field is optional and can be left out.' },
+          { id: 'd', label: 'It is a string that will be converted to null.' },
+        ],
+        answer: 'b',
+        explain:
+          'The `|` means "one or the other". `content: string | null` says a post may genuinely have no content, and TypeScript will not let you call `.length` on it until you have checked which one you have. That check is the thing it is forcing you to remember.',
+      },
+    ],
+  },
+
+  {
+    id: 'async',
+    title: 'Nothing happens immediately',
+    week: 1,
+    phase: 'Reading the code',
+    minutes: 35,
+    attest: [
+      {
+        id: 'saw-undefined',
+        label: 'I deleted an `await` and read what came back instead',
+      },
+    ],
+    ask: [
+      {
+        id: 'what-async-returns',
+        prompt:
+          'What do you actually get back when you call an `async` function, and what does `await` do to it?',
+        lookFor: [
+          'you get a promise, not the value',
+          'a promise is a receipt you can wait on',
+          '`await` turns the receipt into the value',
+          '`await` only works inside a function marked `async`',
+        ],
+        modelAnswer:
+          'A promise \u2014 always, even when the body returns a plain number. A promise is a receipt: it stands for a value that is not here yet. `await` is what redeems the receipt for the thing itself, and it only works inside a function marked `async`, which is why the two words turn up together everywhere.',
+      },
+    ],
+    checks: [
+      {
+        id: 'await-restored',
+        label: 'You put the `await` back',
+        async run() {
+          const dirty = await gitOut('status', '--porcelain', '--', '__tests__/api/posts.test.ts');
+
+          if (dirty === '') {
+            return { pass: true, detail: 'The test file is back as it was.' };
+          }
+
+          return {
+            pass: false,
+            detail:
+              'You still have the deleted `await` in `__tests__/api/posts.test.ts`:\n\n```\ngit restore __tests__/api/posts.test.ts\n```',
+          };
+        },
+      },
+    ],
+    quiz: [
+      {
+        id: 'forgotten-await',
+        prompt:
+          'You forget an `await` on a function that reads the database, then send the result as JSON. What does the caller receive?',
+        options: [
+          { id: 'a', label: 'An error saying you forgot to await.' },
+          { id: 'b', label: 'The data, slightly later.' },
+          { id: 'c', label: '`{}` — an empty object, with no error anywhere.' },
+          { id: 'd', label: 'The request hangs forever.' },
+        ],
+        answer: 'c',
+        explain:
+          'A promise has no properties of its own to serialise, so `JSON.stringify` on one produces `{}`. Nothing throws. This is the shape of bug that costs juniors whole afternoons: correct-looking code, a wrong answer, and nothing at all to read.',
+      },
+          ],
+  },
+
+  {
+    id: 'naming',
+    title: 'What to call things',
+    week: 1,
+    phase: 'Reading the code',
+    minutes: 30,
+    quiz: [
+      {
+        id: 'file-case',
+        prompt:
+          'You are adding a component that shows one product card. What do you call the file?',
+        options: [
+          { id: 'a', label: '`ProductCard.tsx`' },
+          { id: 'b', label: '`product-card.tsx`' },
+          { id: 'c', label: '`productCard.tsx`' },
+          { id: 'd', label: '`product_card.tsx`' },
+        ],
+        answer: 'b',
+        explain:
+          'Files in this project are kebab-case — `posts-board.tsx`, `global-setup.ts`, `database-url.ts`. The component *inside* it is still `ProductCard`. Those two conventions are different on purpose, and the reason is dull but real: macOS and Windows treat `ProductCard.tsx` and `productcard.tsx` as the same file, Linux does not, and a repository that disagrees with itself about capitals breaks on somebody else\u2019s machine.',
+      },
+      {
+        id: 'which-extension',
+        prompt: 'Why is `posts-board.tsx` a `.tsx` while `route.ts` is a `.ts`?',
+        options: [
+          { id: 'a', label: '`.tsx` is for files in the `app/` folder.' },
+          { id: 'b', label: '`.tsx` is for anything that runs in the browser.' },
+          { id: 'c', label: '`.tsx` is for files that contain JSX — HTML-shaped markup.' },
+          { id: 'd', label: 'They are interchangeable; it is a matter of taste.' },
+        ],
+        answer: 'c',
+        explain:
+          'The `x` is the only difference and it means "this file contains JSX". `route.ts` returns data and never writes a tag, so it does not need it. Put JSX in a `.ts` file and TypeScript reads the angle brackets as something else entirely and gives you an error that does not mention JSX at all.',
+      },
+      {
+        id: 'function-name',
+        prompt:
+          'A function takes an unknown value and returns either a valid price or a reason it was refused. Best name?',
+        options: [
+          { id: 'a', label: '`price(raw)`' },
+          { id: 'b', label: '`handlePrice(raw)`' },
+          { id: 'c', label: '`parsePriceCents(raw)`' },
+          { id: 'd', label: '`checkPriceCentsAndReturnResultOrError(raw)`' },
+        ],
+        answer: 'c',
+        explain:
+          'A verb first, because it does something. `price` sounds like a value, not an action. `handle` is the emptiest verb in programming — it tells you nothing about what happens. And the last one describes the implementation, which will change; the name should survive that.',
+      },
+    ],
+  },
+
+  {
+    id: 'using-ai',
+    title: 'Using AI without it using you',
+    week: 1,
+    phase: 'Reading the code',
+    minutes: 30,
+    ask: [
+      {
+        id: 'why-type-it',
+        prompt:
+          'The rule is not "never look at the examples" — it is read them, look away, then write it. Why the looking away? What would you lose by transcribing it with the example open?',
+        lookFor: [
+          'transcribing is still copying, because the answer is in front of you',
+          'producing it from understanding is what makes it stick',
+          'you discover which lines you could not have written yourself',
+          'afterwards you can write something similar rather than only recognising it',
+        ],
+        modelAnswer:
+          'With the example open I am copying, just slowly — I never have to produce anything, because the answer is right there. Looking away turns it into producing, and that is where I discover which lines I could not have written myself, which is the useful information. Transcribing does make me read every character, which is worth something, but afterwards I can only recognise the code rather than write it again.',
+      },
+    ],
+    attest: [
+      {
+        id: 'write-not-copy',
+        label:
+          'cs50.ai only, and no code enters this repo that I did not write myself',
+        hint: 'Both halves. Turn off the assistant built into your editor — it suggests as you type, which is the failure mode this step is about. And "write it myself" means read the example, look away, then produce it — not pasted, and not transcribed with the example open.',
+      },
+    ],
+    quiz: [
+      {
+        id: 'find-the-bug',
+        prompt:
+          'That `newestFirst` function looks right and is wrong twice. Which pair of problems does it have?',
+        options: [
+          {
+            id: 'a',
+            label:
+              'It sorts oldest-first despite its name, and it reorders the caller\u2019s array in place.',
+          },
+          { id: 'b', label: 'It crashes on an empty array, and it is slow.' },
+          { id: 'c', label: 'It does not handle `null`, and the return type is wrong.' },
+          { id: 'd', label: 'Nothing is wrong with it.' },
+        ],
+        answer: 'a',
+        explain:
+          '`a - b` sorts ascending, which is oldest first — the opposite of the name. And `.sort()` rearranges the array it was given rather than returning a new one, so whoever called it now has their data in a different order without asking. Both are the kind of plausible, confident, wrong code these tools produce, and both are findable by reading it.',
+      },
+      {
+        id: 'good-use',
+        prompt:
+          'Which of these can you ask cs50.ai during onboarding without breaking either rule?',
+        options: [
+          { id: 'a', label: '"Write me a POST endpoint for products."' },
+          {
+            id: 'b',
+            label:
+              '"Here is my endpoint and the error it gives. What should I look at first? Do not fix it."',
+          },
+          { id: 'c', label: '"Fix this file."' },
+          { id: 'd', label: '"Write the tests for this so I do not have to."' },
+        ],
+        answer: 'b',
+        explain:
+          'It keeps you doing the work. You still have to read the code, form a theory, and make the change — the AI only narrows where to look. The other three hand over the part where the learning happens, and you find out at review, or at the next thing you cannot do.',
+      },
+    ],
+  },
+
+  {
     id: 'requests',
     title: 'Watch the conversation',
+    week: 1,
     phase: 'How the app works',
     minutes: 35,
     ask: [
@@ -858,6 +1126,7 @@ export const steps = [
   {
     id: 'two-machines',
     title: 'Which machine is this running on?',
+    week: 1,
     phase: 'How the app works',
     minutes: 25,
     ask: [
@@ -971,6 +1240,7 @@ export const steps = [
   {
     id: 'use-client',
     title: 'The line that decides',
+    week: 1,
     phase: 'How the app works',
     minutes: 30,
     ask: [
@@ -1083,69 +1353,104 @@ export const steps = [
   },
 
   {
-    id: 'using-ai',
-    title: 'Using AI without it using you',
-    phase: 'Taking on a task',
-    minutes: 30,
-    ask: [
-      {
-        id: 'why-type-it',
-        prompt:
-          'The rule is not "never look at the examples" — it is read them, look away, then write it. Why the looking away? What would you lose by transcribing it with the example open?',
-        lookFor: [
-          'transcribing is still copying, because the answer is in front of you',
-          'producing it from understanding is what makes it stick',
-          'you discover which lines you could not have written yourself',
-          'afterwards you can write something similar rather than only recognising it',
-        ],
-        modelAnswer:
-          'With the example open I am copying, just slowly — I never have to produce anything, because the answer is right there. Looking away turns it into producing, and that is where I discover which lines I could not have written myself, which is the useful information. Transcribing does make me read every character, which is worth something, but afterwards I can only recognise the code rather than write it again.',
-      },
-    ],
+    id: 'first-pull-request',
+    title: 'Your first pull request',
+    week: 1,
+    phase: 'Your first pull request',
+    minutes: 40,
     attest: [
       {
-        id: 'write-not-copy',
-        label:
-          'cs50.ai only, and no code enters this repo that I did not write myself',
-        hint: 'Both halves. Turn off the assistant built into your editor — it suggests as you type, which is the failure mode this step is about. And "write it myself" means read the example, look away, then produce it — not pasted, and not transcribed with the example open.',
+        id: 'opened-small',
+        label: 'I opened a pull request for my home page change',
+        hint: 'Base `main`, compare your `sandbox/…` branch. GitHub offers a "Compare & pull request" button on a freshly pushed branch.',
+      },
+      {
+        id: 'described-small',
+        label: 'Its description says what changed and how to check it',
+        hint: 'Two sentences is plenty for a change this size. The habit is what matters \u2014 a reviewer should never have to reverse-engineer your intent from the diff.',
+      },
+      {
+        id: 'reviewed-small',
+        label: 'Somebody reviewed it, and I replied to what they said',
+        hint: 'Ask your onboarding buddy or your lead. Reply to every comment \u2014 changed it, or said why not. An unanswered comment reads as ignored.',
+      },
+      {
+        id: 'closed-small',
+        label: 'I closed it without merging',
+        hint: 'On the pull request page, "Close pull request" below the comment box. The work was real; `main` stays exactly as you found it.',
+      },
+    ],
+    checks: [
+      onSandboxBranch,
+      {
+        id: 'pushed-small',
+        label: 'Your branch is on GitHub',
+        async run() {
+          const branch = await currentBranch();
+          const remote = await gitOut('ls-remote', '--heads', 'origin', branch);
+
+          if (remote === '') {
+            return {
+              pass: false,
+              detail: `\`${branch}\` is not on GitHub yet.\n\n\`git push -u origin ${branch}\`\n\nIf that fails with "Permission denied (publickey)", the authentication from step 3 is not set up \u2014 that is a different problem from the push being wrong.`,
+            };
+          }
+
+          return { pass: true, detail: `\`${branch}\` is on GitHub.` };
+        },
+      },
+      {
+        id: 'nothing-unpushed',
+        label: 'Everything you have committed is pushed',
+        async run() {
+          const branch = await currentBranch();
+          const ahead = await gitOut('rev-list', '--count', `origin/${branch}..${branch}`);
+
+          if (ahead !== '' && Number(ahead) > 0) {
+            return {
+              pass: false,
+              detail: `You have ${ahead} commit(s) that are not on GitHub, so your pull request is missing them.\n\nA reviewer is reading whatever was there when they opened the page \u2014 \`git push\` and they will see the rest.`,
+            };
+          }
+
+          return { pass: true, detail: 'Your branch and GitHub agree.' };
+        },
+      },
+    ],
+  },
+  {
+    id: 'issues',
+    title: 'Issues and the board',
+    week: 2,
+    phase: 'Taking on a task',
+    minutes: 20,
+    attest: [
+      { id: 'assigned', label: 'I assigned an issue to myself' },
+      { id: 'in-progress', label: 'I moved it to In progress on the project board' },
+      {
+        id: 'commented',
+        label: 'I commented on the issue saying how I plan to approach it',
+        hint: 'Even one sentence. It is the cheapest possible way to find out you misread the issue.',
       },
     ],
     quiz: [
       {
-        id: 'find-the-bug',
+        id: 'stuck',
         prompt:
-          'That `newestFirst` function looks right and is wrong twice. Which pair of problems does it have?',
+          'You have been stuck on the same problem for two hours. What is the right move?',
         options: [
-          {
-            id: 'a',
-            label:
-              'It sorts oldest-first despite its name, and it reorders the caller\u2019s array in place.',
-          },
-          { id: 'b', label: 'It crashes on an empty array, and it is slow.' },
-          { id: 'c', label: 'It does not handle `null`, and the return type is wrong.' },
-          { id: 'd', label: 'Nothing is wrong with it.' },
-        ],
-        answer: 'a',
-        explain:
-          '`a - b` sorts ascending, which is oldest first — the opposite of the name. And `.sort()` rearranges the array it was given rather than returning a new one, so whoever called it now has their data in a different order without asking. Both are the kind of plausible, confident, wrong code these tools produce, and both are findable by reading it.',
-      },
-      {
-        id: 'good-use',
-        prompt:
-          'Which of these can you ask cs50.ai during onboarding without breaking either rule?',
-        options: [
-          { id: 'a', label: '"Write me a POST endpoint for products."' },
+          { id: 'a', label: 'Keep going — asking makes you look like you cannot do the job.' },
           {
             id: 'b',
             label:
-              '"Here is my endpoint and the error it gives. What should I look at first? Do not fix it."',
+              'Say where you are stuck: what you expected, what happened, what you have already tried.',
           },
-          { id: 'c', label: '"Fix this file."' },
-          { id: 'd', label: '"Write the tests for this so I do not have to."' },
+          { id: 'c', label: 'Move the issue back to To do and pick another one.' },
+          { id: 'd', label: 'Open a PR and let the reviewer work it out.' },
         ],
         answer: 'b',
         explain:
-          'It keeps you doing the work. You still have to read the code, form a theory, and make the change — the AI only narrows where to look. The other three hand over the part where the learning happens, and you find out at review, or at the next thing you cannot do.',
+          'Two hours is roughly where a question stops being cheaper to avoid. Nobody is impressed by a silent week. Asking well is a skill in itself, and that three-part shape — expected, actual, tried — is most of it: it shows you did the work, and it lets someone help you in one reply instead of five.',
       },
     ],
   },
@@ -1153,6 +1458,7 @@ export const steps = [
   {
     id: 'decomposition',
     title: 'Break the problem down',
+    week: 2,
     phase: 'Taking on a task',
     minutes: 35,
     ask: [
@@ -1318,45 +1624,10 @@ export const steps = [
   },
 
   {
-    id: 'issues',
-    title: 'Issues and the board',
-    phase: 'Taking on a task',
-    minutes: 20,
-    attest: [
-      { id: 'assigned', label: 'I assigned an issue to myself' },
-      { id: 'in-progress', label: 'I moved it to In progress on the project board' },
-      {
-        id: 'commented',
-        label: 'I commented on the issue saying how I plan to approach it',
-        hint: 'Even one sentence. It is the cheapest possible way to find out you misread the issue.',
-      },
-    ],
-    quiz: [
-      {
-        id: 'stuck',
-        prompt:
-          'You have been stuck on the same problem for two hours. What is the right move?',
-        options: [
-          { id: 'a', label: 'Keep going — asking makes you look like you cannot do the job.' },
-          {
-            id: 'b',
-            label:
-              'Say where you are stuck: what you expected, what happened, what you have already tried.',
-          },
-          { id: 'c', label: 'Move the issue back to To do and pick another one.' },
-          { id: 'd', label: 'Open a PR and let the reviewer work it out.' },
-        ],
-        answer: 'b',
-        explain:
-          'Two hours is roughly where a question stops being cheaper to avoid. Nobody is impressed by a silent week. Asking well is a skill in itself, and that three-part shape — expected, actual, tried — is most of it: it shows you did the work, and it lets someone help you in one reply instead of five.',
-      },
-    ],
-  },
-
-  {
     id: 'database',
     title: 'Add a model to the database',
-    phase: 'The tools of the trade',
+    week: 2,
+    phase: 'Storing it',
     minutes: 55,
     attest: [
       {
@@ -1576,271 +1847,9 @@ export const steps = [
   },
 
   {
-    id: 'typescript',
-    title: 'TypeScript, the parts you need',
-    phase: 'The tools of the trade',
-    minutes: 55,
-    attest: [
-      {
-        id: 'saw-editor-error',
-        label: 'I saw my editor mark the mistake before I ran anything',
-      },
-    ],
-    ask: [
-      {
-        id: 'why-annotations',
-        prompt:
-          'Your editor underlined the mistake before you ran anything. Nothing executed. How did it know?',
-        lookFor: [
-          'the function declares what type it takes',
-          'passing something else contradicts what is already written',
-          'a contradiction can be found by reading, without running',
-        ],
-        modelAnswer:
-          'Nothing ran. `createPost` says in its own signature that `title` is a string, so handing it a number contradicts something already written down. A contradiction is findable by reading the code, which needs no database, no server and no test run \u2014 that is why it is instant.',
-      },
-    ],
-    checks: [
-      {
-        id: 'tsc-clean',
-        label: 'The project type-checks, and your experiment is cleaned up',
-        slow: SLOW,
-        async run() {
-          const dirty = await gitOut('status', '--porcelain', '--', '__tests__/api/posts.test.ts');
-
-          if (dirty !== '') {
-            return {
-              pass: false,
-              detail:
-                'You still have the deliberate mistake in `__tests__/api/posts.test.ts`. Take that line out again:\n\n```\ngit restore __tests__/api/posts.test.ts\n```',
-            };
-          }
-
-          const result = await run('npx', ['tsc', '--noEmit'], { timeout: 180_000 });
-
-          if (result.ok) {
-            return {
-              pass: true,
-              detail: 'No type errors. Nothing was run to find that out.',
-            };
-          }
-
-          return {
-            pass: false,
-            detail: `\`npx tsc --noEmit\` is reporting errors:\n\n\`\`\`\n${tail(result.stdout || result.stderr, 10)}\n\`\`\``,
-          };
-        },
-      },
-    ],
-    quiz: [
-            {
-        id: 'union-meaning',
-        prompt: 'What does `string | null` mean when you see it on a field?',
-        options: [
-          { id: 'a', label: 'The field is a string that might be empty.' },
-          { id: 'b', label: 'Either a string or nothing — and you must handle both.' },
-          { id: 'c', label: 'The field is optional and can be left out.' },
-          { id: 'd', label: 'It is a string that will be converted to null.' },
-        ],
-        answer: 'b',
-        explain:
-          'The `|` means "one or the other". `content: string | null` says a post may genuinely have no content, and TypeScript will not let you call `.length` on it until you have checked which one you have. That check is the thing it is forcing you to remember.',
-      },
-    ],
-  },
-
-  {
-    id: 'naming',
-    title: 'What to call things',
-    phase: 'The tools of the trade',
-    minutes: 30,
-    quiz: [
-      {
-        id: 'file-case',
-        prompt:
-          'You are adding a component that shows one product card. What do you call the file?',
-        options: [
-          { id: 'a', label: '`ProductCard.tsx`' },
-          { id: 'b', label: '`product-card.tsx`' },
-          { id: 'c', label: '`productCard.tsx`' },
-          { id: 'd', label: '`product_card.tsx`' },
-        ],
-        answer: 'b',
-        explain:
-          'Files in this project are kebab-case — `posts-board.tsx`, `global-setup.ts`, `database-url.ts`. The component *inside* it is still `ProductCard`. Those two conventions are different on purpose, and the reason is dull but real: macOS and Windows treat `ProductCard.tsx` and `productcard.tsx` as the same file, Linux does not, and a repository that disagrees with itself about capitals breaks on somebody else\u2019s machine.',
-      },
-      {
-        id: 'which-extension',
-        prompt: 'Why is `posts-board.tsx` a `.tsx` while `route.ts` is a `.ts`?',
-        options: [
-          { id: 'a', label: '`.tsx` is for files in the `app/` folder.' },
-          { id: 'b', label: '`.tsx` is for anything that runs in the browser.' },
-          { id: 'c', label: '`.tsx` is for files that contain JSX — HTML-shaped markup.' },
-          { id: 'd', label: 'They are interchangeable; it is a matter of taste.' },
-        ],
-        answer: 'c',
-        explain:
-          'The `x` is the only difference and it means "this file contains JSX". `route.ts` returns data and never writes a tag, so it does not need it. Put JSX in a `.ts` file and TypeScript reads the angle brackets as something else entirely and gives you an error that does not mention JSX at all.',
-      },
-      {
-        id: 'function-name',
-        prompt:
-          'A function takes an unknown value and returns either a valid price or a reason it was refused. Best name?',
-        options: [
-          { id: 'a', label: '`price(raw)`' },
-          { id: 'b', label: '`handlePrice(raw)`' },
-          { id: 'c', label: '`parsePriceCents(raw)`' },
-          { id: 'd', label: '`checkPriceCentsAndReturnResultOrError(raw)`' },
-        ],
-        answer: 'c',
-        explain:
-          'A verb first, because it does something. `price` sounds like a value, not an action. `handle` is the emptiest verb in programming — it tells you nothing about what happens. And the last one describes the implementation, which will change; the name should survive that.',
-      },
-    ],
-  },
-
-  {
-    id: 'async',
-    title: 'Nothing happens immediately',
-    phase: 'The tools of the trade',
-    minutes: 35,
-    attest: [
-      {
-        id: 'saw-undefined',
-        label: 'I deleted an `await` and read what came back instead',
-      },
-    ],
-    ask: [
-      {
-        id: 'what-async-returns',
-        prompt:
-          'What do you actually get back when you call an `async` function, and what does `await` do to it?',
-        lookFor: [
-          'you get a promise, not the value',
-          'a promise is a receipt you can wait on',
-          '`await` turns the receipt into the value',
-          '`await` only works inside a function marked `async`',
-        ],
-        modelAnswer:
-          'A promise \u2014 always, even when the body returns a plain number. A promise is a receipt: it stands for a value that is not here yet. `await` is what redeems the receipt for the thing itself, and it only works inside a function marked `async`, which is why the two words turn up together everywhere.',
-      },
-    ],
-    checks: [
-      {
-        id: 'await-restored',
-        label: 'You put the `await` back',
-        async run() {
-          const dirty = await gitOut('status', '--porcelain', '--', '__tests__/api/posts.test.ts');
-
-          if (dirty === '') {
-            return { pass: true, detail: 'The test file is back as it was.' };
-          }
-
-          return {
-            pass: false,
-            detail:
-              'You still have the deleted `await` in `__tests__/api/posts.test.ts`:\n\n```\ngit restore __tests__/api/posts.test.ts\n```',
-          };
-        },
-      },
-    ],
-    quiz: [
-      {
-        id: 'forgotten-await',
-        prompt:
-          'You forget an `await` on a function that reads the database, then send the result as JSON. What does the caller receive?',
-        options: [
-          { id: 'a', label: 'An error saying you forgot to await.' },
-          { id: 'b', label: 'The data, slightly later.' },
-          { id: 'c', label: '`{}` — an empty object, with no error anywhere.' },
-          { id: 'd', label: 'The request hangs forever.' },
-        ],
-        answer: 'c',
-        explain:
-          'A promise has no properties of its own to serialise, so `JSON.stringify` on one produces `{}`. Nothing throws. This is the shape of bug that costs juniors whole afternoons: correct-looking code, a wrong answer, and nothing at all to read.',
-      },
-          ],
-  },
-
-  {
-    id: 'debugging',
-    title: 'When it breaks',
-    phase: 'The tools of the trade',
-    minutes: 50,
-    attest: [
-      {
-        id: 'found-in-logs',
-        label: 'I found the real error in the container log, not in the browser',
-      },
-      { id: 'read-the-diff', label: 'I read the assertion diff and it told me the answer' },
-    ],
-    ask: [
-      {
-        id: 'first-question',
-        prompt:
-          'Something worked an hour ago and does not now. What is the first question, and what command answers it?',
-        lookFor: [
-          'what did I change',
-          '`git diff` answers it immediately',
-          'it rules out a whole universe of other theories',
-        ],
-        modelAnswer:
-          'What did I change? Almost always the answer is me, and `git diff` tells me in one second. It rules out every theory that starts "maybe Next.js is broken", and it costs nothing to ask. Restarting things sometimes fixes it and teaches me nothing, so I meet the same bug again next week.',
-      },
-    ],
-    checks: [
-      {
-        id: 'posts-route-restored',
-        label: 'You put `app/api/posts/route.ts` back',
-        async run() {
-          const dirty = await gitOut('status', '--porcelain', '--', 'app/api/posts/route.ts');
-
-          if (dirty === '') return { pass: true, detail: 'Restored.' };
-
-          return {
-            pass: false,
-            detail:
-              'The route still has your deliberate break in it:\n\n```\ngit restore app/api/posts/route.ts\n```',
-          };
-        },
-      },
-      {
-        id: 'contract-restored',
-        label: 'The contract and its generated files agree again',
-        async run() {
-          const dirty = await gitOut('status', '--porcelain', '--', 'lib/prisma');
-
-          if (dirty === '') return { pass: true, detail: 'Back in step.' };
-
-          return {
-            pass: false,
-            detail:
-              '`lib/prisma` still has changes from the experiment:\n\n```\ngit restore lib/prisma\n```\n\nIf you meant to keep a contract change, run `npx prisma-cli contract emit` instead so the generated files match.',
-          };
-        },
-      },
-    ],
-    quiz: [
-      {
-        id: 'where-does-it-surface',
-        prompt:
-          'The browser shows `{"error":"Failed to list posts"}` and a 500. Where is the *real* error?',
-        options: [
-          { id: 'a', label: 'In the browser console.' },
-          { id: 'b', label: 'In the container log — the handler logged it before answering.' },
-          { id: 'c', label: 'Nowhere; a 500 discards it.' },
-          { id: 'd', label: 'In the database log.' },
-        ],
-        answer: 'b',
-        explain:
-          '`internalError` calls `console.error(message, error)` and *then* answers with a flat message. That is deliberate — a raw error can contain table names, queries, sometimes connection strings, so the detail goes where your team can see it and the caller gets the summary. The detail always exists. You just have to know which window.',
-      },
-          ],
-  },
-
-  {
     id: 'what-tests-are',
     title: 'What a test actually is',
+    week: 2,
     phase: 'Building it, tested',
     minutes: 30,
     attest: [
@@ -1910,6 +1919,7 @@ export const steps = [
   {
     id: 'tdd',
     title: 'Write a test, then make it pass',
+    week: 2,
     phase: 'Building it, tested',
     minutes: 70,
     ask: [
@@ -2189,6 +2199,7 @@ export const steps = [
   {
     id: 'prep',
     title: 'PREP — think before you type',
+    week: 2,
     phase: 'Building it, tested',
     minutes: 50,
     ask: [
@@ -2389,6 +2400,7 @@ export const steps = [
   {
     id: 'post-happy',
     title: 'POST — creating something',
+    week: 2,
     phase: 'Building it, tested',
     minutes: 45,
     ask: [
@@ -2480,6 +2492,7 @@ export const steps = [
   {
     id: 'post-validation',
     title: 'Refusing bad input',
+    week: 2,
     phase: 'Building it, tested',
     minutes: 60,
     checks: [
@@ -2706,9 +2719,87 @@ export const steps = [
   },
 
   {
+    id: 'debugging',
+    title: 'When it breaks',
+    week: 2,
+    phase: 'Putting a page on it',
+    minutes: 50,
+    attest: [
+      {
+        id: 'found-in-logs',
+        label: 'I found the real error in the container log, not in the browser',
+      },
+      { id: 'read-the-diff', label: 'I read the assertion diff and it told me the answer' },
+    ],
+    ask: [
+      {
+        id: 'first-question',
+        prompt:
+          'Something worked an hour ago and does not now. What is the first question, and what command answers it?',
+        lookFor: [
+          'what did I change',
+          '`git diff` answers it immediately',
+          'it rules out a whole universe of other theories',
+        ],
+        modelAnswer:
+          'What did I change? Almost always the answer is me, and `git diff` tells me in one second. It rules out every theory that starts "maybe Next.js is broken", and it costs nothing to ask. Restarting things sometimes fixes it and teaches me nothing, so I meet the same bug again next week.',
+      },
+    ],
+    checks: [
+      {
+        id: 'posts-route-restored',
+        label: 'You put `app/api/posts/route.ts` back',
+        async run() {
+          const dirty = await gitOut('status', '--porcelain', '--', 'app/api/posts/route.ts');
+
+          if (dirty === '') return { pass: true, detail: 'Restored.' };
+
+          return {
+            pass: false,
+            detail:
+              'The route still has your deliberate break in it:\n\n```\ngit restore app/api/posts/route.ts\n```',
+          };
+        },
+      },
+      {
+        id: 'contract-restored',
+        label: 'The contract and its generated files agree again',
+        async run() {
+          const dirty = await gitOut('status', '--porcelain', '--', 'lib/prisma');
+
+          if (dirty === '') return { pass: true, detail: 'Back in step.' };
+
+          return {
+            pass: false,
+            detail:
+              '`lib/prisma` still has changes from the experiment:\n\n```\ngit restore lib/prisma\n```\n\nIf you meant to keep a contract change, run `npx prisma-cli contract emit` instead so the generated files match.',
+          };
+        },
+      },
+    ],
+    quiz: [
+      {
+        id: 'where-does-it-surface',
+        prompt:
+          'The browser shows `{"error":"Failed to list posts"}` and a 500. Where is the *real* error?',
+        options: [
+          { id: 'a', label: 'In the browser console.' },
+          { id: 'b', label: 'In the container log — the handler logged it before answering.' },
+          { id: 'c', label: 'Nowhere; a 500 discards it.' },
+          { id: 'd', label: 'In the database log.' },
+        ],
+        answer: 'b',
+        explain:
+          '`internalError` calls `console.error(message, error)` and *then* answers with a flat message. That is deliberate — a raw error can contain table names, queries, sometimes connection strings, so the detail goes where your team can see it and the caller gets the summary. The detail always exists. You just have to know which window.',
+      },
+          ],
+  },
+
+  {
     id: 'ui',
     title: 'Put a page on top of it',
-    phase: 'Shipping it',
+    week: 2,
+    phase: 'Putting a page on it',
     minutes: 75,
     ask: [
       {
@@ -3001,6 +3092,7 @@ export const steps = [
   {
     id: 'pull-request',
     title: 'Open a pull request',
+    week: 2,
     phase: 'Shipping it',
     minutes: 60,
     ask: [
@@ -3119,6 +3211,7 @@ export const steps = [
   {
     id: 'cleanup',
     title: 'Close the loop and tidy up',
+    week: 2,
     phase: 'Shipping it',
     minutes: 15,
     attest: [
@@ -3225,6 +3318,7 @@ export function publicSteps(t = (key, fallback) => fallback) {
   return steps.map((step, index) => ({
     id: step.id,
     number: index + 1,
+    week: step.week,
     phase: t(`phase.${slug(step.phase)}`, step.phase),
     title: t(`step.${step.id}.title`, step.title),
     minutes: step.minutes,

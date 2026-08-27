@@ -440,5 +440,22 @@
   "ui.waitingToPass": "Esperando isto passar",
   "ui.tickToContinue": "Marque para continuar",
   "attest.tdd.wrote-too-much.label": "Adicionei uma funcionalidade que nenhum teste pediu, vi a suíte continuar verde e apaguei",
-  "attest.tdd.wrote-too-much.hint": "As duas metades importam. Verde com o código prova que nada estava olhando para ele; verde sem o código prova a mesma coisa pelo outro lado. Se você rodou só uma vez, viu metade do ponto."
+  "attest.tdd.wrote-too-much.hint": "As duas metades importam. Verde com o código prova que nada estava olhando para ele; verde sem o código prova a mesma coisa pelo outro lado. Se você rodou só uma vez, viu metade do ponto.",
+  "step.first-pull-request.title": "Seu primeiro pull request",
+  "phase.your-first-pull-request": "Seu primeiro pull request",
+  "phase.reading-the-code": "Lendo o código",
+  "phase.storing-it": "Guardando os dados",
+  "phase.putting-a-page-on-it": "Colocando uma página por cima",
+  "check.first-pull-request.sandbox-branch": "Você está na sua branch de treino",
+  "check.first-pull-request.pushed-small": "Sua branch está no GitHub",
+  "check.first-pull-request.nothing-unpushed": "Tudo o que você commitou foi enviado",
+  "attest.first-pull-request.opened-small.label": "Abri um pull request para a alteração da página inicial",
+  "attest.first-pull-request.opened-small.hint": "Base `main`, compare a sua branch `sandbox/…`. O GitHub oferece um botão “Compare & pull request” numa branch recém-enviada.",
+  "attest.first-pull-request.described-small.label": "A descrição diz o que mudou e como verificar",
+  "attest.first-pull-request.described-small.hint": "Duas frases bastam para uma alteração deste tamanho. O que importa é o hábito — quem revisa nunca deveria ter que deduzir sua intenção a partir do diff.",
+  "attest.first-pull-request.reviewed-small.label": "Alguém revisou, e eu respondi ao que a pessoa disse",
+  "attest.first-pull-request.reviewed-small.hint": "Peça ao seu par de onboarding ou à sua liderança. Responda a cada comentário — mudou, ou disse por que não. Um comentário sem resposta soa como ignorado.",
+  "attest.first-pull-request.closed-small.label": "Fechei sem fazer merge",
+  "attest.first-pull-request.closed-small.hint": "Na página do pull request, “Close pull request”, abaixo da caixa de comentário. O trabalho foi real; a `main` fica exatamente como você a encontrou.",
+  "ui.week": "Semana {n}"
 }

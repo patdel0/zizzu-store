@@ -1,8 +1,12 @@
-Seu trabalho está na sua branch, na sua máquina. Duas coisas precisam acontecer:
-ele tem que chegar ao GitHub, e alguém tem que lê-lo.
+Segunda vez. Você levou a alteração da página inicial até o fim na etapa
+{{step:first-pull-request}} — push, abrir, descrever, revisar, fechar — então a
+mecânica não é novidade.
 
-Você configurou a autenticação do GitHub lá na etapa {{step:git-setup}}, então a
-primeira é um comando.
+O que é novo é que a alteração vale ser revisada. Uma edição de título não tem
+nada sobre o que discordar; um modelo, um endpoint e uma página têm decisões
+dentro. Esta etapa é a parte do processo que só passa a importar quando isso é
+verdade: o que rodar antes de dar push, o que roda depois, e como ser revisado e
+como revisar.
 
 === attest=green-before-push
 ## Antes de dar push

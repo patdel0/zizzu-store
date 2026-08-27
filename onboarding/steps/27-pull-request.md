@@ -1,8 +1,12 @@
-Your work is on your branch, on your machine. Two things have to happen: it has
-to reach GitHub, and someone has to read it.
+Second time through. You took the home page change all the way in
+{{step:first-pull-request}} — push, open, describe, review, close — so the
+mechanics are not new.
 
-You set up GitHub authentication back in {{step:git-setup}}, so the first is one
-command.
+What is new is that the change is worth reviewing. A heading edit has nothing to
+disagree about; a model, an endpoint and a page have decisions in them. This
+step is the parts of the process that only start to matter once that is true:
+what to run before you push, what runs after, and how to be reviewed and to
+review.
 
 === attest=green-before-push
 ## Before you push
