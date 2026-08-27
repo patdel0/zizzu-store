@@ -457,5 +457,11 @@
   "attest.first-pull-request.reviewed-small.hint": "Ask your onboarding buddy or your lead. Reply to every comment — changed it, or said why not. An unanswered comment reads as ignored.",
   "attest.first-pull-request.closed-small.label": "I closed it without merging",
   "attest.first-pull-request.closed-small.hint": "On the pull request page, \"Close pull request\" below the comment box. The work was real; `main` stays exactly as you found it.",
-  "ui.week": "Week {n}"
+  "ui.week": "Week {n}",
+  "step.components.title": "What you have been editing",
+  "phase.when-it-breaks": "When it breaks",
+  "check.components.sandbox-branch": "You are on your sandbox branch",
+  "check.components.tagline-component": "`app/tagline.tsx` exports a `Tagline` component",
+  "check.components.tagline-rendered": "`app/page.tsx` imports it and renders it",
+  "check.components.tagline-served": "The page still shows your tagline"
 }

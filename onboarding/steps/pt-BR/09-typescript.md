@@ -240,8 +240,9 @@ Nada conecta os dois. Adicione um campo a `Post` no contrato, regenere, e o
 `SerializedPost` não muda — ele só para silenciosamente de descrever o que o
 endpoint envia.
 
-É a mesma divergência que você viu entre `contract.ts` e `contract.json`, um
-nível mais para fora, e aqui nada a detecta. Quando você mudar um modelo, procure
+Você vai encontrar a mesma divergência na etapa {{step:database}}, entre o
+`contract.ts` e o arquivo gerado a partir dele — só que aquela tem uma
+verificação de olho, e esta não. Quando você mudar um modelo, procure
 o tipo escrito à mão que o espelha. Normalmente existe um.
 :::
 

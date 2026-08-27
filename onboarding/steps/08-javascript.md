@@ -108,6 +108,6 @@ reaching into an object that turned out to be `undefined` crashes.
 Open `app/api/posts/route.ts` again and read the `GET` function. Imports,
 arrow functions, destructuring, `??` — you can now name all of it.
 
-Except the word `await`, which is on nearly every line. That is the next step,
+Except the word `await`, which is on nearly every line. That is two steps away,
 and it is the one that bites hardest when you get it wrong.
 :::

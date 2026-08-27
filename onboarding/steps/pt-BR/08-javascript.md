@@ -109,6 +109,6 @@ ele, tentar entrar num objeto que acabou sendo `undefined` quebra.
 Abra `app/api/posts/route.ts` de novo e leia a função `GET`. Imports, funções de
 seta, desestruturação, `??` — você já consegue nomear tudo isso.
 
-Menos a palavra `await`, que está em quase toda linha. Essa é a próxima etapa, e
-é a que mais dói quando você erra.
+Menos a palavra `await`, que está em quase toda linha. Essa vem duas etapas
+adiante, e é a que mais dói quando você erra.
 :::

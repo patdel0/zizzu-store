@@ -1238,6 +1238,121 @@ export const steps = [
   },
 
   {
+    id: 'components',
+    title: 'What you have been editing',
+    week: 1,
+    phase: 'How the app works',
+    minutes: 40,
+    checks: [
+      onSandboxBranch,
+      {
+        id: 'tagline-component',
+        label: '`app/tagline.tsx` exports a `Tagline` component',
+        async run() {
+          const source = await read('app/tagline.tsx');
+
+          if (source === null) {
+            return {
+              pass: false,
+              detail:
+                'No `app/tagline.tsx`. The filename is kebab-case even though the component inside it is PascalCase \u2014 the rule from {{step:naming}}.',
+            };
+          }
+
+          if (!/export function Tagline\s*\(/.test(source)) {
+            if (/export default function/.test(source)) {
+              return {
+                pass: false,
+                detail:
+                  'That is a default export. `page.tsx` and `route.ts` have to be default exports because Next.js looks for them by position; everything else in this project is a named export, so the import can say what it is asking for. Use `export function Tagline(...)`.',
+              };
+            }
+
+            return {
+              pass: false,
+              detail:
+                'The file is there but nothing called `Tagline` is exported from it. A component is a function that returns markup, and its name is capitalised so React can tell it from a plain HTML tag.',
+            };
+          }
+
+          if (!/\{\s*text\s*[,}:]/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                '`Tagline` does not take a `text` prop. Props arrive as one object, destructured on the way in: `export function Tagline({ text }: { text: string })`.',
+            };
+          }
+
+          return { pass: true, detail: '`Tagline` takes a `text` prop and returns markup.' };
+        },
+      },
+      {
+        id: 'tagline-rendered',
+        label: '`app/page.tsx` imports it and renders it',
+        async run() {
+          const source = await read('app/page.tsx');
+
+          if (source === null) {
+            return { pass: false, detail: 'Could not read `app/page.tsx`.' };
+          }
+
+          if (!/import\s*\{\s*Tagline\s*\}/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'Nothing imports `Tagline`. A file cannot see into another one unless it asks: `import { Tagline } from \'./tagline\';`',
+            };
+          }
+
+          if (!/<Tagline[\s/>]/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'It is imported but never rendered. `<Tagline text="..." />` in the markup is how you call it \u2014 that angle-bracket form *is* the function call.',
+            };
+          }
+
+          if (!/<Tagline[^>]*text=/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                '`<Tagline />` is rendered without a `text` prop, so it has nothing to show. Pass it: `<Tagline text="your tagline" />`.',
+            };
+          }
+
+          return { pass: true, detail: '`page.tsx` imports `Tagline` and passes it a prop.' };
+        },
+      },
+      {
+        id: 'tagline-served',
+        label: 'The page still shows your tagline',
+        async run() {
+          const response = await fetchLocal(APP, { timeout: 8_000 });
+
+          if (response === null) {
+            return {
+              pass: false,
+              detail: 'The app is not running. Start it with `./script/dev`.',
+            };
+          }
+
+          if (!response.body.includes('text-emerald-600')) {
+            return {
+              pass: false,
+              detail:
+                'The page is being served, but the tagline is not on it. Moving markup into a component should change nothing a visitor sees \u2014 if the page lost it, the component is imported but not rendered, or it is not returning what it used to.',
+            };
+          }
+
+          return {
+            pass: true,
+            detail: 'Same page as before, now assembled from two files.',
+          };
+        },
+      },
+    ],
+  },
+  {
     id: 'use-client',
     title: 'The line that decides',
     week: 1,
@@ -1419,43 +1534,6 @@ export const steps = [
     ],
   },
   {
-    id: 'issues',
-    title: 'Issues and the board',
-    week: 2,
-    phase: 'Taking on a task',
-    minutes: 20,
-    attest: [
-      { id: 'assigned', label: 'I assigned an issue to myself' },
-      { id: 'in-progress', label: 'I moved it to In progress on the project board' },
-      {
-        id: 'commented',
-        label: 'I commented on the issue saying how I plan to approach it',
-        hint: 'Even one sentence. It is the cheapest possible way to find out you misread the issue.',
-      },
-    ],
-    quiz: [
-      {
-        id: 'stuck',
-        prompt:
-          'You have been stuck on the same problem for two hours. What is the right move?',
-        options: [
-          { id: 'a', label: 'Keep going — asking makes you look like you cannot do the job.' },
-          {
-            id: 'b',
-            label:
-              'Say where you are stuck: what you expected, what happened, what you have already tried.',
-          },
-          { id: 'c', label: 'Move the issue back to To do and pick another one.' },
-          { id: 'd', label: 'Open a PR and let the reviewer work it out.' },
-        ],
-        answer: 'b',
-        explain:
-          'Two hours is roughly where a question stops being cheaper to avoid. Nobody is impressed by a silent week. Asking well is a skill in itself, and that three-part shape — expected, actual, tried — is most of it: it shows you did the work, and it lets someone help you in one reply instead of five.',
-      },
-    ],
-  },
-
-  {
     id: 'decomposition',
     title: 'Break the problem down',
     week: 2,
@@ -1619,6 +1697,43 @@ export const steps = [
         answer: 'b',
         explain:
           'It costs two minutes and finds the two things a plan is usually missing: a step that depends on something not built yet, and a piece nobody remembered at all. Both are far cheaper to find now than on the afternoon you hit them.',
+      },
+    ],
+  },
+
+  {
+    id: 'issues',
+    title: 'Issues and the board',
+    week: 2,
+    phase: 'Taking on a task',
+    minutes: 20,
+    attest: [
+      { id: 'assigned', label: 'I assigned an issue to myself' },
+      { id: 'in-progress', label: 'I moved it to In progress on the project board' },
+      {
+        id: 'commented',
+        label: 'I commented on the issue saying how I plan to approach it',
+        hint: 'Even one sentence. It is the cheapest possible way to find out you misread the issue.',
+      },
+    ],
+    quiz: [
+      {
+        id: 'stuck',
+        prompt:
+          'You have been stuck on the same problem for two hours. What is the right move?',
+        options: [
+          { id: 'a', label: 'Keep going — asking makes you look like you cannot do the job.' },
+          {
+            id: 'b',
+            label:
+              'Say where you are stuck: what you expected, what happened, what you have already tried.',
+          },
+          { id: 'c', label: 'Move the issue back to To do and pick another one.' },
+          { id: 'd', label: 'Open a PR and let the reviewer work it out.' },
+        ],
+        answer: 'b',
+        explain:
+          'Two hours is roughly where a question stops being cheaper to avoid. Nobody is impressed by a silent week. Asking well is a skill in itself, and that three-part shape — expected, actual, tried — is most of it: it shows you did the work, and it lets someone help you in one reply instead of five.',
       },
     ],
   },
@@ -2722,7 +2837,7 @@ export const steps = [
     id: 'debugging',
     title: 'When it breaks',
     week: 2,
-    phase: 'Putting a page on it',
+    phase: 'When it breaks',
     minutes: 50,
     attest: [
       {

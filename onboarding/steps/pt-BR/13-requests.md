@@ -127,8 +127,7 @@ Um **400**, e se você tirar o `| head -1` vai ver que ele se explica:
 {"error":"`title` is required"}
 ```
 
-Alguém escreveu essa verificação na mão. Daqui a algumas etapas, esse alguém é
-você.
+Alguém escreveu essa verificação na mão. Semana que vem, esse alguém é você.
 
 O padrão por trás dos números — [a lista completa está no MDN](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Reference/Status):
 

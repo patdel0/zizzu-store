@@ -457,5 +457,11 @@
   "attest.first-pull-request.reviewed-small.hint": "Peça ao seu par de onboarding ou à sua liderança. Responda a cada comentário — mudou, ou disse por que não. Um comentário sem resposta soa como ignorado.",
   "attest.first-pull-request.closed-small.label": "Fechei sem fazer merge",
   "attest.first-pull-request.closed-small.hint": "Na página do pull request, “Close pull request”, abaixo da caixa de comentário. O trabalho foi real; a `main` fica exatamente como você a encontrou.",
-  "ui.week": "Semana {n}"
+  "ui.week": "Semana {n}",
+  "step.components.title": "O que você vem editando",
+  "phase.when-it-breaks": "Quando quebra",
+  "check.components.sandbox-branch": "Você está na sua branch de treino",
+  "check.components.tagline-component": "`app/tagline.tsx` exporta um componente `Tagline`",
+  "check.components.tagline-rendered": "`app/page.tsx` o importa e o renderiza",
+  "check.components.tagline-served": "A página continua mostrando seu slogan"
 }

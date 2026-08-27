@@ -121,7 +121,7 @@ A **400**, and if you drop the `| head -1` you will see it explains itself:
 {"error":"`title` is required"}
 ```
 
-Somebody wrote that check by hand. In a few steps, that somebody is you.
+Somebody wrote that check by hand. Next week, that somebody is you.
 
 The pattern behind the numbers — [MDN has the full list](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status):
 

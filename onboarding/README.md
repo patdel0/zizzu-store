@@ -24,24 +24,35 @@ trainee can start it before `npm install` has ever finished.
 
 ## What it covers
 
-Twenty-seven steps in seven parts, about sixteen hours of focused work — three
-days for most people, and longer is normal. Each part is sized to be finished in
-a sitting, and shows its own budget in the sidebar, because the thing that ends
-a tutorial is looking at how much is left.
+Twenty-nine steps in two parts, about eighteen hours of focused work. The
+sidebar calls them weeks, which is how most teams run it — the first part on day
+one or two, the second across the rest of the fortnight, with real tickets in
+between. Each step is sized to be finished in a sitting and shows its budget.
 
 It assumes no prior knowledge, and introduces each idea **at the point it is
 needed, attached to something the trainee runs** — there is no theory phase to
 sit through.
 
+### Week one — contributing to a project · 8.8 hr
+
 | Part | | Steps |
 |---|---|---|
 | Getting set up | 1½ hr | Docker; git identity and GitHub auth; dependencies and the lockfile; branch names |
 | Your first change | 1½ hr | A JSX and Tailwind edit; the first commit; a conflict, made and resolved |
-| How the app works | 2 hr | Everyday JavaScript; HTTP by `curl`; proving server and browser are different machines; `'use client'` |
-| Taking on a task | 1½ hr | Using AI without outsourcing the thinking; decomposition; claiming an issue and moving the card |
-| The tools of the trade | 3¼ hr | A `Product` model, a schema change and a foreign key; TypeScript; naming; promises; debugging by breaking three things |
-| Building it, tested | 4 hr | What a test is for; red/green; PREP and docblocks; `POST`; validation, injection and secrets |
-| Shipping it | 2½ hr | React and three planted bugs; a browser test; lint and CI; being reviewed and reviewing; what merging does |
+| Reading the code | 3 hr | Everyday JavaScript; TypeScript; promises; naming; using AI without outsourcing the thinking |
+| How the app works | 2¼ hr | HTTP by `curl`; proving server and browser are different machines; components and props, and writing one; `'use client'` |
+| Your first pull request | ¾ hr | Push, open, describe, get reviewed, reply, close |
+
+### Week two — building a feature · 9.4 hr
+
+| Part | | Steps |
+|---|---|---|
+| Taking on a task | 1 hr | Decomposition; claiming an issue and moving the card |
+| Storing it | 1 hr | A `Product` model, a schema change and a foreign key |
+| Building it, tested | 4¼ hr | What a test is for; red/green; PREP and docblocks; `POST`; validation, injection and secrets |
+| When it breaks | ¾ hr | Four windows, three deliberate breaks, and print debugging |
+| Putting a page on it | 1¼ hr | A page, three planted bugs, accessible names, a browser test |
+| Shipping it | 1¼ hr | Lint and CI; being reviewed and reviewing; what merging does; cleanup |
 
 Concepts are taught by experiment rather than assertion. "Code in the browser
 cannot keep a secret" is a paragraph anyone can skim past; finding your own

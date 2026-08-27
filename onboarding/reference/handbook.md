@@ -119,7 +119,7 @@ docker compose watch             # sync your edits into the app container
 docker compose logs -f app       # what is the server actually saying?
 npm test                         # the whole Vitest suite
 npm test -- path/to/one.test.ts  # one file
-npm run test:e2e                 # Playwright (stop the app container first)
+npm run test:e2e                 # Playwright (its own server, on port 3100)
 ```
 
 **Before you push**

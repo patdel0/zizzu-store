@@ -143,7 +143,7 @@ await db.orm.public.Product.where((product) => product.id.isNotNull()).deleteAll
 That function empties the tables before every test, and it lists them by hand —
 so a table it does not know about keeps its rows between tests.
 
-Nothing breaks now. It breaks three steps from now, when a test says there is
+Nothing breaks now. It breaks four steps from now, when a test says there is
 one product and finds two. The failure shows up in a test you did not write, in
 a file that looks correct, and points at your handler instead of at this line.
 

@@ -14,9 +14,22 @@ verdade — uma tabela no banco, um endpoint, uma página e testes para tudo iss
 e a terá levado pelo processo que um time de verdade usa: uma branch, commits
 pequenos, um pull request, uma revisão.
 
-Espere dois dias, e mais que isso é comum — as estimativas de cada etapa
-pressupõem que você não vai parar para entender nada, o que você deveria fazer.
-Ninguém está cronometrando você.
+Ele vem em duas partes, e a barra lateral as chama de semanas.
+
+**A semana um é contribuir para um projeto.** Colocar no ar, aprender git o
+suficiente para trabalhar com segurança, fazer uma alteração pequena e visível, e
+levá-la até o fim por um pull request e uma revisão de verdade. Cerca de oito
+horas.
+
+**A semana dois é construir uma funcionalidade.** Um modelo de banco, um
+endpoint, testes, uma página — e um segundo pull request levando tudo isso. Cerca
+de nove horas.
+
+São horas de trabalho concentrado, não uma semana inteira. A maioria dos times
+faz a primeira parte no primeiro ou segundo dia e a segunda ao longo do resto da
+quinzena, com tarefas de verdade no meio. As estimativas de cada etapa pressupõem
+que você não vai parar para entender nada, o que você deveria fazer. Ninguém está
+cronometrando você.
 
 === quiz=sandbox
 ## Nada do que você fizer aqui conta

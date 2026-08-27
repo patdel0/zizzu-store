@@ -101,12 +101,11 @@ git config --list --global
 Você deve ver seu nome, seu e-mail e seu editor. Se algo parecer errado, rode o
 mesmo comando `git config` de novo — o último vence.
 
-:::warn Ainda não coberto: enviar para o GitHub
-Mandar seu trabalho *para* o GitHub exige autenticação além de identidade, e é
-um assunto separado com escolhas próprias. Isso vem na etapa
-{{step:first-pull-request}}, no fim desta semana — mas está no próximo card,
-porque descobrir que sua autenticação não funciona no momento em que você está
-tentando dar push é uma hora ruim.
+:::note Identidade é só metade
+Mandar seu trabalho *para* o GitHub exige autenticação também, que é um assunto
+separado com escolhas próprias. Você só precisa disso na etapa
+{{step:first-pull-request}}, no fim desta semana — mas está no próximo card
+mesmo assim, pelo motivo que o card dá.
 :::
 
 ===

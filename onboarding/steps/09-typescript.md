@@ -239,8 +239,9 @@ Nothing connects the two. Add a field to `Post` in the contract, regenerate, and
 `SerializedPost` does not change — it just quietly stops describing what the
 endpoint sends.
 
-This is the same drift you met between `contract.ts` and `contract.json`, one
-level further out, and here nothing catches it. When you change a model, search
+You will meet the same drift in {{step:database}}, between `contract.ts` and the
+file generated from it — except that one has a check watching for it, and this
+one does not. When you change a model, search
 for the hand-written type that mirrors it. There is usually one.
 :::
 

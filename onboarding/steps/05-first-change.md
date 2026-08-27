@@ -47,9 +47,30 @@ into real elements. Three differences will trip you up:
 - `class` is written **`className`**, because `class` is already a JavaScript
   keyword.
 - Every tag must close. `<br>` is written `<br />`.
-- `{ }` drops back into JavaScript. `<p>{2 + 2}</p>` renders "4".
+- `{ }` drops back into JavaScript, both between tags and inside an attribute.
+  `<p>{2 + 2}</p>` renders "4"; `width={100}` passes the number 100, where
+  `width="100"` would pass the text.
 
-Everything else — `<h1>`, `<p>`, `<a href>` — is exactly what you already know.
+Lowercase tags — `<h1>`, `<p>`, `<a href>` — are the browser's, and are exactly
+what you already know.
+
+**A capitalised tag is not.** This file has one:
+
+```tsx
+<Image src="/next.svg" alt="Next.js logo" width={100} height={20} priority />
+```
+
+That is a *component* — someone else's code, called from here, configured by
+those attributes. You will meet components properly in {{step:components}}. For
+now: capital letter means somebody wrote it, lowercase means the browser
+already had it.
+
+:::note The `{" "}` you are about to delete
+Scattered through this file are `{" "}` — a JSX expression containing a single
+space. JSX collapses the whitespace between lines, so when a space between two
+elements has to survive, it gets written out deliberately. Deleting them along
+with the text around them is correct here.
+:::
 
 ===
 ## And the styling is not quite CSS

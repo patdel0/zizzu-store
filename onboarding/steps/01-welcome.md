@@ -14,9 +14,19 @@ database table, an endpoint, a page, and tests for all of it — and taken it
 through the process a working team actually uses: a branch, small commits, a
 pull request, a review.
 
-Expect two days, and longer is common — the estimates on each step assume you
-are not stopping to understand anything, which you should be. Nobody is timing
-you.
+It comes in two parts, and the sidebar calls them weeks.
+
+**Week one is contributing to a project.** Get it running, learn enough git to
+work safely, make a small visible change, and take it all the way through a real
+pull request and review. About eight hours.
+
+**Week two is building a feature.** A database model, an endpoint, tests, a
+page — and a second pull request carrying all of it. About nine hours.
+
+Those are hours of focused work, not a week's worth. Most teams run the first
+part on day one or two and the second across the rest of the fortnight, with
+real tickets in between. The estimates on each step assume you are not stopping
+to understand anything, which you should be. Nobody is timing you.
 
 === quiz=sandbox
 ## Nothing you do here counts

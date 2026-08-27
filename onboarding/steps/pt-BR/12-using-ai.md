@@ -1,5 +1,6 @@
-Daqui em diante você escreve código de verdade, e vai ter a tentação de pedir a
-uma IA que escreva por você.
+Você vai ter a tentação de pedir a uma IA que escreva código por você — um pouco
+esta semana, e o tempo todo na semana que vem, quando construir uma
+funcionalidade do zero.
 
 Este time tem duas regras sobre isso. Diferente da maior parte deste tutorial,
 elas não são conselho.

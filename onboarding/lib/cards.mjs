@@ -20,7 +20,15 @@
  * above it rather than at a step ten minutes long.
  */
 
-const DELIMITER = /^===[ \t]*(.*)$/;
+/**
+ * A card break: `===` alone, or `===` followed only by `key=value` gates.
+ *
+ * Deliberately narrow. Prose can wrap onto a line beginning `===` — a
+ * Portuguese translation of a ternary chain did exactly that, and a looser
+ * pattern silently cut the card in half mid-sentence and moved the gate with
+ * it. Anything that is not a recognised gate list is left as text.
+ */
+const DELIMITER = /^===[ \t]*((?:[a-z]+=[a-z0-9,-]+(?:[ \t]+|$))*)$/;
 
 /** `check=a,b quiz=c` → `{ check: ['a','b'], quiz: ['c'], attest: [] }` */
 function parseGate(attributes) {

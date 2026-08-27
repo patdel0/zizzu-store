@@ -53,8 +53,8 @@ git push -u origin sandbox/seu-nome
 simples e o `git pull` saibam para onde ir.
 
 Se falhar, leia o erro antes de tentar de novo. “Permission denied (publickey)”
-significa que a autenticação acima não está configurada, não que você deu push
-errado.
+significa que a autenticação da etapa {{step:git-setup}} não está configurada,
+não que você deu push errado.
 
 === ask=history-recall
 ## O que quem revisa está prestes a ver
@@ -68,8 +68,20 @@ Um **[pull request](https://docs.github.com/pt/pull-requests)** é um pedido par
 fazer merge da sua branch na `main`. É onde a revisão acontece: o diff, os
 comentários linha a linha e a conversa, tudo num lugar só.
 
-No GitHub, sua branch recém-enviada aparece com um botão “Compare & pull
-request”. Base: `main`. Compare: sua branch.
+No GitHub, sua branch aparece com um botão “Compare & pull request”. Base:
+`main`. Compare: sua branch.
+
+:::note Sim, este é um segundo pull request na mesma branch
+A etapa {{step:first-pull-request}} disse para não abrir um novo quando você tem
+alterações a acrescentar — e está certo, enquanto um pull request está aberto.
+Você fechou aquele, então este é um pedido novo sobre a mesma branch.
+
+O diff dele carrega tudo o que está na branch, incluindo a alteração de título da
+semana um e o commit de merge da etapa {{step:conflicts}}. Isso é normal e vale
+uma linha na sua descrição: diga para que a alteração serve, e quem revisar,
+ao ler alguns commits mais antigos, não vai ficar em dúvida se deveriam estar
+ali.
+:::
 
 === attest=description,linked
 ## Escrevendo
@@ -177,8 +189,8 @@ abra um novo.
 === attest=reviewed-one
 ## Revisando outras pessoas
 
-Metade da revisão de código é ser revisado. A outra metade chega na sua primeira
-quinzena, e ninguém explica.
+A etapa {{step:first-pull-request}} te pediu para ler o pull request de outra
+pessoa. Aqui está como fazer isso direito.
 
 Vão te pedir antes de você se sentir qualificado. Faça mesmo assim — quem lê sem
 já saber como o código funciona é exatamente quem encontra as partes que só fazem

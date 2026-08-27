@@ -103,7 +103,7 @@ a resposta é a que alguém disse que seria. Há algumas dezenas deles aqui, e o
 `npm test` roda todos.
 
 Por enquanto é só o que você precisa — a etapa {{step:what-tests-are}} destrincha
-isso direito, e você vai escrever os seus logo depois.
+isso direito, e você escreve os seus na semana que vem.
 
 A primeira execução é lenta: ela cria um banco `zizzu_test` separado e as
 tabelas dele. Todas as seguintes são mais rápidas.

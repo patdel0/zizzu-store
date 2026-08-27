@@ -99,11 +99,11 @@ git config --list --global
 You should see your name, your email, and your editor. If something looks wrong,
 run the same `git config` command again — the last one wins.
 
-:::warn Not covered yet: pushing to GitHub
-Sending your work *to* GitHub needs authentication as well as identity, and it
-is a separate job with its own choices. That comes in {{step:first-pull-request}}, at the end of this week — but it is
-the next card, because finding out your authentication does not work at the
-moment you are trying to push is a bad hour.
+:::note Identity is only half of it
+Sending your work *to* GitHub needs authentication as well, which is a separate
+job with its own choices. You do not need it until {{step:first-pull-request}},
+at the end of this week — but it is the next card anyway, for the reason the
+card gives.
 :::
 
 ===

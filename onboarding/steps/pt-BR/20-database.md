@@ -144,7 +144,7 @@ await db.orm.public.Product.where((product) => product.id.isNotNull()).deleteAll
 Essa função esvazia as tabelas antes de cada teste, e as lista na mão — então uma
 tabela que ela desconhece mantém suas linhas entre os testes.
 
-Nada quebra agora. Quebra três etapas adiante, quando um teste diz que há um
+Nada quebra agora. Quebra quatro etapas adiante, quando um teste diz que há um
 produto e encontra dois. A falha aparece num teste que você não escreveu, num
 arquivo que parece correto, e aponta para o seu handler em vez de para esta
 linha.

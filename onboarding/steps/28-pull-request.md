@@ -52,8 +52,8 @@ local branch to the remote one, so from now on plain
 [`git push`](https://git-scm.com/docs/git-push) and `git pull` know where to go.
 
 If it fails, read the error before trying again. "Permission denied
-(publickey)" means the authentication above is not set up yet, not that you did
-the push wrong.
+(publickey)" means the authentication from {{step:git-setup}} is not
+set up, not that you did the push wrong.
 
 === ask=history-recall
 ## What your reviewer is about to see
@@ -67,8 +67,19 @@ A **[pull request](https://docs.github.com/en/pull-requests)** is a request to m
 the review happens: the diff, line-by-line comments, and the conversation, all
 in one place.
 
-On GitHub, your freshly pushed branch appears with a "Compare & pull request"
-button. Base: `main`. Compare: your branch.
+On GitHub, your branch appears with a "Compare & pull request" button. Base:
+`main`. Compare: your branch.
+
+:::note Yes, this is a second pull request on the same branch
+{{step:first-pull-request}} told you not to open a new one when you have changes
+to add — and that is right, while a pull request is open. You closed that one,
+so this is a fresh request against the same branch.
+
+Its diff carries everything on the branch, including week one's heading change
+and the merge commit from {{step:conflicts}}. That is normal and worth a line in
+your description: say what the change is *for*, and a reviewer reading a couple
+of older commits will not wonder whether they were meant to be there.
+:::
 
 === attest=description,linked
 ## Writing it
@@ -174,8 +185,8 @@ new one.
 === attest=reviewed-one
 ## Reviewing others
 
-Half of code review is being reviewed. The other half arrives within your first
-fortnight, and nobody explains it.
+{{step:first-pull-request}} asked you to read somebody else's pull request. This
+is how to do it properly.
 
 You will be asked before you feel qualified. Do it anyway — a reader who does
 not already know how the code works is exactly who finds the parts that only

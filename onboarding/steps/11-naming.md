@@ -1,5 +1,5 @@
-In a few steps you create your first files. Three rules bite at that moment; the
-rest is in the handbook.
+You create your first file in a few steps, and your first code files next week.
+Three rules bite at those moments; the rest is in the handbook.
 
 ===
 ## The shape tells you what it is

@@ -1,5 +1,6 @@
-Daqui a algumas etapas você cria seus primeiros arquivos. Três regras mordem
-naquele momento; o resto está no manual.
+Você cria seu primeiro arquivo daqui a algumas etapas, e seus primeiros
+arquivos de código na semana que vem. Três regras mordem nesses momentos; o
+resto está no manual.
 
 ===
 ## O formato te diz o que a coisa é

@@ -112,7 +112,7 @@ docker compose watch             # sincroniza suas edições para o contêiner d
 docker compose logs -f app       # o que o servidor está realmente dizendo?
 npm test                         # a suíte do Vitest
 npm test -- caminho/para/um.test.ts  # só um arquivo
-npm run test:e2e                 # Playwright (pare o contêiner do app antes)
+npm run test:e2e                 # Playwright (servidor próprio, na porta 3100)
 ```
 
 **Git**

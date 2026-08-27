@@ -1,5 +1,5 @@
-From here on you are writing real code, and you will be tempted to ask an AI to
-write it for you.
+You will be tempted to ask an AI to write code for you — a little this week, and
+constantly next week, when you build a feature from nothing.
 
 This team has two rules about that. Unlike most of this tutorial, they are not
 advice.
