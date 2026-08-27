@@ -40,6 +40,50 @@ produção — não. Um repositório relaxado com maiúsculas compila no noteboo
 foi escrito e falha no servidor, reclamando de um módulo que está claramente lá.
 :::
 
+=== attest=saw-the-404
+## Cause o 404 silencioso
+
+A afirmação acima é que uma letra maiúscula em `page.tsx` te dá um 404 e nenhum
+erro. Não aceite na fé — custa noventa segundos e é o tipo de falha que só se
+reconhece depois de tê-la causado.
+
+**1.** Confira que a página funciona:
+[localhost:3000/posts](http://localhost:3000/posts).
+
+**2.** Renomeie o arquivo:
+
+```bash
+mv app/posts/page.tsx app/posts/Page.tsx
+```
+
+**3.** Espere alguns segundos para o contêiner sincronizar e recarregue
+[/posts](http://localhost:3000/posts).
+
+**404.** Agora olhe os dois lugares onde você normalmente olharia:
+
+- o console do navegador — nada
+- `docker compose logs -f app` — nada errado, o servidor está bem
+
+O arquivo está bem ali. O código dentro dele está correto. O Next.js procura
+`page.tsx` e não existe tal arquivo, então, para o roteamento, aquela pasta
+simplesmente não é uma página.
+
+**4.** Devolva:
+
+```bash
+mv app/posts/Page.tsx app/posts/page.tsx
+```
+
+:::warn Por que este vale noventa segundos
+No macOS e no Windows este exercício não faz nada — aqueles sistemas de arquivos
+tratam `Page.tsx` e `page.tsx` como o mesmo arquivo, então a página continua
+funcionando. O Linux, que é o que roda em produção, não.
+
+É essa a razão inteira de a convenção ser rígida: uma letra maiúscula inofensiva
+no notebook em que foi escrita é um 404 no servidor, e quem está depurando está
+olhando para um arquivo que está claramente lá.
+:::
+
 === quiz=function-name
 ## Nomeando uma função
 

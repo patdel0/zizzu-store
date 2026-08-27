@@ -468,5 +468,9 @@
   "check.components.highlights-empty": "It handles being given nothing",
   "check.components.highlights-rendered": "`app/page.tsx` renders it with a real list",
   "attest.components.poked-it.label": "I changed one `<Field />` call and then the `Field` definition, and saw the difference",
-  "attest.components.poked-it.hint": "One call site changes one input. The definition changes all three. That is the whole argument for writing a component, and it takes about a minute to see. `git restore app/posts/posts-board.tsx` puts it all back."
+  "attest.components.poked-it.hint": "One call site changes one input. The definition changes all three. That is the whole argument for writing a component, and it takes about a minute to see. `git restore app/posts/posts-board.tsx` puts it all back.",
+  "attest.javascript.ran-the-operators.label": "I ran the `??` / `||` and `?.` lines and read what came back",
+  "attest.javascript.ran-the-operators.hint": "`node -e \"console.log(0 ?? 5, 0 || 5)\"` prints `0 5`. Thirty seconds, and it is the difference between knowing that `||` discards zero and having watched it happen.",
+  "attest.naming.saw-the-404.label": "I renamed `page.tsx` to `Page.tsx`, got a 404 with no error anywhere, and put it back",
+  "attest.naming.saw-the-404.hint": "On macOS and Windows nothing will happen — those filesystems treat the two names as one file. That is the point: the bug only appears on Linux, which is what production runs. Tick it if you tried."
 }

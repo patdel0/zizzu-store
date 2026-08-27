@@ -104,6 +104,67 @@ body?.choices?.[0]
 `?.` stops rather than throwing if the thing on the left is missing. Without it,
 reaching into an object that turned out to be `undefined` crashes.
 
+=== attest=ran-the-operators
+## Try the two operators on real values
+
+Thirty seconds each, in a terminal. No project, no server — `node -e` runs one
+line and prints the answer.
+
+**1. `??` against `||`:**
+
+```bash
+node -e "console.log(0 ?? 5, 0 || 5)"
+```
+
+```
+0 5
+```
+
+Same inputs, different answers. `??` kept the zero because a zero is a value;
+`||` threw it away because a zero is *falsy*, along with `''`, `false` and `NaN`.
+
+**2. Now the one that bites:**
+
+```bash
+node -e "console.log(JSON.stringify({ nullish: '' ?? 'fallback', or: '' || 'fallback' }))"
+```
+
+```
+{"nullish":"","or":"fallback"}
+```
+
+Look at `route.ts` line 156 again — `content: content ?? null`. If that were
+`||`, a post whose content someone deliberately cleared would come back with
+whatever the fallback was instead of the empty string they meant. **That is a
+data bug, and nothing would throw.**
+
+**3. And `?.`, both ways:**
+
+```bash
+node -e "const o = {}; console.log(o.a?.b)"
+```
+
+```
+undefined
+```
+
+```bash
+node -e "const o = {}; console.log(o.a.b)"
+```
+
+```
+TypeError: Cannot read properties of undefined (reading 'b')
+```
+
+The second one is the most common crash in JavaScript, and `?.` is the single
+character that turns it into a value you can check.
+
+:::note Why run them rather than read them
+You have just seen `0 || 5` produce `5`. Reading that sentence and watching your
+own terminal print it are different, and the second one is the version you
+remember at four in the afternoon when a price of zero has gone missing.
+:::
+
 :::note You have now met everything in a route handler except one thing
 Open `app/api/posts/route.ts` again and read the `GET` function. Imports,
 arrow functions, destructuring, `??` — you can now name all of it.

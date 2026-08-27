@@ -105,6 +105,67 @@ body?.choices?.[0]
 `?.` para em vez de lançar erro se o que está à esquerda estiver ausente. Sem
 ele, tentar entrar num objeto que acabou sendo `undefined` quebra.
 
+=== attest=ran-the-operators
+## Experimente os dois operadores com valores de verdade
+
+Trinta segundos cada, num terminal. Sem projeto, sem servidor — `node -e` roda
+uma linha e imprime a resposta.
+
+**1. `??` contra `||`:**
+
+```bash
+node -e "console.log(0 ?? 5, 0 || 5)"
+```
+
+```
+0 5
+```
+
+Mesmas entradas, respostas diferentes. O `??` manteve o zero porque zero é um
+valor; o `||` jogou fora porque zero é *falsy*, junto com `''`, `false` e `NaN`.
+
+**2. Agora o que morde:**
+
+```bash
+node -e "console.log(JSON.stringify({ nullish: '' ?? 'fallback', or: '' || 'fallback' }))"
+```
+
+```
+{"nullish":"","or":"fallback"}
+```
+
+Olhe a linha 156 do `route.ts` de novo — `content: content ?? null`. Se aquilo
+fosse `||`, um post cujo conteúdo alguém apagou de propósito voltaria com o que
+estivesse no fallback em vez da string vazia que a pessoa quis. **Isso é um bug
+de dados, e nada seria lançado.**
+
+**3. E o `?.`, dos dois jeitos:**
+
+```bash
+node -e "const o = {}; console.log(o.a?.b)"
+```
+
+```
+undefined
+```
+
+```bash
+node -e "const o = {}; console.log(o.a.b)"
+```
+
+```
+TypeError: Cannot read properties of undefined (reading 'b')
+```
+
+O segundo é a quebra mais comum do JavaScript, e o `?.` é o único caractere que
+a transforma num valor que você pode verificar.
+
+:::note Por que rodar em vez de ler
+Você acabou de ver `0 || 5` produzir `5`. Ler essa frase e ver o seu próprio
+terminal imprimir são coisas diferentes, e a segunda é a versão de que você
+lembra às quatro da tarde quando um preço zero sumiu.
+:::
+
 :::note Você já viu tudo o que existe num route handler, menos uma coisa
 Abra `app/api/posts/route.ts` de novo e leia a função `GET`. Imports, funções de
 seta, desestruturação, `??` — você já consegue nomear tudo isso.

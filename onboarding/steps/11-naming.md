@@ -40,6 +40,49 @@ the laptop it was written on and fails on the server, complaining about a module
 that is plainly there.
 :::
 
+=== attest=saw-the-404
+## Cause the silent 404
+
+The claim above is that a capital letter in `page.tsx` gives you a 404 and no
+error. Do not take that on trust — it costs ninety seconds and it is the kind of
+failure you only recognise once you have caused it.
+
+**1.** Check the page works: [localhost:3000/posts](http://localhost:3000/posts).
+
+**2.** Rename the file:
+
+```bash
+mv app/posts/page.tsx app/posts/Page.tsx
+```
+
+**3.** Wait a few seconds for the container to sync, then reload
+[/posts](http://localhost:3000/posts).
+
+**404.** Now look at the two places you would normally look:
+
+- the browser console — nothing
+- `docker compose logs -f app` — nothing wrong, the server is fine
+
+The file is right there. The code in it is correct. Next.js is looking for
+`page.tsx` and there is no such file, so as far as routing is concerned that
+folder simply is not a page.
+
+**4.** Put it back:
+
+```bash
+mv app/posts/Page.tsx app/posts/page.tsx
+```
+
+:::warn Why this one is worth ninety seconds
+On macOS and Windows this exercise does nothing — those filesystems treat
+`Page.tsx` and `page.tsx` as the same file, so the page keeps working. Linux,
+which is what production runs on, does not.
+
+That is the whole reason the convention is strict: a capital letter that is
+harmless on the laptop it was written on is a 404 on the server, and the person
+debugging it is looking at a file that is plainly there.
+:::
+
 === quiz=function-name
 ## Naming a function
 

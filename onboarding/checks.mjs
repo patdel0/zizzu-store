@@ -746,6 +746,13 @@ export const steps = [
     week: 1,
     phase: 'Reading the code',
     minutes: 30,
+    attest: [
+      {
+        id: 'ran-the-operators',
+        label: 'I ran the `??` / `||` and `?.` lines and read what came back',
+        hint: '`node -e "console.log(0 ?? 5, 0 || 5)"` prints `0 5`. Thirty seconds, and it is the difference between knowing that `||` discards zero and having watched it happen.',
+      },
+    ],
     quiz: [
       {
         id: 'what-import-does',
@@ -926,6 +933,13 @@ export const steps = [
     week: 1,
     phase: 'Reading the code',
     minutes: 30,
+    attest: [
+      {
+        id: 'saw-the-404',
+        label: 'I renamed `page.tsx` to `Page.tsx`, got a 404 with no error anywhere, and put it back',
+        hint: 'On macOS and Windows nothing will happen \u2014 those filesystems treat the two names as one file. That is the point: the bug only appears on Linux, which is what production runs. Tick it if you tried.',
+      },
+    ],
     quiz: [
       {
         id: 'file-case',
