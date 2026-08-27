@@ -80,29 +80,6 @@ notebook, não perde nada.
 :::
 
 ===
-## O que você vai usar
-
-Você não precisa saber essas coisas. Precisa saber que elas existem, para que,
-quando uma aparecer numa mensagem de erro, você saiba qual parte do sistema está
-reclamando. Cada uma tem link para a documentação — é para lá que se vai quando
-este tutorial acaba e uma pergunta de verdade começa.
-
-| | |
-|---|---|
-| [Next.js](https://nextjs.org/docs) | O framework web. Serve páginas *e* responde requisições de API. |
-| [React](https://react.dev) | Como as páginas são descritas, em componentes. |
-| [TypeScript](https://www.typescriptlang.org/docs/) | JavaScript com tipos, para que erros sejam pegos antes de você rodar qualquer coisa. |
-| [Tailwind CSS](https://tailwindcss.com/docs/styling-with-utility-classes) | Estilo, escrito como classes pequenas na marcação. |
-| [PostgreSQL](https://www.postgresql.org/docs/) | O banco de dados. |
-| [Prisma](https://www.prisma.io/docs) | Como o código consulta o banco, em TypeScript tipado. |
-| [Vitest](https://vitest.dev/) | Testes para funções e endpoints de API. |
-| [Playwright](https://playwright.dev/) | Testes que dirigem um navegador de verdade. |
-| [Docker](https://docs.docker.com/) | Roda o app e o banco, para que a máquina de todo mundo seja igual. |
-| [git](https://git-scm.com/docs) | Guarda o histórico do projeto. |
-
-Cada uma é apresentada onde você precisa dela pela primeira vez.
-
-===
 ## Três coisas que vale saber de saída
 
 **Estar travado é o trabalho.** Não é uma fase que se supera. Gente com vinte
@@ -112,6 +89,10 @@ reconhecer isso e pedir ajuda. Existe uma etapa inteira sobre como pedir bem.
 **Não se espera que você memorize isto.** Ninguém guarda um código inteiro na
 cabeça. As pessoas sabem mais ou menos onde procurar, e procuram. Este tutorial
 está tentando te dar o “mais ou menos onde”, não um mapa decorado.
+
+O manual na barra lateral é o resto disso: as dez ferramentas que este projeto
+usa e para que serve cada uma, todas as convenções e os comandos. Ele existe
+para ser consultado, não lido — nada nele está no caminho do curso.
 
 **A sensação de estar perdido nunca vai embora de vez.** Toda pessoa
 desenvolvedora sente isso ao cair num código desconhecido — no primeiro dia, de

@@ -5,6 +5,28 @@ path of the course.
 
 ---
 
+## What this project is built from
+
+You do not need to know these. You need to know they exist, so that when one
+appears in an error message you know which part of the system is complaining.
+Each links to its documentation — that is where to go when the tutorial stops
+and a real question starts.
+
+| | |
+|---|---|
+| [Next.js](https://nextjs.org/docs) | The web framework. Serves pages *and* answers API requests. |
+| [React](https://react.dev) | How pages are described, as components. |
+| [TypeScript](https://www.typescriptlang.org/docs/) | JavaScript with types, so mistakes are caught before you run anything. |
+| [Tailwind CSS](https://tailwindcss.com/docs/styling-with-utility-classes) | Styling, written as small classes on the markup. |
+| [PostgreSQL](https://www.postgresql.org/docs/) | The database. |
+| [Prisma](https://www.prisma.io/docs) | How the code queries the database, in typed TypeScript. |
+| [Vitest](https://vitest.dev/) | Tests for functions and API endpoints. |
+| [Playwright](https://playwright.dev/) | Tests that drive a real browser. |
+| [Docker](https://docs.docker.com/) | Runs the app and the database, so everyone's machine matches. |
+| [git](https://git-scm.com/docs) | Records the history of the project. |
+
+---
+
 ## Naming
 
 | Shape | Looks like | Used for |
