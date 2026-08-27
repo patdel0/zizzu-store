@@ -121,8 +121,8 @@ wrong rows.
 === attest=poked-it
 ## Poke it before you build one
 
-Five minutes of changing things and reloading. Nothing here is committed and
-everything is undone at the end — the point is to feel which edits change one
+Five minutes of changing things and reloading. Nothing here is committed, and
+one command at the end puts all of it back — the point is to feel which edits change one
 thing and which change several.
 
 Have [localhost:3000/posts](http://localhost:3000/posts) open with
@@ -144,21 +144,42 @@ Have [localhost:3000/posts](http://localhost:3000/posts) open with
 Save, reload. **All three labels are yellow.** One edit, three places — that is
 what you bought by writing a component instead of copying the block.
 
-**3. Style a list item.** Add a post through the form if the list is empty, then
-find the `<li>` and change its `rounded-lg` to `rounded-none`, or add
-`bg-zinc-100`. Watch every post in the list change together, for the same
-reason.
+**3. Break the capital letter.** Change that same call to a lowercase
+`<field label="Headline" name="title" required />`. Save, reload.
 
-**4. Find the empty state.** Change `No posts yet.` to something else. It will
-not appear — you have posts. Delete them from the form's list by reloading after
-clearing the database, or just trust the ternary: that text only renders when
-`posts.length === 0`.
+The Title input is **gone**, and the browser console says nothing. React took
+`field` for an HTML tag, looked for an element by that name, found none, and
+rendered nothing. That is the silent failure the capital letter protects you
+from — and silent failures are the ones you cannot debug by reading an error.
+
+Put the capital back.
+
+**4. Find the empty state.** Your database has no posts yet, so the list is
+showing `No posts yet.` Change that text to something else and watch it update —
+you are looking at the third branch of that four-state ternary, live.
 
 **Now put it all back:**
 
 ```bash
 git restore app/posts/posts-board.tsx
 ```
+
+[`git restore`](https://git-scm.com/docs/git-restore) discards uncommitted
+changes to a file and returns it to its last committed state. No confirmation,
+no undo — which is exactly what you want after an afternoon of poking, and
+exactly what you do not want when you are unsure. Run `git diff` first when you
+are.
+
+:::warn It also removes your `[browser]` log
+The `console.log('[browser] posts board mounted')` you added in
+{{step:two-machines}} was never committed either, so that command takes it with
+everything else. Put it back — the next step uses it:
+
+```tsx
+useEffect(() => {
+  console.log('[browser] posts board mounted');
+```
+:::
 
 :::note What those five minutes were for
 Editing a component you did not write, watching what moves, and undoing it is

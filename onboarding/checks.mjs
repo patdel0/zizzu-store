@@ -484,7 +484,12 @@ export const steps = [
         id: 'tagline',
         label: 'You added a tagline styled with Tailwind',
         async run() {
-          const source = await read('app/page.tsx');
+          // Either file: {{step:components}} has the reader move this paragraph
+          // into a component of its own, and that refactor must not make an
+          // earlier step go red and tell them to undo it.
+          const page = await read('app/page.tsx');
+          const extracted = await read('app/tagline.tsx');
+          const source = [page, extracted].filter(Boolean).join('\n') || null;
 
           if (source === null) {
             return { pass: false, detail: 'Could not read `app/page.tsx`.' };
@@ -1390,12 +1395,15 @@ export const steps = [
           if (source === null) return { pass: false, detail: 'No `app/highlights.tsx` yet.' };
 
           // Either an early return or a conditional in the markup is fine.
+          // Any of: an early return, a ternary, or `&&` in the markup — with or
+          // without a comparison. All of these are idiomatic and the card
+          // explicitly offers two of them, so the check must not have a
+          // favourite.
           const guarded =
-            /length\s*===\s*0/.test(source) ||
-            /length\s*<\s*1/.test(source) ||
+            /items\.length\s*(===?\s*0|<\s*1|[<>]=?\s*\d)/.test(source) ||
             /!\s*items\.length/.test(source) ||
-            /items\.length\s*\?/.test(source) ||
-            /items\.length\s*&&/.test(source);
+            /items\.length\s*[?&]/.test(source) ||
+            /items\.length\s*\)?\s*(\?|&&)/.test(source);
 
           if (!guarded) {
             return {
@@ -1415,6 +1423,14 @@ export const steps = [
           const source = await read('app/page.tsx');
 
           if (source === null) return { pass: false, detail: 'Could not read `app/page.tsx`.' };
+
+          if (!/import\s*\{\s*Highlights\s*\}/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'Nothing imports `Highlights`, so rendering it is a build error rather than a component. Add `import { Highlights } from \'./highlights\';` at the top, next to the `Tagline` import.',
+            };
+          }
 
           if (!/<Highlights[\s/>]/.test(source)) {
             return {
@@ -1497,6 +1513,17 @@ export const steps = [
 
           const hasState = /useState\s*\(\s*0\s*\)/.test(source);
           const hasClick = /onClick=/.test(source);
+
+          // `onClick={setClicks(clicks + 1)}` calls it while the page is being
+          // drawn, which sets state, which redraws. The card warns about it, so
+          // the check has to be able to see it.
+          if (hasClick && !/onClick=\{\s*(\(\s*\)|[A-Za-z_$][\w$]*)\s*=>/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'There is an `onClick`, but it is not being handed a function \u2014 it looks like `onClick={setClicks(...)}`, which *calls* it while the page is being drawn. That sets state, which redraws, which calls it again, and React stops you with "Too many re-renders".\n\n`() =>` is what makes it a function: `onClick={() => setClicks(clicks + 1)}`.',
+            };
+          }
 
           if (hasState && hasClick) {
             return { pass: true, detail: 'Found a `useState(0)` and an `onClick`.' };

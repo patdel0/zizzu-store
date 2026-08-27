@@ -130,8 +130,13 @@ Recarregue.
 
 A página quebra, e o erro vale a leitura antes de você consertar:
 
-> You're importing a component that needs `useState`. This React hook only
-> works in a Client Component.
+> You're importing a component that needs `useActionState`. It only works in a
+> Client Component but none of its parents are marked with "use client", so
+> they're Server Components by default.
+
+Ele cita o primeiro hook que encontra, então você pode ver `useActionState` em
+vez de `useState` — aquele que ninguém te ensinou. O ponto é o mesmo, e a
+correção também.
 
 O `useState` precisa de algum lugar para *guardar* o estado entre cliques, e de
 algo para *perceber* o clique. Um servidor renderizou esta página e seguiu em

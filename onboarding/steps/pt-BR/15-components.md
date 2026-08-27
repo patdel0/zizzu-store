@@ -122,8 +122,8 @@ algo é inserido ou removido, fazendo o React casar as linhas erradas.
 === attest=poked-it
 ## Cutuque antes de construir um
 
-Cinco minutos mudando coisas e recarregando. Nada aqui é commitado e tudo é
-desfeito no fim — o ponto é sentir quais edições mudam uma coisa e quais mudam
+Cinco minutos mudando coisas e recarregando. Nada aqui é commitado, e um comando
+no fim devolve tudo — o ponto é sentir quais edições mudam uma coisa e quais mudam
 várias.
 
 Deixe [localhost:3000/posts](http://localhost:3000/posts) aberto com o
@@ -145,20 +145,43 @@ Salve, recarregue.
 Salve, recarregue. **Os três labels ficaram amarelos.** Uma edição, três lugares
 — é isso que você comprou escrevendo um componente em vez de copiar o bloco.
 
-**3. Estilize um item da lista.** Adicione um post pelo formulário se a lista
-estiver vazia, ache o `<li>` e troque o `rounded-lg` por `rounded-none`, ou
-acrescente `bg-zinc-100`. Veja todos os posts da lista mudarem juntos, pelo mesmo
-motivo.
+**3. Quebre a letra maiúscula.** Mude aquela mesma chamada para um
+`<field label="Headline" name="title" required />` minúsculo. Salve, recarregue.
 
-**4. Ache o estado vazio.** Mude `No posts yet.` para outra coisa. Não vai
-aparecer — você tem posts. É o ternário: aquele texto só renderiza quando
-`posts.length === 0`.
+O campo Title **sumiu**, e o console do navegador não diz nada. O React entendeu
+`field` como tag HTML, procurou um elemento com esse nome, não achou nenhum, e
+não renderizou nada. É essa a falha silenciosa da qual a letra maiúscula te
+protege — e falhas silenciosas são as que você não consegue depurar lendo um
+erro.
+
+Devolva a maiúscula.
+
+**4. Ache o estado vazio.** Seu banco ainda não tem posts, então a lista está
+mostrando `No posts yet.` Mude esse texto para outra coisa e veja atualizar —
+você está olhando o terceiro ramo daquele ternário de quatro estados, ao vivo.
 
 **Agora devolva tudo:**
 
 ```bash
 git restore app/posts/posts-board.tsx
 ```
+
+O [`git restore`](https://git-scm.com/docs/git-restore) descarta alterações não
+commitadas de um arquivo e o devolve ao último estado commitado. Sem confirmação,
+sem desfazer — que é exatamente o que você quer depois de uma tarde cutucando, e
+exatamente o que você não quer quando está em dúvida. Rode `git diff` antes
+quando estiver.
+
+:::warn Ele também remove o seu log `[browser]`
+O `console.log('[browser] posts board mounted')` que você adicionou na etapa
+{{step:two-machines}} também nunca foi commitado, então aquele comando o leva
+junto com o resto. Recoloque — a próxima etapa usa:
+
+```tsx
+useEffect(() => {
+  console.log('[browser] posts board mounted');
+```
+:::
 
 :::note Para que serviram esses cinco minutos
 Editar um componente que você não escreveu, ver o que se move e desfazer é a

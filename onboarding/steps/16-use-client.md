@@ -128,8 +128,13 @@ Reload.
 
 The page breaks, and the error is worth reading before you fix it:
 
-> You're importing a component that needs `useState`. This React hook only
-> works in a Client Component.
+> You're importing a component that needs `useActionState`. It only works in a
+> Client Component but none of its parents are marked with "use client", so
+> they're Server Components by default.
+
+It names whichever hook it finds first, so you may see `useActionState` rather
+than `useState` — the one you have not been taught. The point is the same, and
+so is the fix.
 
 `useState` needs somewhere to *keep*
 the state between clicks, and something to *notice* the click. A server rendered

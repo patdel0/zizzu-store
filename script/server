@@ -3,6 +3,13 @@
 docker compose down
 docker compose up -d
 
+# The app's database needs its tables before anything can read from it, and
+# `db init` only ever adds what is missing, so this is safe to run every time.
+# Without it `/api/posts` answers 500 and `/posts` shows an error, which is a
+# baffling first impression of a project that is working fine.
+docker compose exec -T app npx prisma-cli db init --no-interactive --yes >/dev/null 2>&1 \
+  || echo "Could not initialise the database. Try: docker compose exec app npx prisma-cli db init"
+
 # The image is built with a copy of the code, so edits do not reach the running
 # container on their own. Anyone who misses this edits a file, reloads, and sees
 # the old page with no error to explain it.
