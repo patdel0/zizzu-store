@@ -10,12 +10,17 @@ and the Prisma CLI all run from your own terminal, not from the container.
 Once installed, run:
 ``` bash
 ./script/setup;
-./script/server;
+./script/dev;
 ```
+
+`script/dev` starts the containers and syncs your edits into the app container
+as you save. Use `script/server` instead if you only need it running in the
+background — but then edits will not reach it until you run
+`docker compose watch`.
 
 ### Services
 - Next.js: http://localhost:3000
-- PostgresSQL: 
+- PostgreSQL: `postgresql://zizzu:zizzu@localhost:5432/zizzu`
 
 ### API
 

@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+# Starts the containers *and* syncs your edits into the app container, which is
+# what you want while you are working. Runs in the foreground: leave it open.
+#
+# `script/server` is the detached version, for when you just need the app up.
+
+docker compose watch
