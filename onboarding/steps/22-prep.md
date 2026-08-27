@@ -259,8 +259,8 @@ looking.
 
 :::note There is a tag syntax, and this project does not use it
 You will see `@param` and `@returns` in other codebases, and your editor
-understands them. Every one of the seventeen docblocks in this repository is
-plain prose instead.
+understands them. Every docblock in this repository is plain prose
+instead.
 
 Match the repository. A convention is only worth anything if it is followed
 everywhere, and consistency beats the better idea — which is the same advice
