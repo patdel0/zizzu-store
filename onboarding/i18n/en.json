@@ -466,5 +466,7 @@
   "check.components.tagline-served": "The page still shows your tagline",
   "check.components.highlights-list": "`Highlights` maps over its prop and gives each item a `key`",
   "check.components.highlights-empty": "It handles being given nothing",
-  "check.components.highlights-rendered": "`app/page.tsx` renders it with a real list"
+  "check.components.highlights-rendered": "`app/page.tsx` renders it with a real list",
+  "attest.components.poked-it.label": "I changed one `<Field />` call and then the `Field` definition, and saw the difference",
+  "attest.components.poked-it.hint": "One call site changes one input. The definition changes all three. That is the whole argument for writing a component, and it takes about a minute to see. `git restore app/posts/posts-board.tsx` puts it all back."
 }

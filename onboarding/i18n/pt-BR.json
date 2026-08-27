@@ -466,5 +466,7 @@
   "check.components.tagline-served": "A página continua mostrando seu slogan",
   "check.components.highlights-list": "`Highlights` mapeia sua prop e dá uma `key` a cada item",
   "check.components.highlights-empty": "Ele trata o caso de não receber nada",
-  "check.components.highlights-rendered": "`app/page.tsx` o renderiza com uma lista de verdade"
+  "check.components.highlights-rendered": "`app/page.tsx` o renderiza com uma lista de verdade",
+  "attest.components.poked-it.label": "Mudei uma chamada de `<Field />` e depois a definição do `Field`, e vi a diferença",
+  "attest.components.poked-it.hint": "Uma chamada muda um campo. A definição muda os três. É esse o argumento inteiro para escrever um componente, e leva cerca de um minuto para ver. `git restore app/posts/posts-board.tsx` devolve tudo."
 }

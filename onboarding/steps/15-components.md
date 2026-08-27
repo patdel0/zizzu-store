@@ -118,6 +118,55 @@ something stable and unique — a database id. **Not the array index**, which
 changes the moment anything is inserted or removed, so React matches up the
 wrong rows.
 
+=== attest=poked-it
+## Poke it before you build one
+
+Five minutes of changing things and reloading. Nothing here is committed and
+everything is undone at the end — the point is to feel which edits change one
+thing and which change several.
+
+Have [localhost:3000/posts](http://localhost:3000/posts) open with
+`docker compose watch` running, so a save shows up in the browser.
+
+**1. Change one call site.** In `posts-board.tsx`, find
+`<Field label="Title" name="title" required />` and change the label to
+`Headline`. Save, reload.
+
+*One* input changed. You passed a different argument to one call.
+
+**2. Change the definition.** Now scroll to `Field` at the bottom and give the
+`<span>` a background:
+
+```tsx
+<span className="bg-amber-200 text-zinc-600 dark:text-zinc-400">{label}</span>
+```
+
+Save, reload. **All three labels are yellow.** One edit, three places — that is
+what you bought by writing a component instead of copying the block.
+
+**3. Style a list item.** Add a post through the form if the list is empty, then
+find the `<li>` and change its `rounded-lg` to `rounded-none`, or add
+`bg-zinc-100`. Watch every post in the list change together, for the same
+reason.
+
+**4. Find the empty state.** Change `No posts yet.` to something else. It will
+not appear — you have posts. Delete them from the form's list by reloading after
+clearing the database, or just trust the ternary: that text only renders when
+`posts.length === 0`.
+
+**Now put it all back:**
+
+```bash
+git restore app/posts/posts-board.tsx
+```
+
+:::note What those five minutes were for
+Editing a component you did not write, watching what moves, and undoing it is
+most of what your first fortnight looks like. The habit worth taking from it is
+the last command: poke freely, because `git restore` means nothing you tried is
+permanent.
+:::
+
 === check=sandbox-branch,tagline-component,tagline-rendered,tagline-served
 ## Now write one
 

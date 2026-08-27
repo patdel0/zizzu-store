@@ -119,6 +119,54 @@ esquecem.
 estável e único — um id do banco. **Não o índice do array**, que muda assim que
 algo é inserido ou removido, fazendo o React casar as linhas erradas.
 
+=== attest=poked-it
+## Cutuque antes de construir um
+
+Cinco minutos mudando coisas e recarregando. Nada aqui é commitado e tudo é
+desfeito no fim — o ponto é sentir quais edições mudam uma coisa e quais mudam
+várias.
+
+Deixe [localhost:3000/posts](http://localhost:3000/posts) aberto com o
+`docker compose watch` rodando, para que um save apareça no navegador.
+
+**1. Mude uma chamada.** Em `posts-board.tsx`, ache
+`<Field label="Title" name="title" required />` e mude o label para `Headline`.
+Salve, recarregue.
+
+*Um* campo mudou. Você passou um argumento diferente para uma chamada.
+
+**2. Mude a definição.** Agora desça até o `Field` no fim e dê um fundo ao
+`<span>`:
+
+```tsx
+<span className="bg-amber-200 text-zinc-600 dark:text-zinc-400">{label}</span>
+```
+
+Salve, recarregue. **Os três labels ficaram amarelos.** Uma edição, três lugares
+— é isso que você comprou escrevendo um componente em vez de copiar o bloco.
+
+**3. Estilize um item da lista.** Adicione um post pelo formulário se a lista
+estiver vazia, ache o `<li>` e troque o `rounded-lg` por `rounded-none`, ou
+acrescente `bg-zinc-100`. Veja todos os posts da lista mudarem juntos, pelo mesmo
+motivo.
+
+**4. Ache o estado vazio.** Mude `No posts yet.` para outra coisa. Não vai
+aparecer — você tem posts. É o ternário: aquele texto só renderiza quando
+`posts.length === 0`.
+
+**Agora devolva tudo:**
+
+```bash
+git restore app/posts/posts-board.tsx
+```
+
+:::note Para que serviram esses cinco minutos
+Editar um componente que você não escreveu, ver o que se move e desfazer é a
+maior parte do que a sua primeira quinzena parece. O hábito que vale levar é o
+último comando: cutuque à vontade, porque `git restore` significa que nada do
+que você tentou é permanente.
+:::
+
 === check=sandbox-branch,tagline-component,tagline-rendered,tagline-served
 ## Agora escreva um
 

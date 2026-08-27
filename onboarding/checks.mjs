@@ -1242,7 +1242,15 @@ export const steps = [
     title: 'React: the components you have been editing',
     week: 1,
     phase: 'How the app works',
-    minutes: 55,
+    minutes: 60,
+    attest: [
+      {
+        id: 'poked-it',
+        label:
+          'I changed one `<Field />` call and then the `Field` definition, and saw the difference',
+        hint: 'One call site changes one input. The definition changes all three. That is the whole argument for writing a component, and it takes about a minute to see. `git restore app/posts/posts-board.tsx` puts it all back.',
+      },
+    ],
     checks: [
       onSandboxBranch,
       {
