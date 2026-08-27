@@ -13,9 +13,14 @@ Once installed, run:
 ./script/server;
 ```
 
+`script/dev` starts the containers and syncs your edits into the app container
+as you save. Use `script/server` instead if you only need it running in the
+background — but then edits will not reach it until you run
+`docker compose watch`.
+
 ### Services
 - Next.js: http://localhost:3000
-- PostgresSQL: 
+- PostgreSQL: `postgresql://zizzu:zizzu@localhost:5432/zizzu`
 
 ### API
 
