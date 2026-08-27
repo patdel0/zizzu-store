@@ -118,6 +118,64 @@ a quebra um, em que o navegador te disse que algo falhou e mais nada.
 
 **3.** Restaure.
 
+===
+## Imprimindo coisas, do jeito certo
+
+Você usou `console.log` na etapa {{step:two-machines}} para provar onde o código
+roda. Ele também é a ferramenta a que você mais vai recorrer quando algo estiver
+errado, e existe um jeito certo de segurá-la.
+
+**Imprima o nome junto com o valor.** As chaves em volta das variáveis fazem
+isso por você:
+
+```typescript
+console.log({ priceCents, parsed, ok: parsed.ok });
+```
+
+```
+{ priceCents: '899', parsed: { ok: false, error: '...' }, ok: false }
+```
+
+Compare com `console.log(priceCents)`, que imprime `899` numa linha sozinha, dez
+linhas abaixo de outra coisa que também imprimiu `899`. Saída sem rótulo é como
+você acaba depurando o valor errado com total confiança.
+
+**Imprima nas fronteiras primeiro.** O que entrou, e o que está prestes a sair:
+
+```typescript
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+  console.log('[POST /api/products] body', body);
+```
+
+A maioria dos bugs é um valor chegando num formato que ninguém esperava, e dois
+logs nas bordas acham isso mais rápido que dez no meio.
+
+**Depois corte ao meio.** Se a entrada está certa e a saída está errada, coloque
+um log exatamente na metade e você jogou fora metade do código numa execução.
+Repita. Essa é a quarta pergunta do método abaixo, e imprimir é como você a
+responde.
+
+:::warn Tire antes de commitar
+O `git diff` antes de todo commit é onde você pega isso — é o mesmo hábito da
+etapa {{step:first-commit}}, e logs esquecidos são a coisa mais comum que ele
+pega.
+
+Um `console.log` deixado num Route Handler roda em toda requisição para sempre, e
+um log de servidor cheio de `aqui`, `aqui 2` e `{ body: ... }` é um que ninguém lê
+na hora em que importa.
+:::
+
+:::note Existe um depurador, e logs continuam servindo
+Seu editor consegue pausar a execução e deixar você inspecionar tudo naquele
+instante, o que é genuinamente melhor para um bug emaranhado. Também dá mais
+trabalho de configurar. Muita gente experiente imprime valores há anos e não está
+fazendo errado.
+
+O erro não é escolher logs. É imprimir valores sem rótulo, espalhá-los a esmo em
+vez de nas fronteiras, e deixá-los para trás.
+:::
+
 === quiz=where-does-it-surface ask=first-question
 ## Um método, para quando não há tutorial
 

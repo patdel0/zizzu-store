@@ -1766,7 +1766,7 @@ export const steps = [
     id: 'debugging',
     title: 'When it breaks',
     phase: 'The tools of the trade',
-    minutes: 40,
+    minutes: 50,
     attest: [
       {
         id: 'found-in-logs',
@@ -1911,7 +1911,7 @@ export const steps = [
     id: 'tdd',
     title: 'Write a test, then make it pass',
     phase: 'Building it, tested',
-    minutes: 60,
+    minutes: 70,
     ask: [
       {
         id: 'why-red-first',
@@ -1927,6 +1927,12 @@ export const steps = [
       },
     ],
     attest: [
+      {
+        id: 'wrote-too-much',
+        label:
+          'I added a feature no test asked for, saw the suite stay green, and deleted it',
+        hint: 'Both halves matter. Green with the code proves nothing was watching it; green without it proves the same thing from the other side. If you only ran it once you have seen half the point.',
+      },
       {
         id: 'green-but-broken',
         label: 'I saw the whole suite pass while the app was visibly broken',

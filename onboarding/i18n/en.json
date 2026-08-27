@@ -438,5 +438,7 @@
   "ui.running": "Running…",
   "ui.answerToContinue": "Answer to continue",
   "ui.waitingToPass": "Waiting for this to pass",
-  "ui.tickToContinue": "Tick to continue"
+  "ui.tickToContinue": "Tick to continue",
+  "attest.tdd.wrote-too-much.label": "I added a feature no test asked for, saw the suite stay green, and deleted it",
+  "attest.tdd.wrote-too-much.hint": "Both halves matter. Green with the code proves nothing was watching it; green without it proves the same thing from the other side. If you only ran it once you have seen half the point."
 }

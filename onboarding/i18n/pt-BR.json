@@ -438,5 +438,7 @@
   "ui.running": "Rodando…",
   "ui.answerToContinue": "Responda para continuar",
   "ui.waitingToPass": "Esperando isto passar",
-  "ui.tickToContinue": "Marque para continuar"
+  "ui.tickToContinue": "Marque para continuar",
+  "attest.tdd.wrote-too-much.label": "Adicionei uma funcionalidade que nenhum teste pediu, vi a suíte continuar verde e apaguei",
+  "attest.tdd.wrote-too-much.hint": "As duas metades importam. Verde com o código prova que nada estava olhando para ele; verde sem o código prova a mesma coisa pelo outro lado. Se você rodou só uma vez, viu metade do ponto."
 }

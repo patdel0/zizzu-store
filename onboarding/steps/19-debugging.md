@@ -119,6 +119,61 @@ break one, where the browser told you a thing failed and nothing else.
 
 **3.** Put it back.
 
+===
+## Printing things out, properly
+
+You used `console.log` in {{step:two-machines}} to prove where code runs. It is
+also the tool you will reach for most when something is wrong, and there is a
+right way to hold it.
+
+**Log the name as well as the value.** Braces around the variables do it for
+you:
+
+```typescript
+console.log({ priceCents, parsed, ok: parsed.ok });
+```
+
+```
+{ priceCents: '899', parsed: { ok: false, error: '...' }, ok: false }
+```
+
+Compare that with `console.log(priceCents)`, which prints `899` on a line by
+itself, ten lines below something else that also printed `899`. Unlabelled
+output is how you end up debugging the wrong value with total confidence.
+
+**Log at the boundaries first.** What came in, and what is about to go out:
+
+```typescript
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+  console.log('[POST /api/products] body', body);
+```
+
+Most bugs are a value arriving in a shape nobody expected, and two logs at the
+edges find that faster than ten in the middle.
+
+**Then halve it.** If the input is right and the output is wrong, put one log
+exactly halfway and you have thrown away half the code in one run. Repeat. This
+is the fourth question from the method below, and printing is how you answer it.
+
+:::warn Take them out before you commit
+`git diff` before every commit is where you catch this — it is the same habit
+from {{step:first-commit}}, and stray logs are the commonest thing it catches.
+
+A `console.log` left in a Route Handler runs on every request forever, and a
+server log full of `here`, `here 2` and `{ body: ... }` is one nobody reads when
+it matters.
+:::
+
+:::note There is a debugger, and logs are still fine
+Your editor can pause execution and let you inspect everything at that moment,
+which is genuinely better for a tangled bug. It is also more to set up. Plenty
+of experienced people print values for years and are not doing it wrong.
+
+The mistake is not choosing logs. It is printing unlabelled values, scattering
+them at random rather than at the boundaries, and leaving them behind.
+:::
+
 === quiz=where-does-it-surface ask=first-question
 ## A method, for when there is no tutorial
 

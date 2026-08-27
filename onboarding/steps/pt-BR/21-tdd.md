@@ -291,6 +291,72 @@ raciocínio: alguns ramos custam mais para testar do que valem, e dizer isso em 
 alta é melhor que fingir que a lacuna não existe.
 :::
 
+=== attest=wrote-too-much
+## Não escreva código que o teste não pediu
+
+“Escreva o código mais simples que faça passar” é a frase com que todo mundo
+concorda e ninguém segue. Vale dois minutos ver o que quebra quando você a
+ignora.
+
+**1.** Seu `GET /api/products` funciona e um teste o cobre. Agora adicione algo
+que ninguém pediu — um limite, o tipo de coisa que dá para imaginar precisando:
+
+```typescript
+const url = new URL(request.url);
+const limit = Number(url.searchParams.get('limit') ?? 50);
+
+const products = await db.orm.public.Product.orderBy((product) =>
+  product.createdAt.desc(),
+).take(limit).all();
+```
+
+**2.** Rode a suíte.
+
+```bash
+npm test
+```
+
+Verde. Claro que sim — nenhum teste menciona `limit`.
+
+**3.** Agora apague aquelas duas linhas e devolva o `.all()`.
+
+**4.** Rode de novo. **Verde também.**
+
+===
+## O que isso te mostrou
+
+A suíte deu a mesma resposta com e sem a funcionalidade. Ela não tinha opinião
+nenhuma, porque ninguém escreveu uma opinião.
+
+Então você tinha um ramo num arquivo cujos testes passam, que é o tipo de código
+mais caro que existe:
+
+| | |
+| --- | --- |
+| Código sem teste num arquivo sem teste | Óbvio. Todo mundo tem cuidado por perto. |
+| Código sem teste num arquivo **testado** | Invisível. Ele herda o visto verde do arquivo. |
+
+O `limit` teria ido para produção. Seria lido pela próxima pessoa como coberto,
+porque tudo em volta está. E no dia em que alguém passar `?limit=abc`,
+`Number('abc')` é `NaN`, `.take(NaN)` faz sabe-se lá o quê, e a suíte de testes
+continua dizendo que está tudo bem.
+
+**A regra, e ela é verificável:** se você consegue apagar uma linha e nenhum
+teste falha, você tem duas opções honestas — escrever o teste, ou apagar a
+linha. Decidir qual é o trabalho. Não fazer nenhuma das duas é como uma base de
+código se enche de coisa que ninguém ousa tocar e ninguém consegue justificar.
+
+:::note É isto que o “mais simples” está protegendo
+Não é elegância, e não é digitar menos. É que toda linha que você escreve deveria
+ser rastreável até algo que falhava sem ela. É isso que faz uma suíte significar
+alguma coisa: não que ela seja grande, mas que o código e os testes foram
+construídos a partir da mesma lista.
+
+O limite é uma funcionalidade perfeitamente boa. Ela só precisa de uma issue, de
+um teste que falhe sem ela, e de uma decisão sobre `?limit=abc` — o que dá quinze
+minutos, e você acabou de ver por que pular isso custa mais.
+:::
+
 === check=order quiz=envelope ask=why-red-first
 ## Agora commite — separado
 

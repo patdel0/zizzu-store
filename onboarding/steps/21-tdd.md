@@ -286,6 +286,71 @@ explains the reasoning: some branches cost more to test than they are worth, and
 saying so out loud is better than pretending the gap is not there.
 :::
 
+=== attest=wrote-too-much
+## Do not write code the test did not ask for
+
+"Write the simplest code that makes it pass" is the line everybody nods at and
+nobody follows. It is worth two minutes to see what breaks when you ignore it.
+
+**1.** Your `GET /api/products` works and one test covers it. Now add something
+nobody asked for — a limit, the sort of thing you can imagine needing:
+
+```typescript
+const url = new URL(request.url);
+const limit = Number(url.searchParams.get('limit') ?? 50);
+
+const products = await db.orm.public.Product.orderBy((product) =>
+  product.createdAt.desc(),
+).take(limit).all();
+```
+
+**2.** Run the suite.
+
+```bash
+npm test
+```
+
+Green. Of course it is — no test mentions `limit`.
+
+**3.** Now delete those two lines and put `.all()` back.
+
+**4.** Run it again. **Also green.**
+
+===
+## What that showed you
+
+The suite gave the same answer with the feature and without it. It had no
+opinion either way, because nobody wrote down an opinion.
+
+So you had a branch in a file whose tests pass, which is the most expensive kind
+of code there is:
+
+| | |
+| --- | --- |
+| Untested code in an untested file | Obvious. Everyone is careful around it. |
+| Untested code in a **tested** file | Invisible. It inherits the file's green tick. |
+
+`limit` would have shipped. It would have been read by the next person as
+covered, because everything around it is. And the day somebody passes
+`?limit=abc`, `Number('abc')` is `NaN`, `.take(NaN)` does whatever it does, and
+the test suite still says everything is fine.
+
+**The rule, and it is checkable:** if you can delete a line and no test fails,
+you have two honest options — write the test, or delete the line. Deciding
+which is the work. Doing neither is how a codebase fills up with code nobody
+dares touch and nobody can justify.
+
+:::note This is what "simplest" is protecting
+Not elegance, and not typing less. It is that every line you write should be
+traceable to something that failed without it. That is what makes a suite mean
+something: not that it is large, but that the code and the tests were built to
+the same list.
+
+The limit is a perfectly good feature. It just needs an issue, a test that fails
+without it, and a decision about `?limit=abc` — which is fifteen minutes, and
+you have now seen why skipping them costs more.
+:::
+
 === check=order quiz=envelope ask=why-red-first
 ## Now commit — separately
 
