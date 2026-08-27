@@ -1239,7 +1239,7 @@ export const steps = [
 
   {
     id: 'components',
-    title: 'What you have been editing',
+    title: 'React: the components you have been editing',
     week: 1,
     phase: 'How the app works',
     minutes: 40,
@@ -1354,7 +1354,7 @@ export const steps = [
   },
   {
     id: 'use-client',
-    title: 'The line that decides',
+    title: 'React: server and client components',
     week: 1,
     phase: 'How the app works',
     minutes: 30,
