@@ -463,5 +463,8 @@
   "check.components.sandbox-branch": "You are on your sandbox branch",
   "check.components.tagline-component": "`app/tagline.tsx` exports a `Tagline` component",
   "check.components.tagline-rendered": "`app/page.tsx` imports it and renders it",
-  "check.components.tagline-served": "The page still shows your tagline"
+  "check.components.tagline-served": "The page still shows your tagline",
+  "check.components.highlights-list": "`Highlights` maps over its prop and gives each item a `key`",
+  "check.components.highlights-empty": "It handles being given nothing",
+  "check.components.highlights-rendered": "`app/page.tsx` renders it with a real list"
 }

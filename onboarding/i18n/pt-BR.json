@@ -463,5 +463,8 @@
   "check.components.sandbox-branch": "Você está na sua branch de treino",
   "check.components.tagline-component": "`app/tagline.tsx` exporta um componente `Tagline`",
   "check.components.tagline-rendered": "`app/page.tsx` o importa e o renderiza",
-  "check.components.tagline-served": "A página continua mostrando seu slogan"
+  "check.components.tagline-served": "A página continua mostrando seu slogan",
+  "check.components.highlights-list": "`Highlights` mapeia sua prop e dá uma `key` a cada item",
+  "check.components.highlights-empty": "Ele trata o caso de não receber nada",
+  "check.components.highlights-rendered": "`app/page.tsx` o renderiza com uma lista de verdade"
 }

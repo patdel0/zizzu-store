@@ -167,6 +167,53 @@ Commite sozinho. `Move the tagline into its own component` é um bom assunto: di
 o que mudou, e quem revisar sabe que precisa conferir que nada ficou diferente.
 :::
 
+=== check=highlights-list,highlights-empty,highlights-rendered
+## Agora um que renderiza uma lista
+
+O `Tagline` mostra uma coisa. A maioria dos componentes mostra *várias* — e é aí
+que as duas ideias do card anterior se encontram.
+
+Crie `app/highlights.tsx`. Ele recebe um array de strings e os renderiza como uma
+lista:
+
+```tsx
+export function Highlights({ items }: { items: string[] }) {
+  // se não houver nenhum, não renderize nada
+  // caso contrário, uma <ul> com um <li> por item
+}
+```
+
+Depois coloque na página inicial, abaixo do seu slogan, com alguns itens de
+verdade:
+
+```tsx
+<Highlights items={['Devolução grátis', 'Entrega no dia seguinte']} />
+```
+
+Três coisas sobre as quais este exercício de fato é, e as três são verificadas:
+
+**O array é JavaScript**, então a prop precisa de chaves — `items={[...]}`, não
+`items="..."`. Mesma regra do `width={100}`.
+
+**Todo `<li>` precisa de uma `key`.** Use o próprio texto: `key={item}`. Não a
+posição no array — ela muda quando algo é inserido, e o React passa a casar as
+linhas erradas.
+
+**Decida o que uma lista vazia faz.** Passar `items={[]}` deveria não renderizar
+nada, e não uma caixa vazia com um buraco onde a lista estaria. Ou devolva `null`
+cedo, ou coloque a condição na marcação — as duas são normais.
+
+:::note Você vai reencontrar as três
+O board que você conserta na etapa {{step:ui}} tem uma `key` faltando, e é um de
+três bugs que você precisa achar sem que ninguém diga onde. Ter escrito uma você
+mesmo é a diferença entre reconhecer e ter lido a respeito.
+:::
+
+:::try Prove o caso vazio
+Mude a prop para `items={[]}`, recarregue, e confira que a página não tem um
+espaço sobrando onde a lista estava. Depois devolva seus itens.
+:::
+
 ===
 ## O que você já consegue ler
 

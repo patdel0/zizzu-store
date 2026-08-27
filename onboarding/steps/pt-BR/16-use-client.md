@@ -37,6 +37,18 @@ botão:
 </button>
 ```
 
+Duas coisas sobre aquela primeira linha. As duas são fáceis de errar e nenhuma
+te dá um erro.
+
+**`onClick` quer uma função, não o resultado de uma.** O `() =>` é o que a torna
+uma função. Escreva `onClick={setClicks(clicks + 1)}` e ela roda na hora,
+enquanto a página está sendo desenhada — o que muda o estado, o que redesenha, o
+que roda de novo.
+
+**As chaves são a mesma regra de sempre**: a próxima coisa é JavaScript.
+`onClick="setClicks(clicks + 1)"` é uma string, e uma string não faz nada ao ser
+clicada, silenciosamente.
+
 Salve, recarregue a página e clique algumas vezes. O número sobe.
 
 ===
@@ -60,6 +72,20 @@ valor mudaria e nada na tela perceberia.
 É esse o truque inteiro do React: você descreve como a página deve ficar para um
 determinado estado, e o React re-executa isso sempre que o estado muda.
 
+:::note Quando o novo valor depende do antigo
+`setClicks(clicks + 1)` serve aqui. Quando várias atualizações podem acontecer
+antes de um redesenho, passe uma função no lugar e o React te entrega o valor
+atual:
+
+```tsx
+setClicks((current) => current + 1);
+```
+
+A mesma forma já está neste arquivo — `setPosts((current) => [body.data,
+...(current ?? [])])`. Recorra a ela sempre que o novo valor for calculado a
+partir do antigo.
+:::
+
 :::try Prove que a re-execução acontece
 Você ainda tem o `console.log('[browser] posts board mounted')` no `useEffect`.
 Adicione um segundo log bem no topo da função do componente, fora de tudo:
@@ -77,6 +103,21 @@ mudou.
 [`useEffect`](https://react.dev/reference/react/useEffect): trabalho que deve
 acontecer quando o componente aparece pela primeira vez, não a cada
 re-execução. Carregar os posts é exatamente esse tipo de trabalho.
+
+**O que faz rodar uma vez é a última linha do efeito.** Vá até o fim dele:
+
+```tsx
+  return () => controller.abort();
+}, []);
+```
+
+O `useEffect` recebe dois argumentos — uma função e uma lista de coisas que devem
+fazê-la rodar de novo. Aquele `[]` é a lista, e uma lista vazia significa “nada
+faz; rode só depois da primeira renderização”.
+
+Deixe a lista de fora por completo e ele roda depois de *toda* renderização. Se o
+efeito então muda estado, essa renderização causa outra, que roda o efeito de
+novo. Não é um laço que dá para ver no código; é um que se vê na aba de rede.
 
 Tire o log extra depois de ver.
 :::

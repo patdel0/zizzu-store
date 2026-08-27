@@ -1242,7 +1242,7 @@ export const steps = [
     title: 'React: the components you have been editing',
     week: 1,
     phase: 'How the app works',
-    minutes: 40,
+    minutes: 55,
     checks: [
       onSandboxBranch,
       {
@@ -1321,6 +1321,110 @@ export const steps = [
           }
 
           return { pass: true, detail: '`page.tsx` imports `Tagline` and passes it a prop.' };
+        },
+      },
+      {
+        id: 'highlights-list',
+        label: '`Highlights` maps over its prop and gives each item a `key`',
+        async run() {
+          const source = await read('app/highlights.tsx');
+
+          if (source === null) {
+            return {
+              pass: false,
+              detail: 'No `app/highlights.tsx` yet.',
+            };
+          }
+
+          if (!/export function Highlights\s*\(/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'Nothing called `Highlights` is exported from it. Named export, PascalCase component, kebab-case filename \u2014 same three rules as `Tagline`.',
+            };
+          }
+
+          if (!/\.map\s*\(/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                'Nothing maps over `items`. Rendering many things means turning an array of values into an array of elements: `{items.map((item) => <li>...</li>)}`.',
+            };
+          }
+
+          const item = source.match(/<li[^>]*>/);
+
+          if (!item || !/key=/.test(item[0])) {
+            return {
+              pass: false,
+              detail:
+                'The `<li>` has no `key`. React needs one per item to tell them apart between renders \u2014 and the browser console will tell you so the moment this renders.',
+            };
+          }
+
+          if (/key=\{\s*(index|i|idx)\s*\}/.test(item[0])) {
+            return {
+              pass: false,
+              detail:
+                'That key is the array position, which changes as soon as anything is inserted or removed \u2014 so React matches up the wrong rows. Here the text itself is unique and stable: `key={item}`.',
+            };
+          }
+
+          return { pass: true, detail: 'Mapped, with a stable key on each item.' };
+        },
+      },
+      {
+        id: 'highlights-empty',
+        label: 'It handles being given nothing',
+        async run() {
+          const source = await read('app/highlights.tsx');
+
+          if (source === null) return { pass: false, detail: 'No `app/highlights.tsx` yet.' };
+
+          // Either an early return or a conditional in the markup is fine.
+          const guarded =
+            /length\s*===\s*0/.test(source) ||
+            /length\s*<\s*1/.test(source) ||
+            /!\s*items\.length/.test(source) ||
+            /items\.length\s*\?/.test(source) ||
+            /items\.length\s*&&/.test(source);
+
+          if (!guarded) {
+            return {
+              pass: false,
+              detail:
+                'Nothing decides what happens when `items` is empty. An empty `<ul>` renders as a stray gap on the page \u2014 four states of a list, and this is the one people forget.\n\nEither return `null` early, or put the condition in the markup.',
+            };
+          }
+
+          return { pass: true, detail: 'The empty case is handled.' };
+        },
+      },
+      {
+        id: 'highlights-rendered',
+        label: '`app/page.tsx` renders it with a real list',
+        async run() {
+          const source = await read('app/page.tsx');
+
+          if (source === null) return { pass: false, detail: 'Could not read `app/page.tsx`.' };
+
+          if (!/<Highlights[\s/>]/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                '`<Highlights />` is not on the page. Import it the same way you imported `Tagline`, and render it.',
+            };
+          }
+
+          if (!/<Highlights[^>]*items=\{/.test(source)) {
+            return {
+              pass: false,
+              detail:
+                '`<Highlights />` has no `items` prop, so it has nothing to map over. An array is JavaScript, so it needs braces: `items={[\'…\', \'…\']}`.',
+            };
+          }
+
+          return { pass: true, detail: 'Rendered, with a list passed in.' };
         },
       },
       {

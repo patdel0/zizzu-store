@@ -36,6 +36,17 @@ Then, just above the closing `</div>` at the end of the component, add a button:
 </button>
 ```
 
+Two things about that first line. Both are easy to get wrong and neither gives
+you an error.
+
+**`onClick` wants a function, not the result of one.** `() =>` is what makes it
+one. Write `onClick={setClicks(clicks + 1)}` and it runs immediately, while the
+page is being drawn — which sets state, which redraws, which runs it again.
+
+**The braces are the same rule as everywhere else**: the next thing is
+JavaScript. `onClick="setClicks(clicks + 1)"` is a string, and a string does
+nothing when clicked, silently.
+
 Save, reload the page, and click it a few times. The number goes up.
 
 ===
@@ -59,6 +70,19 @@ change and nothing on screen would notice.
 That is React's whole trick: you describe what the page should look like for a
 given state, React re-runs it whenever the state changes.
 
+:::note When the new value depends on the old one
+`setClicks(clicks + 1)` is fine here. When several updates can happen before a
+redraw, pass a function instead and React hands you the current value:
+
+```tsx
+setClicks((current) => current + 1);
+```
+
+The same form is already in this file — `setPosts((current) => [body.data,
+...(current ?? [])])`. Reach for it whenever the new value is computed from the
+old one.
+:::
+
 :::try Prove the re-run happens
 You still have `console.log('[browser] posts board mounted')` in the
 `useEffect`. Add a second log at the very top of the component function, outside
@@ -77,6 +101,21 @@ changed.
 [`useEffect`](https://react.dev/reference/react/useEffect) is for: work that
 should happen when the component first appears, not on every re-run. Loading the
 posts is exactly that kind of work.
+
+**What makes it once is the last line of the effect.** Scroll to the end of it:
+
+```tsx
+  return () => controller.abort();
+}, []);
+```
+
+`useEffect` takes two arguments — a function, and a list of things that should
+make it run again. That `[]` is the list, and an empty one means "nothing does;
+run after the first render only".
+
+Leave the list out entirely and it runs after *every* render. If the effect then
+sets state, that render causes another render, which runs the effect again. It
+is not a loop you can see in the code; it is one you see in the network tab.
 
 Take the extra log out again when you have seen it.
 :::

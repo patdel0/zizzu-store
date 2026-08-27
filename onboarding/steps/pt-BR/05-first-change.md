@@ -49,9 +49,30 @@ diferenças vão te pegar:
 - `class` se escreve **`className`**, porque `class` já é uma palavra reservada
   do JavaScript.
 - Toda tag precisa fechar. `<br>` se escreve `<br />`.
-- `{ }` volta para o JavaScript. `<p>{2 + 2}</p>` renderiza “4”.
+- `{ }` volta para o JavaScript, tanto entre tags quanto dentro de um atributo.
+  `<p>{2 + 2}</p>` renderiza “4”; `width={100}` passa o número 100, enquanto
+  `width="100"` passaria o texto.
 
-Todo o resto — `<h1>`, `<p>`, `<a href>` — é exatamente o que você já conhece.
+Tags minúsculas — `<h1>`, `<p>`, `<a href>` — são do navegador, e são exatamente
+o que você já conhece.
+
+**Uma tag maiúscula não é.** Este arquivo tem uma:
+
+```tsx
+<Image src="/next.svg" alt="Next.js logo" width={100} height={20} priority />
+```
+
+Isso é um *componente* — código de outra pessoa, chamado daqui, configurado por
+aqueles atributos. Você vai conhecer componentes direito na etapa
+{{step:components}}. Por enquanto: letra maiúscula significa que alguém
+escreveu, minúscula significa que o navegador já tinha.
+
+:::note O `{" "}` que você está prestes a apagar
+Espalhados por este arquivo há `{" "}` — uma expressão JSX contendo um único
+espaço. O JSX junta o espaço em branco entre linhas, então quando um espaço entre
+dois elementos precisa sobreviver, ele é escrito deliberadamente. Apagá-los junto
+com o texto em volta está certo aqui.
+:::
 
 ===
 ## E o estilo não é bem CSS

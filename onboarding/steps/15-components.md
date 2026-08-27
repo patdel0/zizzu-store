@@ -168,6 +168,52 @@ subject line: it says what changed, and a reviewer reading it knows to check
 that nothing looks different.
 :::
 
+=== check=highlights-list,highlights-empty,highlights-rendered
+## Now one that renders a list
+
+`Tagline` shows one thing. Most components show *many* — and that is where the
+two ideas from the last card meet.
+
+Create `app/highlights.tsx`. It takes an array of strings and renders them as a
+list:
+
+```tsx
+export function Highlights({ items }: { items: string[] }) {
+  // if there are none, render nothing
+  // otherwise a <ul> with one <li> per item
+}
+```
+
+Then put it on the home page under your tagline, with a couple of real ones:
+
+```tsx
+<Highlights items={['Free returns', 'Next-day delivery']} />
+```
+
+Three things this exercise is actually about, and all three are checked:
+
+**The array is JavaScript**, so the prop needs braces — `items={[...]}`, not
+`items="..."`. Same rule as `width={100}`.
+
+**Every `<li>` needs a `key`.** Use the text itself: `key={item}`. Not the array
+position — that changes when anything is inserted, and React starts matching up
+the wrong rows.
+
+**Decide what an empty list does.** Passing `items={[]}` should render nothing at
+all, not an empty box with a gap where a list would be. Either return `null`
+early, or put the condition in the markup — both are normal.
+
+:::note You will meet all three again
+The board you fix in {{step:ui}} has a missing `key` in it, and it is one of
+three bugs you have to find without being told where. Having written one
+yourself is the difference between spotting it and reading about it.
+:::
+
+:::try Prove the empty case
+Change the prop to `items={[]}`, reload, and check the page has no stray
+whitespace where the list was. Then put your items back.
+:::
+
 ===
 ## What you can now read
 
