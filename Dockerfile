@@ -24,8 +24,16 @@ RUN --mount=type=cache,target=/root/.npm \
 
 COPY . .
 
-ENV WATCHPACK_POLLING=true
+# No WATCHPACK_POLLING: Turbopack (the default dev bundler) uses its own
+# native watcher, which that variable does not reach, and the bind mount in
+# compose.yaml delivers inotify events natively on Linux anyway.
 ENV HOSTNAME="0.0.0.0"
+
+# `.next` is in .dockerignore, so it does not exist in the image. Create it
+# before the chown: Docker seeds the anonymous volume that masks it from the
+# image path, and without this the volume is created root-owned while the
+# container runs as `node`, so `next dev` cannot write `.next/dev`.
+RUN mkdir -p /app/.next
 
 RUN chown -R node:node /app
 USER node

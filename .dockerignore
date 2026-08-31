@@ -3,8 +3,6 @@
 # `__tests__/` is kept, because our Dockerfile is a development one and those
 # files are source; and `.claude/` is added alongside the other tool folders.
 #
-# Note these rules also apply to `docker compose watch` — anything listed here
-# stops syncing into the running container, not just out of the build context.
 
 # Dependencies (installed inside the image, never copy from host)
 node_modules/
