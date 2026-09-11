@@ -23,7 +23,7 @@ The following guides illustrate how to use some features concretely:
 * [Accessing data with MySQL](https://spring.io/guides/gs/accessing-data-mysql/)
 
 ### Docker Compose support
-This project contains a Docker Compose file named `compose.yaml`.
+This project contains a Docker Compose file named `../compose.yaml`.
 In this file, the following services have been defined:
 
 * mysql: [`mysql:latest`](https://hub.docker.com/_/mysql)
