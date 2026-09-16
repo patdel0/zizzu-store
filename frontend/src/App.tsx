@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
+import './App.css';
 import heroImg from './assets/hero.png';
 import reactLogo from './assets/react.svg';
 import viteLogo from './assets/vite.svg';
-import './App.css';
 
-const App = () => {
+const App: React.FC = () => {
   const [count, setCount] = useState(0);
 
   return (
@@ -30,7 +30,7 @@ const App = () => {
         </div>
         <button
           className="counter"
-          onClick={() => setCount((count) => count + 1)}
+          onClick={() => setCount((previousCount) => previousCount + 1)}
           type="button"
         >
           Count is
@@ -52,12 +52,14 @@ const App = () => {
             <li>
               <a href="https://vite.dev/" rel="noreferrer" target="_blank">
                 <img alt="" className="logo" src={viteLogo} />
+                {' '}
                 Explore Vite
               </a>
             </li>
             <li>
               <a href="https://react.dev/" rel="noreferrer" target="_blank">
                 <img alt="" className="button-icon" src={reactLogo} />
+                {' '}
                 Learn more
               </a>
             </li>
