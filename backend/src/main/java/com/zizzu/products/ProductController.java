@@ -8,23 +8,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path="/products")
 public class ProductController {
     @Autowired
-
     private ProductRepository productRepository;
 
-    @PostMapping(path="/add")
+    @PostMapping
     public @ResponseBody String addNewProduct (@RequestParam String title
-    , @RequestParam String details
-    , @RequestParam Integer stock
-    , @RequestParam Float pricing
-    , @RequestParam String colourVariants
-    , @RequestParam String taxonomy) {
+    , @RequestParam String details ){
         Product n = new Product();
         n.setTitle(title);
         n.setDetails(details);
-        n.setStock(stock);
-        n.setPricing(pricing);
-        n.setColourVariants(colourVariants);
-        n.setTaxonomy(taxonomy);
         productRepository.save(n);
         return "Saved";
     }
