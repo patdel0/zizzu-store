@@ -1,5 +1,5 @@
 #IDE Config
-.idea/
+*/.idea
 
 #Build output
 backend/target/
