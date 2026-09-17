@@ -1,7 +1,10 @@
 #IDE Config
-backend/.idea/
+.idea/
 
 #Build output
 backend/target/
+
+#Dependencies
+node_modules/
 #IDE
 .idea
