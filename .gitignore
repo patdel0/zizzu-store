@@ -1,0 +1,10 @@
+#IDE Config
+*/.idea
+
+#Build output
+backend/target/
+
+#Dependencies
+node_modules/
+#IDE
+.idea
