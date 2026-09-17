@@ -1,2 +1,7 @@
+#IDE Config
+backend/.idea/
+
+#Build output
+backend/target/
 #IDE
 .idea
