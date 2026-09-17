@@ -1,4 +1,4 @@
-package com.zizzu.accessingdatamysql;
+package com.zizzu;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
