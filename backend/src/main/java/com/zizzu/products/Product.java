@@ -9,19 +9,19 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private @Nullable Integer id;
-    private String title;
+    private String name;
     private String details;
 
     public Integer getId() {
         return id;
     }
 
-    public String getTitle() {
-        return title;
+    public String getName() {
+        return name;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDetails(){
