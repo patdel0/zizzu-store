@@ -1,6 +1,7 @@
 package com.zizzu.products;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,7 +51,15 @@ public class ProductController {
             return "Product deleted.";
     }
 
-    @GetMapping(path="/all")
+    @GetMapping(path = "/{id}")
+    public @ResponseBody ResponseEntity<Product> getProduct(@PathVariable Integer id) {
+        Optional<Product> existing = productRepository.findById(id);
+        return existing
+                .map(product -> ResponseEntity.ok(product))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
     public @ResponseBody Iterable<Product> getAllProducts() {
         return productRepository.findAll();
     }
