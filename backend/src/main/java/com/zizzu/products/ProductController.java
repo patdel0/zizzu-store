@@ -41,6 +41,15 @@ public class ProductController {
             return "Product updated.";
     }
 
+    @DeleteMapping(path = "/{id}")
+    public @ResponseBody String deleteProduct(@PathVariable Integer id) {
+        if (!productRepository.existsById(id)) {
+            return "Product not found.";
+        }
+        productRepository.deleteById(id);
+            return "Product deleted.";
+    }
+
     @GetMapping(path="/all")
     public @ResponseBody Iterable<Product> getAllProducts() {
         return productRepository.findAll();
