@@ -76,3 +76,7 @@ export default defineConfig([
 ])
 
 ```
+
+## Creating a route
+
+When creating a route, we need to add an entry to [`./src/router.tsx`](./src/router.tsx) and where relevant, add a link to navigation.
