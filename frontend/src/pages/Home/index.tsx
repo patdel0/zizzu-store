@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 
-import './App.css';
-import heroImg from './assets/hero.png';
-import reactLogo from './assets/react.svg';
-import viteLogo from './assets/vite.svg';
+import './index.css';
+import heroImg from '../../assets/hero.png';
+import reactLogo from '../../assets/react.svg';
+import viteLogo from '../../assets/vite.svg';
 
-const App: React.FC = () => {
+const Home: React.FC = () => {
   const [count, setCount] = useState(0);
 
   return (
@@ -130,4 +130,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default Home;
