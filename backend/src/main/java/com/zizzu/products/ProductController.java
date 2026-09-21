@@ -31,20 +31,20 @@ public class ProductController {
         return "Saved";
     }
 
-    @PatchMapping(path = "/{id}")
+    @PutMapping(path = "/{id}")
     public @ResponseBody String updateProduct(@PathVariable Integer id
-    , @RequestParam(required = false) String name
-    , @RequestParam(required = false) String details) {
+    , @Valid Request request) {
         Optional<Product> existing = productRepository.findById(id);
         if (existing.isEmpty()) {
             return "Product not found.";
         }
         Product p = existing.get();
-        if (name != null) {
-            p.setName(name);
+
+        if (request.name() != null) {
+            p.setName(request.name());
         }
-        if (details != null) {
-            p.setDetails((details));
+        if (request.details() != null) {
+            p.setDetails((request.details()));
         }
         productRepository.save(p);
             return "Product updated.";
