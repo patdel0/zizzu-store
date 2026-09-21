@@ -1,6 +1,7 @@
 package com.zizzu.products;
 
 import com.zizzu.products.dto.Request;
+import com.zizzu.products.dto.Response;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -60,10 +61,10 @@ public class ProductController {
     }
 
     @GetMapping(path = "/{id}")
-    public @ResponseBody ResponseEntity<Product> getProduct(@PathVariable Integer id) {
+    public @ResponseBody ResponseEntity<Response> getProduct(@PathVariable Integer id) {
         Optional<Product> existing = productRepository.findById(id);
         return existing
-                .map(product -> ResponseEntity.ok(product))
+                .map(product -> ResponseEntity.ok(Response.from(product)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
