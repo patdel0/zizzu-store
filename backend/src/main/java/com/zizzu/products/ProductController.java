@@ -1,5 +1,7 @@
 package com.zizzu.products;
 
+import com.zizzu.products.dto.Request;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,11 +23,10 @@ public class ProductController {
     private ProductRepository productRepository;
 
     @PostMapping
-    public @ResponseBody String addNewProduct (@RequestParam String name
-    , @RequestParam String details ){
+    public @ResponseBody String addNewProduct (@Valid Request request){
         Product n = new Product();
-        n.setName(name);
-        n.setDetails(details);
+        n.setName(request.name());
+        n.setDetails(request.details());
         productRepository.save(n);
         return "Saved";
     }
