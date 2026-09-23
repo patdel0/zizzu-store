@@ -14,9 +14,9 @@ jobs:
       - uses: actions/checkout@v7
 
       - name: "Setup Java"
-        working-directory: "/backend"
-        - uses: actions/setup-java@v6
-          with:
-            distribution: temurin
-            java-version: '17'
-            run: java --version
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+          working-directory: "/backend"
+          run: java --version
