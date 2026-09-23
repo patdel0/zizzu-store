@@ -1,0 +1,22 @@
+name: 'Backend Checks'
+
+on: 'push'
+
+
+defaults:
+  run:
+    shell: 'bash'
+
+jobs:
+  checks:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: "Setup Java"
+        working-directory: "/backend"
+        - uses: actions/setup-java@v6
+          with:
+            distribution: temurin
+            java-version: '17'
+            run: java --version
