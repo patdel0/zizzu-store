@@ -18,5 +18,8 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-          working-directory: "/backend"
           run: java --version
+
+      - name: "Run linter"
+        working-directory: "backend"
+        run: ./mvnw checkstyle:check
