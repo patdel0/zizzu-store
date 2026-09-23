@@ -15,7 +15,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 @Controller
 @RequestMapping(path="/products")
@@ -68,9 +72,14 @@ public class ProductController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+
     @GetMapping
-    public @ResponseBody Iterable<Product> getAllProducts() {
-        return productRepository.findAll();
+    public @ResponseBody Iterable<Response> getAllProducts() {
+
+        return productRepository.findAll().stream()
+                .map(Response::from)
+                .toList();
+
     }
 
 }
