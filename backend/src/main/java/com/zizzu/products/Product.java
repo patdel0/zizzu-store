@@ -14,6 +14,7 @@ public class Product {
     private @Nullable Integer id;
     private String name;
     private String details;
+    private String sku;
 
     public Integer getId() {
         return id;
@@ -33,6 +34,13 @@ public class Product {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+    public void setSku(String sku) {
+        this.sku = sku;
     }
 }
 
