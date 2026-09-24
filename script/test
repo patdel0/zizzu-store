@@ -1,0 +1,4 @@
+#!/usr/bin/sh
+
+cd backend
+./mvnw checkstyle:check
