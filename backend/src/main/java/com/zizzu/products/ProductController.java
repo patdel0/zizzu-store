@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 @Controller
 @RequestMapping(path="/products")
