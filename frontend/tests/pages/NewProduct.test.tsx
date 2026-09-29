@@ -9,18 +9,18 @@ describe('feature: add a product', () => {
     render(<NewProduct />);
   });
 
-  it('renders the name field', () => {
-    const nameField = screen.getByLabelText('Product name');
-    expect(nameField).toBeInTheDocument();
-  });
+  describe('initial render', () => {
+    const requiredFieldsText = ['Product name', 'Description'];
+    it.for(requiredFieldsText)('renders the %s field', (element) => {
+      const descriptionField = screen.getByLabelText(element);
 
-  it('renders the details field', () => {
-    const descriptionField = screen.getByLabelText('Description');
-    expect(descriptionField).toBeInTheDocument();
-  });
+      expect(descriptionField).toBeInTheDocument();
+    });
 
-  it('renders the submit button', () => {
-    const submitButton = screen.getByText('Create product')
-    expect(submitButton).toBeInTheDocument()
-  })
+    it('renders the submit button', () => {
+      const submitButton = screen.getByText('Create product');
+
+      expect(submitButton).toBeInTheDocument();
+    });
+  });
 });
