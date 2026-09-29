@@ -1,0 +1,16 @@
+import React from 'react';
+
+import { render, screen } from '@testing-library/react';
+
+import NewProduct from '../../src/pages/Dashboard/NewProduct';
+
+describe('feature: add a product', () => {
+  beforeEach(() => {
+    render(<NewProduct />);
+  });
+
+  it('renders the name field', () => {
+    const nameField = screen.getByLabelText('Product name');
+    expect(nameField).toBeInTheDocument();
+  });
+});
