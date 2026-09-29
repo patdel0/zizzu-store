@@ -13,4 +13,9 @@ describe('feature: add a product', () => {
     const nameField = screen.getByLabelText('Product name');
     expect(nameField).toBeInTheDocument();
   });
+
+  it('renders the submit button', () => {
+    const submitButton = screen.getByText('Create product')
+    expect(submitButton).toBeInTheDocument()
+  })
 });
