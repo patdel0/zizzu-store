@@ -14,6 +14,11 @@ describe('feature: add a product', () => {
     expect(nameField).toBeInTheDocument();
   });
 
+  it('renders the details field', () => {
+    const descriptionField = screen.getByLabelText('Description');
+    expect(descriptionField).toBeInTheDocument();
+  });
+
   it('renders the submit button', () => {
     const submitButton = screen.getByText('Create product')
     expect(submitButton).toBeInTheDocument()
