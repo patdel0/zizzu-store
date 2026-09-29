@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,7 +24,7 @@ public class ProductController {
     private ProductRepository productRepository;
 
     @PostMapping
-    public @ResponseBody String addNewProduct (@Valid Request request){
+    public @ResponseBody String addNewProduct (@Valid @RequestBody Request request){
         Product n = new Product();
         n.setName(request.name());
         n.setDetails(request.details());
@@ -33,7 +34,7 @@ public class ProductController {
 
     @PutMapping(path = "/{id}")
     public @ResponseBody String updateProduct(@PathVariable Integer id
-    , @Valid Request request) {
+    , @Valid @RequestBody Request request) {
         Optional<Product> existing = productRepository.findById(id);
         if (existing.isEmpty()) {
             return "Product not found.";
