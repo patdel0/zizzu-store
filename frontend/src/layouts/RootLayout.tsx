@@ -8,6 +8,7 @@ export const RootLayout: FC = () => (
   <Fragment>
     <nav>
       <Link to="/">Home</Link>
+      <Link to="/dashboard">Dashboard</Link>
     </nav>
     <Outlet />
   </Fragment>
