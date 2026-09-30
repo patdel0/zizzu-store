@@ -5,6 +5,8 @@ import { http, HttpResponse } from 'msw';
 import { NewProduct } from '../../src/pages/Dashboard/NewProduct';
 import { server } from '../msw/server';
 
+import type { UserEvent } from '@testing-library/user-event';
+
 describe('feature: add a product', () => {
   beforeEach(() => {
     render(<NewProduct />);
@@ -34,7 +36,7 @@ describe('feature: add a product', () => {
   describe('form submission', () => {
     describe('successfully creates the product', () => {
       let responseBody: unknown;
-      let user: unknown;
+      let user: UserEvent;
       const nameField = () => screen.getByLabelText('Product name');
       const detailsField = () => screen.getByLabelText('Description');
       const submitButton = () => screen.getByText('Create product');
@@ -68,6 +70,13 @@ describe('feature: add a product', () => {
         await user.click(submitButton());
 
         await waitFor(() => expect(nameField()).toHaveValue(''));
+      });
+
+      it('notifies user of successful submission', async () => {
+        await user.click(submitButton());
+
+        const toastContainer = screen.getByText('Product created successfully!');
+        await waitFor(() => expect(toastContainer).toBeInTheDocument());
       });
     });
   });
