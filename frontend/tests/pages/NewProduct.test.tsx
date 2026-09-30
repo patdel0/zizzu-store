@@ -2,10 +2,10 @@ import React from 'react';
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { http } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 import NewProduct from '../../src/pages/Dashboard/NewProduct';
-import { server } from '../msw/server';
+import server from '../msw/server';
 
 describe('feature: add a product', () => {
   beforeEach(() => {
@@ -34,25 +34,35 @@ describe('feature: add a product', () => {
   });
 
   describe('form submission', () => {
-    it('posts the form data to `api/products`', async () => {
+    describe('successfully creates the product', () => {
       let responseBody: unknown;
+      let user: unknown;
+      const nameField = () => screen.getByLabelText('Product name');
+      const detailsField = () => screen.getByLabelText('Description');
+      const submitButton = () => screen.getByText('Create product');
 
-      server.use(
-        http.post('http://localhost:8080/products', async ({ request }) => {
-          responseBody = await request.clone().json();
-        }),
-      );
+      beforeEach(async () => {
+        server.use(
+          http.post('http://localhost:8080/products', async ({ request }) => {
+            responseBody = await request.clone().json();
+            return HttpResponse.json({ status: 200 });
+          }),
+        );
 
-      const user = userEvent.setup();
+        user = userEvent.setup();
 
-      const nameField = screen.getByLabelText('Product name');
-      await user.type(nameField, 'Hoodie');
+        await user.type(nameField(), 'Hoodie');
+        await user.type(detailsField(), 'Keeps you warm');
+      });
 
-      const detailsField = screen.getByLabelText('Description');
-      await user.type(detailsField, 'Keeps you warm');
+      it('posts the form data to `api/products`', async () => {
+        await user.click(submitButton());
 
-      const submitButton = screen.getByText('Create product');
-      await user.click(submitButton);
+        expect(responseBody).toStrictEqual({
+          name: 'Hoodie',
+          details: 'Keeps you warm',
+        });
+      });
 
       expect(responseBody).toStrictEqual({
         name: 'Hoodie', details: 'Keeps you warm',
