@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 
@@ -64,8 +64,12 @@ describe('feature: add a product', () => {
         });
       });
 
-      expect(responseBody).toStrictEqual({
-        name: 'Hoodie', details: 'Keeps you warm',
+      it('clears the form', async () => {
+        await waitFor(() => expect(nameField()).toHaveValue('Hoodie'));
+
+        await user.click(submitButton());
+
+        await waitFor(() => expect(nameField()).toHaveValue(''));
       });
     });
   });
