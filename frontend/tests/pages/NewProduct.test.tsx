@@ -4,8 +4,8 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 
-import NewProduct from '../../src/pages/Dashboard/NewProduct';
-import server from '../msw/server';
+import { NewProduct } from '../../src/pages/Dashboard/NewProduct';
+import { server } from '../msw/server';
 
 describe('feature: add a product', () => {
   beforeEach(() => {

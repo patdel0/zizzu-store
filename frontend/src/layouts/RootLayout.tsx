@@ -13,5 +13,3 @@ export const RootLayout: FC = () => (
     <Outlet />
   </Fragment>
 );
-
-export default RootLayout;

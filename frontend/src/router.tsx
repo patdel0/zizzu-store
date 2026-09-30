@@ -5,7 +5,7 @@ import { RootLayout } from './layouts/RootLayout';
 import { NewProduct } from './pages/Dashboard/NewProduct';
 import { Home } from './pages/Home';
 
-const router = createBrowserRouter([
+export const router = createBrowserRouter([
   {
     path: '/',
     Component: RootLayout,
@@ -21,5 +21,3 @@ const router = createBrowserRouter([
     ],
   },
 ]);
-
-export default router;
