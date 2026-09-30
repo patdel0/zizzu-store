@@ -1,14 +1,16 @@
-name: 'Backend Checks'
+name: 'Backend'
 
-on: 'push'
-
+on:
+  push:
+    paths-ignore:
+      - 'frontend/**'
 
 defaults:
   run:
     shell: 'bash'
 
 jobs:
-  checks:
+  backend:
     runs-on: 'ubuntu-latest'
     steps:
       - uses: actions/checkout@v7
