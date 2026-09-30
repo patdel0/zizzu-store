@@ -1,0 +1,24 @@
+name: 'Frontend'
+
+on:
+  push:
+    paths-ignore:
+      - 'backend/**'
+
+defaults:
+  run:
+    shell: 'bash'
+
+jobs:
+  frontend:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - run: npm ci
+        working-directory: 'frontend'
+
+      - name: 'Run tests'
+        run: ./script/test frontend
