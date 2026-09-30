@@ -1,10 +1,3 @@
-/**
- * THIS FILE WAS AUTO-GENERATED.
- * PLEASE DO NOT EDIT IT MANUALLY.
- * ===============================
- * IF YOU COPY THIS INTO AN ESLINT CONFIG, REMOVE THIS COMMENT BLOCK.
- */
-
 import path from 'node:path';
 
 import { includeIgnoreFile } from '@eslint/compat';
@@ -54,6 +47,18 @@ const typescriptConfig = defineConfig([
   ...configs.react.typescript,
 ]);
 
+const overrides = defineConfig([
+  // Named exports only, for IDE auto-imports
+  {
+    name: 'custom/named-exports',
+    rules: {
+      'import-x/prefer-default-export': 'off',
+      // React 17+ JSX transform, no `import React` needed
+      'react/react-in-jsx-scope': 'off',
+    },
+  },
+]);
+
 export default defineConfig([
   // Ignore files and folders listed in .gitignore
   includeIgnoreFile(gitignorePath),
@@ -63,4 +68,6 @@ export default defineConfig([
   ...reactConfig,
   // TypeScript config
   ...typescriptConfig,
+  // Project overrides
+  ...overrides,
 ]);

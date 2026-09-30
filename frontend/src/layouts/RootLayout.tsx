@@ -1,14 +1,16 @@
-import React from 'react';
+import { Fragment } from 'react';
 
 import { Link, Outlet } from 'react-router';
 
-const RootLayout: React.FC = () => (
-  <React.Fragment>
+import type { FC } from 'react';
+
+export const RootLayout: FC = () => (
+  <Fragment>
     <nav>
       <Link to="/">Home</Link>
     </nav>
     <Outlet />
-  </React.Fragment>
+  </Fragment>
 );
 
 export default RootLayout;
