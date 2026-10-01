@@ -101,6 +101,20 @@ describe('feature: add a product', () => {
         const toastContainer = await screen.findByText(/500/);
         await waitFor(() => expect(toastContainer).toBeInTheDocument());
       });
+
+      it('notifies the user when request errors', async () => {
+        server.use(
+          http.post('http://localhost:8080/products', async ({ request }) => {
+            responseBody = await request.clone().json();
+            return HttpResponse.error();
+          }),
+        );
+
+        await user.click(submitButton());
+
+        const toastContainer = await screen.findByText(/Product creation failed/);
+        await waitFor(() => expect(toastContainer).toBeInTheDocument());
+      });
     });
   });
 });

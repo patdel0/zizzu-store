@@ -28,7 +28,7 @@ export const useNewProductForm = (): ProductFormHook => {
       setStatus('Product created successfully!');
     } catch (error) {
       console.log(error);
-      setStatus('Failed to create the product. Please try again.');
+      setStatus('Product creation failed. Please try again.');
     }
   }
 
