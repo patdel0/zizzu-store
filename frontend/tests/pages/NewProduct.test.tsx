@@ -34,13 +34,13 @@ describe('feature: add a product', () => {
   });
 
   describe('form submission', () => {
-    describe('successfully creates the product', () => {
-      let responseBody: unknown;
-      let user: UserEvent;
-      const nameField = () => screen.getByLabelText('Product name');
-      const detailsField = () => screen.getByLabelText('Description');
-      const submitButton = () => screen.getByText('Create product');
+    let responseBody: unknown;
+    let user: UserEvent;
+    const nameField = () => screen.getByLabelText('Product name');
+    const detailsField = () => screen.getByLabelText('Description');
+    const submitButton = () => screen.getByText('Create product');
 
+    describe('successfully creates the product', () => {
       beforeEach(async () => {
         server.use(
           http.post('http://localhost:8080/products', async ({ request }) => {
@@ -76,6 +76,29 @@ describe('feature: add a product', () => {
         await user.click(submitButton());
 
         const toastContainer = await screen.findByText('Product created successfully!');
+        await waitFor(() => expect(toastContainer).toBeInTheDocument());
+      });
+    });
+
+    describe('form submission fails', () => {
+      beforeEach(async () => {
+        user = userEvent.setup();
+
+        await user.type(nameField(), 'Hoodie');
+        await user.type(detailsField(), 'Keeps you warm');
+      });
+
+      it('notifies the user of response status', async () => {
+        server.use(
+          http.post('http://localhost:8080/products', async ({ request }) => {
+            responseBody = await request.clone().json();
+            return HttpResponse.json(null, { status: 500 });
+          }),
+        );
+
+        await user.click(submitButton());
+
+        const toastContainer = await screen.findByText(/500/);
         await waitFor(() => expect(toastContainer).toBeInTheDocument());
       });
     });

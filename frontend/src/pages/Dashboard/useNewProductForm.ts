@@ -11,17 +11,24 @@ export const useNewProductForm = (): ProductFormHook => {
   async function handleSubmit(formData: FormData): Promise<void> {
     const data = Object.fromEntries(formData);
 
-    const response = await fetch('http://localhost:8080/products', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
+    try {
+      const response = await fetch('http://localhost:8080/products', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
 
-    const responseStatus = response.status;
-    if (responseStatus === 201) {
+      if (!response.ok) {
+        setStatus(`Error: ${response.status} Please contact the developers.`);
+        return;
+      }
+
       setStatus('Product created successfully!');
+    } catch (error) {
+      console.log(error);
+      setStatus('Failed to create the product. Please try again.');
     }
   }
 
