@@ -43,22 +43,18 @@ public class ProductController {
     }
 
     @PutMapping(path = "/{id}")
-    public @ResponseBody String updateProduct(@PathVariable Integer id
-    , @Valid @RequestBody Request request) {
+    public @ResponseBody ResponseEntity<Response> updateProduct(
+        @PathVariable Integer id,
+        @Valid @RequestBody Request request
+    ) {
         Optional<Product> existing = productRepository.findById(id);
-        if (existing.isEmpty()) {
-            return "Product not found.";
-        }
-        Product p = existing.get();
-
-        if (request.name() != null) {
-            p.setName(request.name());
-        }
-        if (request.details() != null) {
-            p.setDetails((request.details()));
-        }
-        productRepository.save(p);
-            return "Product updated.";
+        return existing
+            .map(p -> {
+                p.setName(request.name());
+                p.setDetails(request.details());
+                return ResponseEntity.ok(Response.from(productRepository.save(p)));
+            })
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping(path = "/{id}")
@@ -67,7 +63,7 @@ public class ProductController {
             return "Product not found.";
         }
         productRepository.deleteById(id);
-            return "Product deleted.";
+        return "Product deleted.";
     }
 
     @GetMapping(path = "/{id}")
@@ -77,7 +73,6 @@ public class ProductController {
                 .map(product -> ResponseEntity.ok(Response.from(product)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
 
     @GetMapping
     public @ResponseBody Iterable<Response> getAllProducts() {
