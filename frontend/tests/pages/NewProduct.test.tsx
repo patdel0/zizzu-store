@@ -45,7 +45,7 @@ describe('feature: add a product', () => {
         server.use(
           http.post('http://localhost:8080/products', async ({ request }) => {
             responseBody = await request.clone().json();
-            return HttpResponse.json({ status: 200 });
+            return HttpResponse.json(null, { status: 201 });
           }),
         );
 
@@ -75,7 +75,7 @@ describe('feature: add a product', () => {
       it('notifies user of successful submission', async () => {
         await user.click(submitButton());
 
-        const toastContainer = screen.getByText('Product created successfully!');
+        const toastContainer = await screen.findByText('Product created successfully!');
         await waitFor(() => expect(toastContainer).toBeInTheDocument());
       });
     });
