@@ -20,14 +20,8 @@ export const useNewProductForm = (): ProductFormHook => {
         body: JSON.stringify(data),
       });
 
-      if (!response.ok) {
-        setStatus(`Error: ${response.status} Please contact the developers.`);
-        return;
-      }
-
-      setStatus('Product created successfully!');
+      if (response.ok) setStatus('Product created successfully!');
     } catch (error) {
-      console.log(error);
       setStatus('Product creation failed. Please try again.');
     }
   }
