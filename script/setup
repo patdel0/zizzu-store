@@ -1,0 +1,3 @@
+#!/usr/bin/sh
+
+cp ./frontend/.env-example ./frontend/.env
