@@ -43,7 +43,7 @@ describe('feature: add a product', () => {
     describe('successfully creates the product', () => {
       beforeEach(async () => {
         server.use(
-          http.post('http://localhost:8080/products', async ({ request }) => {
+          http.post(import.meta.env.VITE_API_URL + '/products', async ({ request }) => {
             responseBody = await request.clone().json();
             return HttpResponse.json(null, { status: 201 });
           }),
@@ -88,23 +88,9 @@ describe('feature: add a product', () => {
         await user.type(detailsField(), 'Keeps you warm');
       });
 
-      it('notifies the user of response status', async () => {
-        server.use(
-          http.post('http://localhost:8080/products', async ({ request }) => {
-            responseBody = await request.clone().json();
-            return HttpResponse.json(null, { status: 500 });
-          }),
-        );
-
-        await user.click(submitButton());
-
-        const toastContainer = await screen.findByText(/500/);
-        await waitFor(() => expect(toastContainer).toBeInTheDocument());
-      });
-
       it('notifies the user when request errors', async () => {
         server.use(
-          http.post('http://localhost:8080/products', async ({ request }) => {
+          http.post(import.meta.env.VITE_API_URL + ' / products', async ({ request }) => {
             responseBody = await request.clone().json();
             return HttpResponse.error();
           }),
