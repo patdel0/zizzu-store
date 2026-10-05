@@ -8,3 +8,4 @@
 
 - Java server: http://localhost:8080
 - MySQL: jdbc:mysql://127.0.0.1:3307/mydatabase
+- React server: http://localhost:5173
