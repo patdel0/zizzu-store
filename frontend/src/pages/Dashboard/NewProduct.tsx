@@ -3,11 +3,12 @@ import { useNewProductForm } from './useNewProductForm';
 import type { FC } from 'react';
 
 export const NewProduct: FC = () => {
-  const { handleSubmit } = useNewProductForm();
+  const { status, handleSubmit } = useNewProductForm();
 
   return (
     <div>
       <h1>New product</h1>
+      {status ? <div>{status}</div> : null}
       <form action={handleSubmit}>
         <div>
           <label htmlFor="name">
