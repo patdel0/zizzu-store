@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import { Fragment, useState } from 'react';
 
 import './index.css';
 import heroImg from '../../assets/hero.png';
 import reactLogo from '../../assets/react.svg';
 import viteLogo from '../../assets/vite.svg';
 
-const Home: React.FC = () => {
+import type { FC } from 'react';
+
+export const Home: FC = () => {
   const [count, setCount] = useState(0);
 
   return (
-    <React.Fragment>
+    <Fragment>
       <section id="center">
         <div className="hero">
           <img alt="" className="base" height="179" src={heroImg} width="170" />
@@ -126,7 +128,7 @@ const Home: React.FC = () => {
 
       <div className="ticks" />
       <section id="spacer" />
-    </React.Fragment>
+    </Fragment>
   );
 };
 
