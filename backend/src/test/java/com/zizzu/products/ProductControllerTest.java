@@ -92,4 +92,20 @@ public class ProductControllerTest {
         assertEquals(1, products.size());
         assertEquals(products, result);
     }
+
+    @Test
+    void shouldReturnProductById () {
+        EntityExchangeResult<Response> productCreated = createProduct("Tenis 41/42", "Adidas");
+
+        Integer id = productCreated.getResponseBody().id();
+
+        EntityExchangeResult<Response> result = client.get()
+                .uri("/products/" + id)
+                .exchange()
+                .returnResult(Response.class);
+
+        assertEquals(productCreated.getResponseBody(), result.getResponseBody());
+
+
+    }
 }
