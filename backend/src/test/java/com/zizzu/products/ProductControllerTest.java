@@ -32,6 +32,15 @@ public class ProductControllerTest {
     @Autowired
     private ProductRepository productRepository;
 
+    public EntityExchangeResult<Response> createProduct (String name, String details) {
+        return client.post()
+                .uri("/products")
+                .header("Content-Type", "application/json")
+                .body(new Request(name,details))
+                .exchange()
+                .returnResult(Response.class);
+    }
+
     @ServiceConnection
     static MySQLContainer mySQLContainer = new MySQLContainer("mysql:latest");
 
@@ -46,29 +55,18 @@ public class ProductControllerTest {
 
     @Test
     void shouldReturnOkWhenProductCreated () {
-        EntityExchangeResult<Response> result = client.post()
-                .uri("/products")
-                .header("Content-Type", "application/json")
-                .body(new Request("Tenis 40/41","Adidas"))
-                .exchange()
-                .returnResult(Response.class);
+        EntityExchangeResult<Response> result = createProduct("Tenis 41/42", "Adidas");
 
         Integer id = result.getResponseBody().id();
         Product product = productRepository.findById(id).orElseThrow();
 
         assertEquals(HttpStatus.CREATED , result.getStatus());
-        assertEquals("Tenis 40/41", product.getName());
+        assertEquals("Tenis 41/42", product.getName());
     }
 
     @Test
     void shouldReturnBadRequestWhenFieldsAreEmpty() {
-        EntityExchangeResult<Response> result = client.post()
-                .uri("/products")
-                .header("Content-Type", "application/json")
-                .body(new Request("", ""))
-                .exchange()
-//                .expectStatus().isBadRequest()
-                .returnResult(Response.class);
+        EntityExchangeResult<Response> result = createProduct("", "");
 
         List<Product> products = productRepository.findAll();
 
@@ -78,12 +76,7 @@ public class ProductControllerTest {
 
     @Test
     void shouldReturnAllProducts () {
-        client.post()
-                .uri("/products")
-                .header("Content-Type", "application/json")
-                .body(new Request("Tenis 40/41","Adidas"))
-                .exchange()
-                .returnResult(Response.class);
+        createProduct("Tenis 41/42", "Adidas");
 
         List<Response> result = client.get()
                 .uri("/products")
