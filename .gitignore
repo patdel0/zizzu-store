@@ -8,3 +8,6 @@ backend/target/
 node_modules/
 #IDE
 .idea
+
+#Environment file
+*/.env
