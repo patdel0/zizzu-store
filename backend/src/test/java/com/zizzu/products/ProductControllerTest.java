@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.servlet.client.EntityExchangeResult;
 import org.springframework.test.web.servlet.client.RestTestClient;
@@ -40,6 +41,7 @@ public class ProductControllerTest {
                 .baseUrl("http://localhost:" + port)
                 .build();
 
+        productRepository.deleteAll();
     }
 
     @Test
@@ -59,10 +61,10 @@ public class ProductControllerTest {
     }
 
     @Test
-    void shouldReturnBadRequestWhenProductCreated() {
+    void shouldReturnBadRequestWhenFieldsAreEmpty() {
         EntityExchangeResult<Response> result = client.post()
                 .uri("/products")
-//                .header("Content-Type", "application/json")
+                .header("Content-Type", "application/json")
                 .body(new Request("", ""))
                 .exchange()
 //                .expectStatus().isBadRequest()
@@ -71,12 +73,30 @@ public class ProductControllerTest {
         List<Product> products = productRepository.findAll();
 
         assertEquals(HttpStatus.BAD_REQUEST, result.getStatus());
-        assertEquals(1, products.size());
-
+        assertEquals(0, products.size());
     }
 
     @Test
-    void isTrue() {
-        assertEquals(true, true);
+    void shouldReturnAllProducts () {
+        client.post()
+                .uri("/products")
+                .header("Content-Type", "application/json")
+                .body(new Request("Tenis 40/41","Adidas"))
+                .exchange()
+                .returnResult(Response.class);
+
+        List<Response> result = client.get()
+                .uri("/products")
+                .exchange()
+                .returnResult(new ParameterizedTypeReference<List<Response>>() {
+                }).getResponseBody();
+
+        List<Response> products = productRepository.findAll()
+                .stream()
+                .map(Response::from)
+                .toList();
+
+        assertEquals(1, products.size());
+        assertEquals(products, result);
     }
 }
