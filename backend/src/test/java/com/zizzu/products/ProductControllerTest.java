@@ -41,8 +41,8 @@ public class ProductControllerTest {
                 .returnResult(Response.class);
     }
 
-//    @ServiceConnection
-//    static MySQLContainer mySQLContainer = new MySQLContainer("mysql:latest");
+    @ServiceConnection
+    static MySQLContainer mySQLContainer = new MySQLContainer("mysql:latest");
 
     @BeforeEach
     public void setUp() {
@@ -105,8 +105,6 @@ public class ProductControllerTest {
                 .returnResult(Response.class);
 
         assertEquals(productCreated.getResponseBody(), result.getResponseBody());
-
-
     }
 
     @Test
@@ -143,6 +141,5 @@ public class ProductControllerTest {
         boolean  product = productRepository.existsById(id);
 
         assertFalse(product);
-
     }
 }
