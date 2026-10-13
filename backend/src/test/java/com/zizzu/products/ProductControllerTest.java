@@ -108,4 +108,24 @@ public class ProductControllerTest {
 
 
     }
+
+    @Test
+    void shouldReturnUpdatedProduct() {
+        EntityExchangeResult<Response> createdProduct = createProduct("Tenis 41/42", "Adidas");
+
+        Integer id = createdProduct.getResponseBody().id();
+
+        EntityExchangeResult<Response> updatedProduct = client.put()
+                .uri("/products/" + id)
+                .header("Content-Type", "application/json")
+                .body(new Request("T-shirt M", "Nike"))
+                .exchange()
+                .returnResult(Response.class);
+
+        Product product = productRepository.findById(id).orElseThrow();
+
+        assertEquals(HttpStatus.OK, updatedProduct.getStatus());
+        assertNotEquals(updatedProduct.getResponseBody(), createdProduct.getResponseBody());
+        assertEquals("T-shirt M", product.getName());
+    }
 }
