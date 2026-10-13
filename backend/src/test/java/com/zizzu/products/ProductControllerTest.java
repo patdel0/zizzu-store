@@ -41,8 +41,8 @@ public class ProductControllerTest {
                 .returnResult(Response.class);
     }
 
-    @ServiceConnection
-    static MySQLContainer mySQLContainer = new MySQLContainer("mysql:latest");
+//    @ServiceConnection
+//    static MySQLContainer mySQLContainer = new MySQLContainer("mysql:latest");
 
     @BeforeEach
     public void setUp() {
@@ -127,5 +127,22 @@ public class ProductControllerTest {
         assertEquals(HttpStatus.OK, updatedProduct.getStatus());
         assertNotEquals(updatedProduct.getResponseBody(), createdProduct.getResponseBody());
         assertEquals("T-shirt M", product.getName());
+    }
+
+    @Test
+    void shouldReturnProductDeletion () {
+        EntityExchangeResult<Response> createdProduct = createProduct("Tenis 41/42", "Adidas");
+
+        Integer id = createdProduct.getResponseBody().id();
+
+        EntityExchangeResult<String> deletedProduct = client.delete()
+                .uri("/products/" + id)
+                .exchange()
+                .returnResult(String.class);
+
+        boolean  product = productRepository.existsById(id);
+
+        assertFalse(product);
+
     }
 }
