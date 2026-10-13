@@ -3,6 +3,7 @@
 if [ "$1" = "backend" ]; then
     cd backend;
     ./mvnw checkstyle:check;
+    ./mvnw test;
 fi
 
 if [ "$1" = "frontend" ]; then
