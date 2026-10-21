@@ -7,12 +7,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.client.EntityExchangeResult;
 import org.springframework.test.web.servlet.client.RestTestClient;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.mysql.MySQLContainer;
 
@@ -20,15 +26,17 @@ import org.testcontainers.mysql.MySQLContainer;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 @Testcontainers
+@WithMockUser(authorities = "write")
 public class ProductControllerTest {
 
-    @LocalServerPort
-    private int port;
-
     private RestTestClient client;
+    @Autowired
+    private WebApplicationContext context;
+
     @Autowired
     private ProductRepository productRepository;
 
@@ -46,8 +54,13 @@ public class ProductControllerTest {
 
     @BeforeEach
     public void setUp() {
-        client = RestTestClient.bindToServer()
-                .baseUrl("http://localhost:" + port)
+        MockMvc mvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .apply(springSecurity())
+                .defaultRequest(get("/").with(csrf()))
+                .build();
+
+        client = RestTestClient.bindTo(mvc)
                 .build();
 
         productRepository.deleteAll();
