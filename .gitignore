@@ -6,8 +6,12 @@ backend/target/
 
 #Dependencies
 node_modules/
+
 #IDE
 .idea
 
 #Environment file
 */.env
+
+#Cookies
+cookies.txt
