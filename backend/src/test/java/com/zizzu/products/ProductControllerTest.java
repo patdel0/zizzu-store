@@ -88,6 +88,40 @@ public class ProductControllerTest {
     }
 
     @Test
+    void shouldReturnFirstTenProducts () {
+        for (int n = 1; n <= 20; n++) {
+            createProduct("Product " + n, "Details " + n);
+        }
+
+        List<Response> result = client.get()
+                .uri("/products")
+                .exchange()
+                .returnResult(new ParameterizedTypeReference<List<Response>>() {
+                }).getResponseBody();
+
+        assertEquals(10, result.size());
+        assertEquals("Product 1", result.get(0).name());
+        assertEquals("Product 10", result.get(9).name());
+    }
+
+    @Test
+    void shouldReturnNProducts () {
+        for (int n = 1; n <= 20; n++) {
+            createProduct("Product " + n, "Details " + n);
+        }
+
+        List<Response> result = client.get()
+                .uri("/products?page=1&size=5")
+                .exchange()
+                .returnResult(new ParameterizedTypeReference<List<Response>>() {
+                }).getResponseBody();
+
+        assertEquals(5, result.size());
+        assertEquals("Product 6", result.get(0).name());
+        assertEquals("Details 10", result.get(4).details());
+    }
+
+    @Test
     void shouldReturnAllProducts () {
         createProduct("Tenis 41/42", "Adidas");
 
