@@ -24,6 +24,14 @@
 ./script/test {backend,frontend}
 ```
 
+### Format
+
+You will likely want to automatically format your code to satisfy the linter. When that happens, run:
+
+``` bash
+./script/format {backend,frontend}
+```
+
 ### Services 
 
 - Java server: http://localhost:8080

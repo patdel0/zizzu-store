@@ -1,0 +1,11 @@
+#!/usr/bin/sh
+
+if [ "$1" = "backend" ]; then
+    cd backend;
+    ./mvnw spotless:apply;
+fi
+
+if [ "$1" = "frontend" ]; then
+    cd frontend;
+    npm run lint:fix;
+fi
