@@ -22,12 +22,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+/** REST endpoints for creating, reading, updating and deleting products. */
 @Controller
 @CrossOrigin(origins = "${app.cors.origins}")
 @RequestMapping(path = "/products")
 public class ProductController {
   @Autowired private ProductRepository productRepository;
 
+  /** Creates a product and returns it with its location in the {@code Location} header. */
   @PostMapping
   public @ResponseBody ResponseEntity<Response> addNewProduct(@Valid @RequestBody Request request) {
     Product n = new Product();
@@ -42,6 +44,7 @@ public class ProductController {
     return ResponseEntity.created(location).body(Response.from(saved));
   }
 
+  /** Updates the product with the given id, or returns 404 if it does not exist. */
   @PutMapping(path = "/{id}")
   public @ResponseBody ResponseEntity<Response> updateProduct(
       @PathVariable Integer id, @Valid @RequestBody Request request) {
@@ -56,6 +59,7 @@ public class ProductController {
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
+  /** Deletes the product with the given id. */
   @DeleteMapping(path = "/{id}")
   public @ResponseBody String deleteProduct(@PathVariable Integer id) {
     if (!productRepository.existsById(id)) {
@@ -65,6 +69,7 @@ public class ProductController {
     return "Product deleted.";
   }
 
+  /** Returns the product with the given id, or 404 if it does not exist. */
   @GetMapping(path = "/{id}")
   public @ResponseBody ResponseEntity<Response> getProduct(@PathVariable Integer id) {
     Optional<Product> existing = productRepository.findById(id);
@@ -73,6 +78,7 @@ public class ProductController {
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
+  /** Returns one page of products, using zero-based page numbers. */
   @GetMapping
   public @ResponseBody Iterable<Response> getAllProducts(
       @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {

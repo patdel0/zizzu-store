@@ -6,6 +6,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import org.jspecify.annotations.Nullable;
 
+/** A product listed in the store, persisted as a JPA entity. */
 @Entity
 public class Product {
   @Id
