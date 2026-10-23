@@ -1,46 +1,46 @@
 package com.zizzu.products;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import org.jspecify.annotations.Nullable;
-
 
 @Entity
 public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private @Nullable Integer id;
-    private String name;
-    private String details;
-    private String sku;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private @Nullable Integer id;
 
-    public Integer getId() {
-        return id;
-    }
+  private String name;
+  private String details;
+  private String sku;
 
-    public String getName() {
-        return name;
-    }
+  public Integer getId() {
+    return id;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getDetails(){
-        return details;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setDetails(String details) {
-        this.details = details;
-    }
+  public String getDetails() {
+    return details;
+  }
 
-    public String getSku() {
-        return sku;
-    }
-    public void setSku(String sku) {
-        this.sku = sku;
-    }
+  public void setDetails(String details) {
+    this.details = details;
+  }
+
+  public String getSku() {
+    return sku;
+  }
+
+  public void setSku(String sku) {
+    this.sku = sku;
+  }
 }
-
