@@ -14,8 +14,11 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-/** Security rules: which routes are public and who may write. */
+/** Security rules: which routes are public, who may write, and how CORS is handled. */
 @Configuration
 public class SecurityConfig {
   /** GET routes that anyone may call without logging in. */
@@ -29,7 +32,8 @@ public class SecurityConfig {
    */
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    http.authorizeHttpRequests(
+    http.cors(Customizer.withDefaults())
+        .authorizeHttpRequests(
             auth ->
                 auth.requestMatchers(HttpMethod.GET, PUBLIC_GET_ROUTES)
                     .permitAll()
@@ -38,6 +42,21 @@ public class SecurityConfig {
         .oauth2Login(Customizer.withDefaults())
         .logout(logout -> logout.logoutSuccessUrl("/"));
     return http.build();
+  }
+
+  /** Applies the allowed frontend origins to every route. */
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource(
+      @Value("${app.cors.origins}") List<String> origins) {
+    CorsConfiguration config = new CorsConfiguration();
+    config.setAllowedOrigins(origins);
+    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    config.setAllowedHeaders(List.of("*"));
+    config.setAllowCredentials(true);
+
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", config);
+    return source;
   }
 
   /** Grants {@code write} to verified users whose email is in {@code app.write-emails}. */
