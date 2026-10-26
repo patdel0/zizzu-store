@@ -1,3 +1,5 @@
+# Zizzu e-commerce
+
 ## Requirements
 
 - Maven (`sudo apt install maven`)
@@ -38,7 +40,11 @@ You will likely want to automatically format your code to satisfy the linter. Wh
 - MySQL: jdbc:mysql://127.0.0.1:3307/mydatabase
 - React server: http://localhost:5173
 
-## Testing the application with OAuth
+### Creating new routes
+
+If you're creating a new public route/endpoint for the application, make sure to add it to the `PUBLIC_GET_ROUTES` in `SecurityConfig.java`. 
+
+### Testing the application with OAuth
 
 CSRF issues were encountered whilst testing POST/PUT/DELETE routes.
 Spring boot security automatically requires the token to be provided with the requests by default.
