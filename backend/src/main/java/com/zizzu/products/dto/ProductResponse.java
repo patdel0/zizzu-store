@@ -9,9 +9,9 @@ import com.zizzu.products.Product;
  * @param name display name of the product
  * @param details description of the product
  */
-public record Response(Integer id, String name, String details) {
+public record ProductResponse(Integer id, String name, String details) {
   /** Creates a response from a {@link Product} entity. */
-  public static Response from(Product product) {
-    return new Response(product.getId(), product.getName(), product.getDetails());
+  public static ProductResponse from(Product product) {
+    return new ProductResponse(product.getId(), product.getName(), product.getDetails());
   }
 }

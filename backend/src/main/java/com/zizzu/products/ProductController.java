@@ -1,7 +1,7 @@
 package com.zizzu.products;
 
-import com.zizzu.products.dto.Request;
-import com.zizzu.products.dto.Response;
+import com.zizzu.products.dto.ProductRequest;
+import com.zizzu.products.dto.ProductResponse;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.Optional;
@@ -29,7 +29,7 @@ public class ProductController {
 
   /** Creates a product and returns it with its location in the {@code Location} header. */
   @PostMapping
-  public @ResponseBody ResponseEntity<Response> addNewProduct(@Valid @RequestBody Request request) {
+  public @ResponseBody ResponseEntity<ProductResponse> addNewProduct(@Valid @RequestBody ProductRequest request) {
     Product n = new Product();
     n.setName(request.name());
     n.setDetails(request.details());
@@ -39,20 +39,20 @@ public class ProductController {
             .path("/{id}")
             .buildAndExpand(saved.getId())
             .toUri();
-    return ResponseEntity.created(location).body(Response.from(saved));
+    return ResponseEntity.created(location).body(ProductResponse.from(saved));
   }
 
   /** Updates the product with the given id, or returns 404 if it does not exist. */
   @PutMapping(path = "/{id}")
-  public @ResponseBody ResponseEntity<Response> updateProduct(
-      @PathVariable Integer id, @Valid @RequestBody Request request) {
+  public @ResponseBody ResponseEntity<ProductResponse> updateProduct(
+      @PathVariable Integer id, @Valid @RequestBody ProductRequest request) {
     Optional<Product> existing = productRepository.findById(id);
     return existing
         .map(
             p -> {
               p.setName(request.name());
               p.setDetails(request.details());
-              return ResponseEntity.ok(Response.from(productRepository.save(p)));
+              return ResponseEntity.ok(ProductResponse.from(productRepository.save(p)));
             })
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
@@ -69,18 +69,18 @@ public class ProductController {
 
   /** Returns the product with the given id, or 404 if it does not exist. */
   @GetMapping(path = "/{id}")
-  public @ResponseBody ResponseEntity<Response> getProduct(@PathVariable Integer id) {
+  public @ResponseBody ResponseEntity<ProductResponse> getProduct(@PathVariable Integer id) {
     Optional<Product> existing = productRepository.findById(id);
     return existing
-        .map(product -> ResponseEntity.ok(Response.from(product)))
+        .map(product -> ResponseEntity.ok(ProductResponse.from(product)))
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
   /** Returns one page of products, using zero-based page numbers. */
   @GetMapping
-  public @ResponseBody Iterable<Response> getAllProducts(
+  public @ResponseBody Iterable<ProductResponse> getAllProducts(
       @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
     Pageable pageable = PageRequest.of(page, size);
-    return productRepository.findAll(pageable).stream().map(Response::from).toList();
+    return productRepository.findAll(pageable).stream().map(ProductResponse::from).toList();
   }
 }

@@ -5,8 +5,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-import com.zizzu.products.dto.Request;
-import com.zizzu.products.dto.Response;
+import com.zizzu.products.dto.ProductRequest;
+import com.zizzu.products.dto.ProductResponse;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,14 +34,14 @@ public class ProductControllerTest {
 
   @Autowired private ProductRepository productRepository;
 
-  public EntityExchangeResult<Response> createProduct(String name, String details) {
+  public EntityExchangeResult<ProductResponse> createProduct(String name, String details) {
     return client
         .post()
         .uri("/products")
         .header("Content-Type", "application/json")
-        .body(new Request(name, details))
+        .body(new ProductRequest(name, details))
         .exchange()
-        .returnResult(Response.class);
+        .returnResult(ProductResponse.class);
   }
 
   @ServiceConnection static MySQLContainer mySQLContainer = new MySQLContainer("mysql:latest");
@@ -61,7 +61,7 @@ public class ProductControllerTest {
 
   @Test
   void shouldReturnOkWhenProductCreated() {
-    EntityExchangeResult<Response> result = createProduct("Tenis 41/42", "Adidas");
+    EntityExchangeResult<ProductResponse> result = createProduct("Tenis 41/42", "Adidas");
 
     Integer id = result.getResponseBody().id();
     Product product = productRepository.findById(id).orElseThrow();
@@ -72,7 +72,7 @@ public class ProductControllerTest {
 
   @Test
   void shouldReturnBadRequestWhenFieldsAreEmpty() {
-    EntityExchangeResult<Response> result = createProduct("", "");
+    EntityExchangeResult<ProductResponse> result = createProduct("", "");
 
     List<Product> products = productRepository.findAll();
 
@@ -86,12 +86,12 @@ public class ProductControllerTest {
       createProduct("Product " + n, "Details " + n);
     }
 
-    List<Response> result =
+    List<ProductResponse> result =
         client
             .get()
             .uri("/products")
             .exchange()
-            .returnResult(new ParameterizedTypeReference<List<Response>>() {})
+            .returnResult(new ParameterizedTypeReference<List<ProductResponse>>() {})
             .getResponseBody();
 
     assertEquals(10, result.size());
@@ -105,12 +105,12 @@ public class ProductControllerTest {
       createProduct("Product " + n, "Details " + n);
     }
 
-    List<Response> result =
+    List<ProductResponse> result =
         client
             .get()
             .uri("/products?page=1&size=5")
             .exchange()
-            .returnResult(new ParameterizedTypeReference<List<Response>>() {})
+            .returnResult(new ParameterizedTypeReference<List<ProductResponse>>() {})
             .getResponseBody();
 
     assertEquals(5, result.size());
@@ -122,15 +122,15 @@ public class ProductControllerTest {
   void shouldReturnAllProducts() {
     createProduct("Tenis 41/42", "Adidas");
 
-    List<Response> result =
+    List<ProductResponse> result =
         client
             .get()
             .uri("/products")
             .exchange()
-            .returnResult(new ParameterizedTypeReference<List<Response>>() {})
+            .returnResult(new ParameterizedTypeReference<List<ProductResponse>>() {})
             .getResponseBody();
 
-    List<Response> products = productRepository.findAll().stream().map(Response::from).toList();
+    List<ProductResponse> products = productRepository.findAll().stream().map(ProductResponse::from).toList();
 
     assertEquals(1, products.size());
     assertEquals(products, result);
@@ -138,30 +138,30 @@ public class ProductControllerTest {
 
   @Test
   void shouldReturnProductById() {
-    EntityExchangeResult<Response> productCreated = createProduct("Tenis 41/42", "Adidas");
+    EntityExchangeResult<ProductResponse> productCreated = createProduct("Tenis 41/42", "Adidas");
 
     Integer id = productCreated.getResponseBody().id();
 
-    EntityExchangeResult<Response> result =
-        client.get().uri("/products/" + id).exchange().returnResult(Response.class);
+    EntityExchangeResult<ProductResponse> result =
+        client.get().uri("/products/" + id).exchange().returnResult(ProductResponse.class);
 
     assertEquals(productCreated.getResponseBody(), result.getResponseBody());
   }
 
   @Test
   void shouldReturnUpdatedProduct() {
-    EntityExchangeResult<Response> createdProduct = createProduct("Tenis 41/42", "Adidas");
+    EntityExchangeResult<ProductResponse> createdProduct = createProduct("Tenis 41/42", "Adidas");
 
     Integer id = createdProduct.getResponseBody().id();
 
-    EntityExchangeResult<Response> updatedProduct =
+    EntityExchangeResult<ProductResponse> updatedProduct =
         client
             .put()
             .uri("/products/" + id)
             .header("Content-Type", "application/json")
-            .body(new Request("T-shirt M", "Nike"))
+            .body(new ProductRequest("T-shirt M", "Nike"))
             .exchange()
-            .returnResult(Response.class);
+            .returnResult(ProductResponse.class);
 
     Product product = productRepository.findById(id).orElseThrow();
 
@@ -172,7 +172,7 @@ public class ProductControllerTest {
 
   @Test
   void shouldReturnProductDeletion() {
-    EntityExchangeResult<Response> createdProduct = createProduct("Tenis 41/42", "Adidas");
+    EntityExchangeResult<ProductResponse> createdProduct = createProduct("Tenis 41/42", "Adidas");
 
     Integer id = createdProduct.getResponseBody().id();
 

@@ -8,4 +8,4 @@ import jakarta.validation.constraints.NotBlank;
  * @param name display name of the product; must not be blank
  * @param details description of the product; must not be blank
  */
-public record Request(@NotBlank String name, @NotBlank String details) {}
+public record ProductRequest(@NotBlank String name, @NotBlank String details) {}
