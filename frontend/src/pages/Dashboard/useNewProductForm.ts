@@ -10,6 +10,7 @@ export const useNewProductForm = (): ProductFormHook => {
 
   async function handleSubmit(formData: FormData): Promise<void> {
     const data = Object.fromEntries(formData);
+    const csrfToken = await cookieStore.get('XSRF-TOKEN');
 
     try {
       const response = await fetch(import.meta.env.VITE_API_URL + '/products', {
@@ -17,6 +18,7 @@ export const useNewProductForm = (): ProductFormHook => {
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          ...(csrfToken && { 'X-XSRF-TOKEN': csrfToken.value }),
         },
         body: JSON.stringify(data),
       });
