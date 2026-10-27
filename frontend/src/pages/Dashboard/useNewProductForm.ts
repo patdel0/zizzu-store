@@ -24,7 +24,7 @@ export const useNewProductForm = (): ProductFormHook => {
       });
 
       if (response.ok) setStatus('Product created successfully!');
-    } catch (error) {
+    } catch {
       setStatus('Product creation failed. Please try again.');
     }
   }
