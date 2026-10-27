@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,6 +41,18 @@ public class ProductControllerTest {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private TaxonomyRepository taxonomyRepository;
+
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+
+    private Taxonomy createTaxonomy(String name) {
+        Taxonomy taxonomy = new Taxonomy();
+        taxonomy.setName(name);
+        return taxonomyRepository.save(taxonomy);
+    }
+
     public EntityExchangeResult<Response> createProduct (String name, String details) {
         return client.post()
                 .uri("/products")
@@ -64,6 +77,7 @@ public class ProductControllerTest {
                 .build();
 
         productRepository.deleteAll();
+        taxonomyRepository.deleteAll();
     }
 
     @Test
@@ -131,10 +145,10 @@ public class ProductControllerTest {
                 .returnResult(new ParameterizedTypeReference<List<Response>>() {
                 }).getResponseBody();
 
-        List<Response> products = productRepository.findAll()
+        List<Response> products = transactionTemplate.execute(status -> productRepository.findAll()
                 .stream()
                 .map(Response::from)
-                .toList();
+                .toList());
 
         assertEquals(1, products.size());
         assertEquals(products, result);
@@ -188,5 +202,78 @@ public class ProductControllerTest {
         boolean  product = productRepository.existsById(id);
 
         assertFalse(product);
+    }
+
+    @Test
+    void shouldCreateProductWithTaxonomies() {
+        Taxonomy footwear = createTaxonomy("footwear");
+        Taxonomy sport = createTaxonomy("sport");
+
+        EntityExchangeResult<Response> result = client.post()
+                .uri("/products")
+                .header("Content-Type", "application/json")
+                .body(new Request("Tenis 41/42", "Adidas", List.of(footwear.getId(), sport.getId())))
+                .exchange()
+                .returnResult(Response.class);
+
+        assertEquals(HttpStatus.CREATED, result.getStatus());
+        assertEquals(List.of(footwear.getId(), sport.getId()), result.getResponseBody().taxonomyIds());
+    }
+
+    @Test
+    void shouldReturnBadRequestWhenTaxonomyDoesNotExist() {
+        EntityExchangeResult<Response> result = client.post()
+                .uri("/products")
+                .header("Content-Type", "application/json")
+                .body(new Request("Tenis 41/42", "Adidas", List.of(999999)))
+                .exchange()
+                .returnResult(Response.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, result.getStatus());
+        assertEquals(0, productRepository.count());
+    }
+
+    @Test
+    void shouldReplaceTaxonomiesWhenUpdating() {
+        Taxonomy footwear = createTaxonomy("footwear");
+        Taxonomy sport = createTaxonomy("sport");
+        Integer id = client.post()
+                .uri("/products")
+                .header("Content-Type", "application/json")
+                .body(new Request("Tenis 41/42", "Adidas", List.of(footwear.getId())))
+                .exchange()
+                .returnResult(Response.class)
+                .getResponseBody().id();
+
+        EntityExchangeResult<Response> updated = client.put()
+                .uri("/products/" + id)
+                .header("Content-Type", "application/json")
+                .body(new Request("Tenis 41/42", "Adidas", List.of(sport.getId())))
+                .exchange()
+                .returnResult(Response.class);
+
+        assertEquals(HttpStatus.OK, updated.getStatus());
+        assertEquals(List.of(sport.getId()), updated.getResponseBody().taxonomyIds());
+    }
+
+    @Test
+    void shouldKeepTaxonomiesWhenUpdateOmitsThem() {
+        Taxonomy footwear = createTaxonomy("footwear");
+        Integer id = client.post()
+                .uri("/products")
+                .header("Content-Type", "application/json")
+                .body(new Request("Tenis 41/42", "Adidas", List.of(footwear.getId())))
+                .exchange()
+                .returnResult(Response.class)
+                .getResponseBody().id();
+
+        EntityExchangeResult<Response> updated = client.put()
+                .uri("/products/" + id)
+                .header("Content-Type", "application/json")
+                .body(new Request("T-shirt M", "Nike"))
+                .exchange()
+                .returnResult(Response.class);
+
+        assertEquals(List.of(footwear.getId()), updated.getResponseBody().taxonomyIds());
     }
 }

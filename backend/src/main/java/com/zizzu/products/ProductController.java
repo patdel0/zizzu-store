@@ -1,7 +1,10 @@
 package com.zizzu.products;
 
 import java.net.URI;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import com.zizzu.products.dto.Request;
 import com.zizzu.products.dto.Response;
@@ -9,6 +12,7 @@ import com.zizzu.products.dto.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import jakarta.validation.Valid;
@@ -32,11 +37,35 @@ public class ProductController {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private TaxonomyRepository taxonomyRepository;
+
+    private Set<Taxonomy> findTaxonomies(List<Integer> ids) {
+        Set<Integer> distinct = new HashSet<>(ids);
+        List<Taxonomy> found = taxonomyRepository.findAllById(distinct);
+        if (found.size() != distinct.size()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Unknown taxonomy id");
+        }
+        return new HashSet<>(found);
+    }
+
+    private void replaceTaxonomies(Product product, Set<Taxonomy> taxonomies) {
+        for (Taxonomy current : new HashSet<>(product.getTaxonomies())) {
+            if (!taxonomies.contains(current)) {
+                product.removeTaxonomy(current);
+            }
+        }
+        taxonomies.forEach(product::addTaxonomy);
+    }
+
     @PostMapping
     public @ResponseBody ResponseEntity<Response> addNewProduct(@Valid @RequestBody Request request) {
         Product n = new Product();
         n.setName(request.name());
         n.setDetails(request.details());
+        if (request.taxonomyIds() != null) {
+            findTaxonomies(request.taxonomyIds()).forEach(n::addTaxonomy);
+        }
         Product saved = productRepository.save(n);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -55,6 +84,9 @@ public class ProductController {
             .map(p -> {
                 p.setName(request.name());
                 p.setDetails(request.details());
+                if (request.taxonomyIds() != null) {
+                    replaceTaxonomies(p, findTaxonomies(request.taxonomyIds()));
+                }
                 return ResponseEntity.ok(Response.from(productRepository.save(p)));
             })
             .orElseGet(() -> ResponseEntity.notFound().build());

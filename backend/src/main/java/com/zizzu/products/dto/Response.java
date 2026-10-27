@@ -1,9 +1,16 @@
 package com.zizzu.products.dto;
 
-import com.zizzu.products.Product;
+import java.util.List;
 
-public record Response(Integer id, String name, String details) {
+import com.zizzu.products.Product;
+import com.zizzu.products.Taxonomy;
+
+public record Response(Integer id, String name, String details, List<Integer> taxonomyIds) {
     public static Response from (Product product) {
-        return new Response(product.getId(), product.getName(), product.getDetails());
+        List<Integer> taxonomyIds = product.getTaxonomies().stream()
+                .map(Taxonomy::getId)
+                .sorted()
+                .toList();
+        return new Response(product.getId(), product.getName(), product.getDetails(), taxonomyIds);
     }
 }
