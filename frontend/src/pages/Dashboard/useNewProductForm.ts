@@ -14,6 +14,7 @@ export const useNewProductForm = (): ProductFormHook => {
     try {
       const response = await fetch(import.meta.env.VITE_API_URL + '/products', {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
