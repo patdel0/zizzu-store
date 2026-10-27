@@ -13,7 +13,7 @@ export const useNewProductForm = (): ProductFormHook => {
     const csrfToken = await cookieStore.get('XSRF-TOKEN');
 
     try {
-      const response = await fetch(import.meta.env.VITE_API_URL + '/products', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/products`, {
         method: 'POST',
         credentials: 'include',
         headers: {
