@@ -70,3 +70,15 @@ in the requests.
 ```bash
 curl -i -b cookies.txt -X POST localhost:8080/products -H "X-CSRF-TOKEN: $TOKEN" -H "Content-Type: application/json" -d '{"name": "updated", "details":"qwer"}'
 ```
+
+## Cookies
+
+The backend sets two cookies. The frontend sets none.
+
+| Cookie | Set by | Purpose | `HttpOnly` | Readable by JS | Lifetime |
+| --- | --- | --- | --- | --- | --- |
+| `JSESSIONID` | Backend (Tomcat), at login | Identifies the logged-in session | Yes | No | Browser session |
+| `XSRF-TOKEN` | Backend (Spring Security `csrf.spa()`), on any response that loads the token, such as `GET /products` | CSRF token. The frontend copies it into the `X-XSRF-TOKEN` header | No | Yes | Browser session |
+
+The frontend sends one custom header, `X-XSRF-TOKEN`, on writes. 
+It also uses `credentials: 'include'` so the browser attaches `JSESSIONID`.
