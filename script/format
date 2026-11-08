@@ -3,6 +3,7 @@
 if [ "$1" = "backend" ]; then
     cd backend;
     ./mvnw spotless:apply;
+    ./mvnw checkstyle:check;
 fi
 
 if [ "$1" = "frontend" ]; then
