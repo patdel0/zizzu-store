@@ -1,4 +1,5 @@
 #!/usr/bin/sh
 
-cd backend;
-mvn spring-boot:run;
+docker compose down
+docker compose up --build --detach
+docker compose logs --follow
