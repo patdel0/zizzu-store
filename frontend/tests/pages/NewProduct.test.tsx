@@ -43,7 +43,7 @@ describe('feature: add a product', () => {
     describe('successfully creates the product', () => {
       beforeEach(async () => {
         server.use(
-          http.post(import.meta.env.VITE_API_URL + '/products', async ({ request }) => {
+          http.post(`${import.meta.env.VITE_API_URL}/products`, async ({ request }) => {
             responseBody = await request.clone().json();
             return HttpResponse.json(null, { status: 201 });
           }),
@@ -90,7 +90,7 @@ describe('feature: add a product', () => {
 
       it('notifies the user when request errors', async () => {
         server.use(
-          http.post(import.meta.env.VITE_API_URL + ' / products', async ({ request }) => {
+          http.post(`${import.meta.env.VITE_API_URL}/products`, async ({ request }) => {
             responseBody = await request.clone().json();
             return HttpResponse.error();
           }),

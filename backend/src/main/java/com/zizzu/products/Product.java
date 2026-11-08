@@ -10,7 +10,7 @@ import org.jspecify.annotations.Nullable;
 @Entity
 public class Product {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private @Nullable Integer id;
 
   private String name;
