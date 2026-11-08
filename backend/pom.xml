@@ -104,7 +104,8 @@
 				<version>3.6.0</version>
 
 				<configuration>
-					<configLocation>config/checkstyle/checkstyle.xml</configLocation>
+					<configLocation>google_checks.xml</configLocation>
+					<violationSeverity>warning</violationSeverity>
 				</configuration>
 
 				<dependencies>
@@ -114,6 +115,20 @@
 						<version>12.3.1</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>com.diffplug.spotless</groupId>
+				<artifactId>spotless-maven-plugin</artifactId>
+				<version>3.10.4</version>
+
+				<configuration>
+					<java>
+						<googleJavaFormat>
+							<version>1.28.0</version>
+						</googleJavaFormat>
+						<removeUnusedImports/>
+					</java>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
