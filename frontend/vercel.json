@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "routes": [
+    {
+      "src": "^/((?:products|taxonomies|oauth2|login|logout)(?:/.*)?)$",
+      "dest": "https://zizzu-store-backend.vercel.app/$1"
+    },
+    { "handle": "filesystem" },
+    { "src": "^/dashboard(?:/.*)?$", "dest": "/index.html" }
+  ]
+}
