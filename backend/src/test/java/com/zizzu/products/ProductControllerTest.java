@@ -9,6 +9,7 @@ import com.zizzu.products.dto.ProductRequest;
 import com.zizzu.products.dto.ProductResponse;
 import com.zizzu.taxonomies.Taxonomy;
 import com.zizzu.taxonomies.TaxonomyRepository;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +49,17 @@ public class ProductControllerTest {
     return client
         .post()
         .uri("/products")
+        .header("Content-Type", "application/json")
+        .body(new ProductRequest(name, details, taxonomyIds))
+        .exchange()
+        .returnResult(ProductResponse.class);
+  }
+
+  public EntityExchangeResult<ProductResponse> updateProduct(
+      Integer id, String name, String details, List<Integer> taxonomyIds) {
+    return client
+        .put()
+        .uri("/products/" + id)
         .header("Content-Type", "application/json")
         .body(new ProductRequest(name, details, taxonomyIds))
         .exchange()
@@ -132,6 +144,7 @@ public class ProductControllerTest {
   @Test
   void shouldReturnAllProducts() {
     createProduct("Tenis 41/42", "Adidas");
+    createProduct("Lingerie Preta", "BBW");
 
     List<ProductResponse> result =
         client
@@ -144,14 +157,13 @@ public class ProductControllerTest {
     List<ProductResponse> products =
         productRepository.findAll().stream().map(ProductResponse::from).toList();
 
-    assertEquals(1, products.size());
+    assertEquals(2, products.size());
     assertEquals(products, result);
   }
 
   @Test
   void shouldReturnProductById() {
     EntityExchangeResult<ProductResponse> productCreated = createProduct("Tenis 41/42", "Adidas");
-
     Integer id = productCreated.getResponseBody().id();
 
     EntityExchangeResult<ProductResponse> result =
@@ -162,9 +174,9 @@ public class ProductControllerTest {
 
   @Test
   void shouldReturnUpdatedProduct() {
-    EntityExchangeResult<ProductResponse> createdProduct = createProduct("Tenis 41/42", "Adidas");
+    EntityExchangeResult<ProductResponse> productCreated = createProduct("Tenis 41/42", "Adidas");
 
-    Integer id = createdProduct.getResponseBody().id();
+    Integer id = productCreated.getResponseBody().id();
 
     EntityExchangeResult<ProductResponse> updatedProduct =
         client
@@ -178,15 +190,15 @@ public class ProductControllerTest {
     Product product = productRepository.findById(id).orElseThrow();
 
     assertEquals(HttpStatus.OK, updatedProduct.getStatus());
-    assertNotEquals(updatedProduct.getResponseBody(), createdProduct.getResponseBody());
+    assertNotEquals(updatedProduct.getResponseBody(), productCreated.getResponseBody());
     assertEquals("T-shirt M", product.getName());
   }
 
   @Test
   void shouldReturnProductDeletion() {
-    EntityExchangeResult<ProductResponse> createdProduct = createProduct("Tenis 41/42", "Adidas");
+    EntityExchangeResult<ProductResponse> productCreated = createProduct("Tenis 41/42", "Adidas");
 
-    Integer id = createdProduct.getResponseBody().id();
+    Integer id = productCreated.getResponseBody().id();
 
     EntityExchangeResult<String> deletedProduct =
         client.delete().uri("/products/" + id).exchange().returnResult(String.class);
@@ -197,7 +209,7 @@ public class ProductControllerTest {
   }
 
   @Test
-  void shouldReturnProductWithTaxonomies() {
+  void shouldCreateProductWithTaxonomy() {
     Taxonomy taxonomy = new Taxonomy();
     taxonomy.setName("Setin");
     Taxonomy savedTaxonomy = taxonomyRepository.save(taxonomy);
@@ -210,5 +222,43 @@ public class ProductControllerTest {
     assertEquals(HttpStatus.CREATED, result.getStatus());
     assertEquals(1, created.taxonomies().size());
     assertEquals("Setin", created.taxonomies().iterator().next().name());
+  }
+
+  @Test
+  void shouldUpdateProductTaxonomies() {
+    Taxonomy taxonomy = new Taxonomy();
+    taxonomy.setName("Cotton");
+    Taxonomy savedTaxonomy = taxonomyRepository.save(taxonomy);
+
+    EntityExchangeResult<ProductResponse> productCreated =
+        createProduct("Victoria Secrets", "Malevola", List.of(savedTaxonomy.getId()));
+
+    Integer id = productCreated.getResponseBody().id();
+    assertEquals(1, productCreated.getResponseBody().taxonomies().size());
+
+    EntityExchangeResult<ProductResponse> updatedProduct =
+        updateProduct(id, "T-shirt M", "Nike", new ArrayList<>());
+
+    assertEquals(HttpStatus.OK, updatedProduct.getStatus());
+    assertEquals(0, updatedProduct.getResponseBody().taxonomies().size());
+  }
+
+  @Test
+  void shouldAddTaxonomyToProduct() {
+    Taxonomy taxonomy = new Taxonomy();
+    taxonomy.setName("Nylon");
+    Taxonomy savedTaxonomy = taxonomyRepository.save(taxonomy);
+
+    EntityExchangeResult<ProductResponse> productCreated =
+        createProduct("Victoria Secrets", "Malevola");
+    Integer id = productCreated.getResponseBody().id();
+    assertEquals(0, productCreated.getResponseBody().taxonomies().size());
+
+    EntityExchangeResult<ProductResponse> updatedProduct =
+        updateProduct(id, "Victoria Secrets", "Malevola", List.of(savedTaxonomy.getId()));
+
+    assertEquals(HttpStatus.OK, updatedProduct.getStatus());
+    assertEquals(1, updatedProduct.getResponseBody().taxonomies().size());
+    assertEquals("Nylon", updatedProduct.getResponseBody().taxonomies().iterator().next().name());
   }
 }
