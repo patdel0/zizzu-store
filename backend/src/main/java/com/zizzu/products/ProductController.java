@@ -89,11 +89,11 @@ public class ProductController {
   /** Returns products by taxonomy when specified, or one zero-based page of all products. */
   @GetMapping
   public @ResponseBody Iterable<ProductResponse> getAllProducts(
-      @RequestParam(required = false) Integer taxonomyId,
+      @RequestParam(required = false) Integer taxonomyName,
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int size) {
-    if (taxonomyId != null) {
-      return productRepository.findByTaxonomiesId(taxonomyId).stream()
+    if (taxonomyName != null) {
+      return productRepository.findByTaxonomiesId(taxonomyName).stream()
           .map(ProductResponse::from)
           .toList();
     }
