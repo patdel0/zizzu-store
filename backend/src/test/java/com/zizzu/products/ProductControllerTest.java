@@ -7,6 +7,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.zizzu.products.dto.ProductRequest;
 import com.zizzu.products.dto.ProductResponse;
+import com.zizzu.taxonomies.Taxonomy;
+import com.zizzu.taxonomies.TaxonomyRepository;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.client.EntityExchangeResult;
 import org.springframework.test.web.servlet.client.RestTestClient;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.mysql.MySQLContainer;
@@ -34,12 +37,19 @@ public class ProductControllerTest {
 
   @Autowired private ProductRepository productRepository;
 
+  @Autowired private TaxonomyRepository taxonomyRepository;
+
   public EntityExchangeResult<ProductResponse> createProduct(String name, String details) {
+    return createProduct(name, details, null);
+  }
+
+  public EntityExchangeResult<ProductResponse> createProduct(
+      String name, String details, List<Integer> taxonomyIds) {
     return client
         .post()
         .uri("/products")
         .header("Content-Type", "application/json")
-        .body(new ProductRequest(name, details))
+        .body(new ProductRequest(name, details, taxonomyIds))
         .exchange()
         .returnResult(ProductResponse.class);
   }
@@ -118,6 +128,7 @@ public class ProductControllerTest {
     assertEquals("Details 10", result.get(4).details());
   }
 
+  @Transactional
   @Test
   void shouldReturnAllProducts() {
     createProduct("Tenis 41/42", "Adidas");
@@ -130,7 +141,8 @@ public class ProductControllerTest {
             .returnResult(new ParameterizedTypeReference<List<ProductResponse>>() {})
             .getResponseBody();
 
-    List<ProductResponse> products = productRepository.findAll().stream().map(ProductResponse::from).toList();
+    List<ProductResponse> products =
+        productRepository.findAll().stream().map(ProductResponse::from).toList();
 
     assertEquals(1, products.size());
     assertEquals(products, result);
@@ -159,7 +171,7 @@ public class ProductControllerTest {
             .put()
             .uri("/products/" + id)
             .header("Content-Type", "application/json")
-            .body(new ProductRequest("T-shirt M", "Nike"))
+            .body(new ProductRequest("T-shirt M", "Nike", null))
             .exchange()
             .returnResult(ProductResponse.class);
 
@@ -182,5 +194,21 @@ public class ProductControllerTest {
     boolean product = productRepository.existsById(id);
 
     assertFalse(product);
+  }
+
+  @Test
+  void shouldReturnProductWithTaxonomies() {
+    Taxonomy taxonomy = new Taxonomy();
+    taxonomy.setName("Setin");
+    Taxonomy savedTaxonomy = taxonomyRepository.save(taxonomy);
+
+    EntityExchangeResult<ProductResponse> result =
+        createProduct("Lingerie", "Victoria Secrets", List.of(savedTaxonomy.getId()));
+
+    ProductResponse created = result.getResponseBody();
+
+    assertEquals(HttpStatus.CREATED, result.getStatus());
+    assertEquals(1, created.taxonomies().size());
+    assertEquals("Setin", created.taxonomies().iterator().next().name());
   }
 }
