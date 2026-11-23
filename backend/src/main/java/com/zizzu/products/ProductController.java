@@ -2,6 +2,7 @@ package com.zizzu.products;
 
 import com.zizzu.products.dto.ProductRequest;
 import com.zizzu.products.dto.ProductResponse;
+import com.zizzu.taxonomies.TaxonomyRepository;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.Optional;
@@ -26,13 +27,18 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping(path = "/products")
 public class ProductController {
   @Autowired private ProductRepository productRepository;
+  @Autowired private TaxonomyRepository taxonomyRepository;
 
   /** Creates a product and returns it with its location in the {@code Location} header. */
   @PostMapping
-  public @ResponseBody ResponseEntity<ProductResponse> addNewProduct(@Valid @RequestBody ProductRequest request) {
+  public @ResponseBody ResponseEntity<ProductResponse> addNewProduct(
+      @Valid @RequestBody ProductRequest request) {
     Product n = new Product();
     n.setName(request.name());
     n.setDetails(request.details());
+    if (request.taxonomyIds() != null) {
+      taxonomyRepository.findAllById(request.taxonomyIds()).forEach(n::addTaxonomy);
+    }
     Product saved = productRepository.save(n);
     URI location =
         ServletUriComponentsBuilder.fromCurrentRequest()
@@ -52,6 +58,10 @@ public class ProductController {
             p -> {
               p.setName(request.name());
               p.setDetails(request.details());
+              if (request.taxonomyIds() != null) {
+                p.getTaxonomies().clear();
+                taxonomyRepository.findAllById(request.taxonomyIds()).forEach(p::addTaxonomy);
+              }
               return ResponseEntity.ok(ProductResponse.from(productRepository.save(p)));
             })
         .orElseGet(() -> ResponseEntity.notFound().build());
@@ -76,10 +86,17 @@ public class ProductController {
         .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
-  /** Returns one page of products, using zero-based page numbers. */
+  /** Returns products by taxonomy when specified, or one zero-based page of all products. */
   @GetMapping
   public @ResponseBody Iterable<ProductResponse> getAllProducts(
-      @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+      @RequestParam(required = false) Integer taxonomyId,
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "10") int size) {
+    if (taxonomyId != null) {
+      return productRepository.findByTaxonomiesId(taxonomyId).stream()
+          .map(ProductResponse::from)
+          .toList();
+    }
     Pageable pageable = PageRequest.of(page, size);
     return productRepository.findAll(pageable).stream().map(ProductResponse::from).toList();
   }
