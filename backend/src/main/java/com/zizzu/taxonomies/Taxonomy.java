@@ -6,22 +6,24 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import org.jspecify.annotations.Nullable;
 
+/** A named classification that can be assigned to multiple products. */
 @Entity
 public class Taxonomy {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private @Nullable Integer id;
-    private String name;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private @Nullable Integer id;
 
-    public Integer getId() {
-        return id;
-    }
+  private String name;
 
-    public String getName() {
-        return name;
-    }
+  public Integer getId() {
+    return id;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
 }

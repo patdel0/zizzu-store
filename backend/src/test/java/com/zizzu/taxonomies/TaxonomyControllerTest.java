@@ -1,7 +1,15 @@
 package com.zizzu.taxonomies;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+
 import com.zizzu.taxonomies.dto.TaxonomyRequest;
 import com.zizzu.taxonomies.dto.TaxonomyResponse;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,167 +23,151 @@ import org.springframework.test.web.servlet.client.EntityExchangeResult;
 import org.springframework.test.web.servlet.client.RestTestClient;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.mysql.MySQLContainer;
-
-import java.util.List;
-
 
 @SpringBootTest
 @Testcontainers
 @WithMockUser(authorities = "write")
 public class TaxonomyControllerTest {
-    private RestTestClient client;
+  private RestTestClient client;
 
-    @Autowired
-    private WebApplicationContext context;
+  @Autowired private WebApplicationContext context;
 
-    @Autowired
-    private TaxonomyRepository taxonomyRepository;
+  @Autowired private TaxonomyRepository taxonomyRepository;
 
-    public EntityExchangeResult<TaxonomyResponse> createTaxonomy (String name) {
-        return client.post()
-                .uri("/taxonomies")
-                .header("Content-Type", "application/json")
-                .body(new TaxonomyRequest(name))
-                .exchange()
-                .returnResult(TaxonomyResponse.class);
+  public EntityExchangeResult<TaxonomyResponse> createTaxonomy(String name) {
+    return client
+        .post()
+        .uri("/taxonomies")
+        .header("Content-Type", "application/json")
+        .body(new TaxonomyRequest(name))
+        .exchange()
+        .returnResult(TaxonomyResponse.class);
+  }
+
+  @ServiceConnection static MySQLContainer mySQLContainer = new MySQLContainer("mysql:latest");
+
+  @BeforeEach
+  public void setUp() {
+    MockMvc mvc =
+        MockMvcBuilders.webAppContextSetup(context)
+            .apply(springSecurity())
+            .defaultRequest(get("/").with(csrf()))
+            .build();
+
+    client = RestTestClient.bindTo(mvc).build();
+
+    taxonomyRepository.deleteAll();
+  }
+
+  @Test
+  void shouldReturnOkWhenTaxonomyCreated() {
+    EntityExchangeResult<TaxonomyResponse> result = createTaxonomy("Cotton");
+
+    Integer id = result.getResponseBody().id();
+    Taxonomy taxonomy = taxonomyRepository.findById(id).orElseThrow();
+
+    assertEquals((HttpStatus.CREATED), result.getStatus());
+    assertEquals("Cotton", taxonomy.getName());
+  }
+
+  @Test
+  void shouldReturnBadRequestWhenFieldsAreEmpty() {
+    EntityExchangeResult<TaxonomyResponse> result = createTaxonomy("");
+
+    List<Taxonomy> taxonomies = taxonomyRepository.findAll();
+
+    assertEquals(HttpStatus.BAD_REQUEST, result.getStatus());
+    assertEquals(0, taxonomies.size());
+  }
+
+  @Test
+  void shouldReturnNTaxonomies() {
+    for (int n = 1; n <= 20; n++) {
+      createTaxonomy("Taxonomy " + n);
     }
 
-    @ServiceConnection
-    static MySQLContainer mySQLContainer = new MySQLContainer("mysql:latest");
+    List<TaxonomyResponse> result =
+        client
+            .get()
+            .uri("/taxonomies?page=1&size=10")
+            .exchange()
+            .returnResult(new ParameterizedTypeReference<List<TaxonomyResponse>>() {})
+            .getResponseBody();
 
-    @BeforeEach
-    public void setUp() {
-        MockMvc mvc = MockMvcBuilders
-                .webAppContextSetup(context)
-                .apply(springSecurity())
-                .defaultRequest(get("/").with(csrf()))
-                .build();
+    assertEquals(10, result.size());
+    assertEquals("Taxonomy 11", result.get(0).name());
+    assertEquals("Taxonomy 20", result.get(9).name());
+  }
 
-        client = RestTestClient.bindTo(mvc)
-                .build();
+  @Test
+  void shouldReturnAllTaxonomies() {
 
-        taxonomyRepository.deleteAll();
+    for (int n = 1; n <= 30; n++) {
+      createTaxonomy("Lingerie " + n);
     }
 
-    @Test
-    void shouldReturnOkWhenTaxonomyCreated () {
-        EntityExchangeResult<TaxonomyResponse> result = createTaxonomy("Cotton");
+    List<TaxonomyResponse> result =
+        client
+            .get()
+            .uri("/taxonomies")
+            .exchange()
+            .returnResult(new ParameterizedTypeReference<List<TaxonomyResponse>>() {})
+            .getResponseBody();
 
-        Integer id = result.getResponseBody().id();
-        Taxonomy taxonomy = taxonomyRepository.findById(id).orElseThrow();
+    List<TaxonomyResponse> taxonomies =
+        taxonomyRepository.findAll().stream().map(TaxonomyResponse::from).toList();
 
-        assertEquals((HttpStatus.CREATED), result.getStatus());
-        assertEquals("Cotton", taxonomy.getName());
-    }
+    assertEquals(30, taxonomies.size());
+    assertEquals(taxonomies, result);
+  }
 
-    @Test
-    void shouldReturnBadRequestWhenFieldsAreEmpty() {
-        EntityExchangeResult<TaxonomyResponse> result = createTaxonomy("");
+  @Test
+  void shouldReturnProductById() {
+    EntityExchangeResult<TaxonomyResponse> taxonomyCreated = createTaxonomy("Lingerie");
 
-        List<Taxonomy> taxonomies = taxonomyRepository.findAll();
+    Integer id = taxonomyCreated.getResponseBody().id();
 
-        assertEquals(HttpStatus.BAD_REQUEST, result.getStatus());
-        assertEquals(0, taxonomies.size());
+    EntityExchangeResult<TaxonomyResponse> result =
+        client.get().uri("/taxonomies/" + id).exchange().returnResult(TaxonomyResponse.class);
 
-    }
+    assertEquals(taxonomyCreated.getResponseBody(), result.getResponseBody());
+  }
 
-    @Test
-    void shouldReturnNTaxonomies () {
-        for (int n = 1; n <= 20; n++) {
-            createTaxonomy("Taxonomy " + n);
-        }
+  @Test
+  void shouldReturnUpdatedTaxonomy() {
+    EntityExchangeResult<TaxonomyResponse> createdTaxonomy = createTaxonomy("Cotton");
 
-        List<TaxonomyResponse> result = client.get()
-                .uri("/taxonomies?page=1&size=10")
-                .exchange()
-                .returnResult(new ParameterizedTypeReference<List<TaxonomyResponse>>() {
-                }).getResponseBody();
+    Integer id = createdTaxonomy.getResponseBody().id();
 
-        assertEquals(10, result.size());
-        assertEquals("Taxonomy 11", result.get(0).name());
-        assertEquals("Taxonomy 20", result.get(9).name());
-    }
+    EntityExchangeResult<TaxonomyResponse> updatedTaxonomy =
+        client
+            .put()
+            .uri("/taxonomies/" + id)
+            .header("Content-Type", "application/json")
+            .body(new TaxonomyRequest("Setin"))
+            .exchange()
+            .returnResult(TaxonomyResponse.class);
 
-    @Test
-    void shouldReturnAllTaxonomies () {
+    Taxonomy taxonomy = taxonomyRepository.findById(id).orElseThrow();
 
-        for (int n = 1; n <= 30; n++) {
-            createTaxonomy("Lingerie " + n);
-        }
+    assertEquals(HttpStatus.OK, updatedTaxonomy.getStatus());
+    assertNotEquals(updatedTaxonomy.getResponseBody(), createdTaxonomy.getResponseBody());
+    assertEquals("Setin", taxonomy.getName());
+  }
 
-        List<TaxonomyResponse> result = client.get()
-                .uri("/taxonomies")
-                .exchange()
-                .returnResult(new ParameterizedTypeReference<List<TaxonomyResponse>>() {
-                }).getResponseBody();
+  @Test
+  void shouldReturnTaxonomyDeletion() {
+    EntityExchangeResult<TaxonomyResponse> createdTaxonomy = createTaxonomy("Cotton");
 
-        List<TaxonomyResponse> taxonomies = taxonomyRepository.findAll()
-                .stream()
-                .map(TaxonomyResponse::from)
-                .toList();
+    Integer id = createdTaxonomy.getResponseBody().id();
 
-        assertEquals(30, taxonomies.size());
-        assertEquals(taxonomies, result);
-    }
+    EntityExchangeResult<String> deletedTaxonomy =
+        client.delete().uri("/taxonomies/" + id).exchange().returnResult(String.class);
 
-    @Test
-    void shouldReturnProductById () {
-        EntityExchangeResult<TaxonomyResponse> taxonomyCreated = createTaxonomy("Lingerie");
+    boolean taxonomy = taxonomyRepository.existsById(id);
 
-        Integer id = taxonomyCreated.getResponseBody().id();
-
-        EntityExchangeResult<TaxonomyResponse> result = client.get()
-                .uri("/taxonomies/" + id)
-                .exchange()
-                .returnResult(TaxonomyResponse.class);
-
-        assertEquals(taxonomyCreated.getResponseBody(), result.getResponseBody());
-    }
-
-    @Test
-    void shouldReturnUpdatedTaxonomy () {
-        EntityExchangeResult<TaxonomyResponse> createdTaxonomy = createTaxonomy("Cotton");
-
-        Integer id = createdTaxonomy.getResponseBody().id();
-
-        EntityExchangeResult<TaxonomyResponse> updatedTaxonomy = client.put()
-                .uri("/taxonomies/" + id)
-                .header("Content-Type", "application/json")
-                .body(new TaxonomyRequest("Setin"))
-                .exchange()
-                .returnResult(TaxonomyResponse.class);
-
-        Taxonomy taxonomy = taxonomyRepository.findById(id).orElseThrow();
-
-        assertEquals(HttpStatus.OK, updatedTaxonomy.getStatus());
-        assertNotEquals(updatedTaxonomy.getResponseBody(), createdTaxonomy.getResponseBody());
-        assertEquals("Setin", taxonomy.getName());
-    }
-
-    @Test
-    void shouldReturnTaxonomyDelition () {
-        EntityExchangeResult<TaxonomyResponse> createdTaxonomy = createTaxonomy("Cotton");
-
-        Integer id = createdTaxonomy.getResponseBody().id();
-
-        EntityExchangeResult<String> deletedTaxonomy = client.delete()
-                .uri("/taxonomies/" + id)
-                .exchange()
-                .returnResult(String.class);
-
-        boolean taxonomy = taxonomyRepository.existsById(id);
-
-        assertFalse(taxonomy);
-    }
-
-
+    assertFalse(taxonomy);
+  }
 }
