@@ -23,7 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
   /** GET routes that anyone may call without logging in. */
   private static final String[] PUBLIC_GET_ROUTES = {
-    "/products/**",
+    "/products/**", "/taxonomies/**",
   };
 
   /**
