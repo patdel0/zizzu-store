@@ -1,3 +1,4 @@
+import { TextInput } from '../../components/ui/TextInput';
 import { useNewProductForm } from './useNewProductForm';
 
 import type { FC } from 'react';
@@ -11,17 +12,9 @@ export const NewProduct: FC = () => {
       {status ? <div>{status}</div> : null}
       <form action={handleSubmit}>
         <div>
-          <label htmlFor="name">
-            <span>Product name</span>
-            <input required id="name" name="name" type="text" />
-          </label>
-
-          <label htmlFor="details">
-            <span>Description</span>
-            <input required id="details" name="details" type="text" />
-          </label>
+          <TextInput name="name" required>Product name</TextInput>
+          <TextInput name="details" required>Description</TextInput>
         </div>
-
         <button type="submit">Create product</button>
       </form>
     </div>
