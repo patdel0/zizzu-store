@@ -1,27 +1,35 @@
 package com.zizzu.products;
 
-
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.jspecify.annotations.Nullable;
-import org.springframework.data.annotation.CreatedDate;
 
 import java.time.Instant;
-/** Final product format with every the details. */
+
+/** Final entity format with all the product details. */
 @Entity
 public class ProductVariant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private @Nullable Integer id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", nullable = false)
+    private Product product;
+
     private Double price;
     private Integer quantity;
+
     @CreationTimestamp
     private Instant createdAt;
+
     @UpdateTimestamp
     private Instant updatedAt;
 
@@ -29,11 +37,17 @@ public class ProductVariant {
         return id;
     }
 
+    public Product getProduct() {
+        return product;
+    }
+    public void setProduct(Product product) {
+        this.product = product;
+    }
     public Double getPrice() {
         return price;
     }
 
-    public void setPrice() {
+    public void setPrice(Double price) {
         this.price = price;
     }
 
@@ -41,7 +55,7 @@ public class ProductVariant {
         return quantity;
     }
 
-    public void setQuantity() {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
@@ -49,15 +63,8 @@ public class ProductVariant {
         return createdAt;
     }
 
-    public void setCreatedAt() {
-        this.createdAt = createdAt;
-    }
-
     public Instant getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt() {
-        this.updatedAt = updatedAt;
-    }
 }
