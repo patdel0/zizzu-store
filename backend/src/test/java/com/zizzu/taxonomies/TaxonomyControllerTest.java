@@ -62,7 +62,7 @@ public class TaxonomyControllerTest {
   }
 
   @Test
-  void shouldReturnOkWhenTaxonomyCreated() {
+  void shouldReturnCreatedWhenTaxonomyCreated() {
     EntityExchangeResult<TaxonomyResponse> result = createTaxonomy("Cotton");
 
     Integer id = result.getResponseBody().id();
@@ -124,7 +124,7 @@ public class TaxonomyControllerTest {
   }
 
   @Test
-  void shouldReturnProductById() {
+  void shouldReturnTaxonomyById() {
     EntityExchangeResult<TaxonomyResponse> taxonomyCreated = createTaxonomy("Lingerie");
 
     Integer id = taxonomyCreated.getResponseBody().id();
