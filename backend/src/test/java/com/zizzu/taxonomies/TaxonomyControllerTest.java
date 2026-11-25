@@ -110,15 +110,17 @@ public class TaxonomyControllerTest {
       }
     }
 
+    public List<TaxonomyResponse> getTaxonomies(String params) {
+      return client
+          .get()
+          .uri("/taxonomies?" + params)
+          .exchange()
+          .returnResult(new ParameterizedTypeReference<List<TaxonomyResponse>>() {})
+          .getResponseBody();
+    }
     @Test
     void shouldHandlePaginationParams() {
-      List<TaxonomyResponse> result =
-          client
-              .get()
-              .uri("/taxonomies?page=1&size=10")
-              .exchange()
-              .returnResult(new ParameterizedTypeReference<List<TaxonomyResponse>>() {})
-              .getResponseBody();
+      List<TaxonomyResponse> result = getTaxonomies("page=1&size=10")
 
       assertEquals(10, result.size());
       assertEquals("Lingerie 11", result.get(0).name());
@@ -127,13 +129,7 @@ public class TaxonomyControllerTest {
 
     @Test
     void shouldReturnAllTaxonomies() {
-      List<TaxonomyResponse> result =
-          client
-              .get()
-              .uri("/taxonomies")
-              .exchange()
-              .returnResult(new ParameterizedTypeReference<List<TaxonomyResponse>>() {})
-              .getResponseBody();
+      List<TaxonomyResponse> result = getTaxonomies(null);
 
       List<TaxonomyResponse> taxonomies =
           taxonomyRepository.findAll().stream().map(TaxonomyResponse::from).toList();
