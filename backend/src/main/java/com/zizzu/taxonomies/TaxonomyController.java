@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -81,8 +82,16 @@ public class TaxonomyController {
   /** Returns one page of taxonomies, using zero-based page numbers. */
   @GetMapping
   public @ResponseBody Iterable<TaxonomyResponse> getAllTaxonomies(
-      @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "30") int size) {
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "30") int size,
+      @RequestParam(required = false) String name) {
     Pageable pageable = PageRequest.of(page, size);
-    return taxonomyRepository.findAll(pageable).stream().map(TaxonomyResponse::from).toList();
+    Page<Taxonomy> results = taxonomyRepository.findAll(pageable);
+
+    if (name != null) {
+      results = taxonomyRepository.findByNameContainingIgnoreCase(name, pageable);
+    }
+
+    return results.stream().map(TaxonomyResponse::from).toList();
   }
 }

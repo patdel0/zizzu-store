@@ -11,6 +11,7 @@ import com.zizzu.taxonomies.dto.TaxonomyRequest;
 import com.zizzu.taxonomies.dto.TaxonomyResponse;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,9 +119,10 @@ public class TaxonomyControllerTest {
           .returnResult(new ParameterizedTypeReference<List<TaxonomyResponse>>() {})
           .getResponseBody();
     }
+
     @Test
     void shouldHandlePaginationParams() {
-      List<TaxonomyResponse> result = getTaxonomies("page=1&size=10")
+      List<TaxonomyResponse> result = getTaxonomies("page=1&size=10");
 
       assertEquals(10, result.size());
       assertEquals("Lingerie 11", result.get(0).name());
@@ -136,6 +138,16 @@ public class TaxonomyControllerTest {
 
       assertEquals(30, taxonomies.size());
       assertEquals(taxonomies, result);
+    }
+
+    @Test
+    @DisplayName("Returns taxonomies whose name CONTAINS the search term")
+    void shouldReturnTaxonomiesMatchingByName() {
+      List<TaxonomyResponse> result = getTaxonomies("name=lingerie 1");
+
+      assertEquals(11, result.size());
+      assertEquals("Lingerie 1", result.get(0).name());
+      assertEquals("Lingerie 10", result.get(1).name());
     }
   }
 
