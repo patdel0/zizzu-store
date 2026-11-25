@@ -1,3 +1,4 @@
+import { Button } from '../../components/ui/Button';
 import { TextInput } from '../../components/ui/TextInput';
 import { useNewProductForm } from './useNewProductForm';
 
@@ -15,7 +16,7 @@ export const NewProduct: FC = () => {
           <TextInput name="name" required>Product name</TextInput>
           <TextInput name="details" required>Description</TextInput>
         </div>
-        <button type="submit">Create product</button>
+        <Button type="submit">Create product</Button>
       </form>
     </div>
   );
