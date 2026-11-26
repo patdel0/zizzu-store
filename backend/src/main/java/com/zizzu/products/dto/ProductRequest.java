@@ -11,4 +11,4 @@ import java.util.List;
  * @param taxonomyIds IDs of the taxonomies to assign, or null to leave them unchanged
  */
 public record ProductRequest(
-    @NotBlank String name, @NotBlank String details, List<Integer> taxonomyIds) {}
+    @NotBlank String name, @NotBlank String details, List<Integer> taxonomyIds, List<ProductVariantRequest> variants) {}

@@ -2,6 +2,7 @@ package com.zizzu.products;
 
 import com.zizzu.products.dto.ProductRequest;
 import com.zizzu.products.dto.ProductResponse;
+import com.zizzu.products.dto.ProductVariantRequest;
 import com.zizzu.taxonomies.TaxonomyRepository;
 import jakarta.validation.Valid;
 import java.net.URI;
@@ -35,20 +36,21 @@ public class ProductController {
   @PostMapping
   public @ResponseBody ResponseEntity<ProductResponse> addNewProduct(
       @Valid @RequestBody ProductRequest request) {
-    Product n = new Product();
-    n.setName(request.name());
-    n.setDetails(request.details());
-    ProductVariant v = new ProductVariant();
-    v.setPrice(List<ProductVariant>().price());
-    v.setQuantity(List<ProductVariant>().quantity());
-    v.setColor(List<ProductVariant>().color());
-    v.setSize(List<ProductVariant>().size());
-    ProductVariant savedVariant = productVariantRepository.save(v);
-    n.addVariant(v);
-    if (request.taxonomyIds() != null) {
-      taxonomyRepository.findAllById(request.taxonomyIds()).forEach(n::addTaxonomy);
+    Product product = new Product();
+    product.setName(request.name());
+    product.setDetails(request.details());
+    for (ProductVariantRequest variantRequest : request.variants()) {
+      ProductVariant variant = new ProductVariant();
+      variant.setPrice(variantRequest.price());
+      variant.setQuantity(variantRequest.quantity());
+      variant.setSize(variantRequest.size());
+      variant.setColor(variantRequest.color());
+      product.addVariant(variant);
     }
-    Product saved = productRepository.save(n);
+    if (request.taxonomyIds() != null) {
+      taxonomyRepository.findAllById(request.taxonomyIds()).forEach(product::addTaxonomy);
+    }
+    Product saved = productRepository.save(product);
     URI location =
         ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{id}")
