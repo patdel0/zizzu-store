@@ -5,6 +5,7 @@ import com.zizzu.products.dto.ProductResponse;
 import com.zizzu.taxonomies.TaxonomyRepository;
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +29,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class ProductController {
   @Autowired private ProductRepository productRepository;
   @Autowired private TaxonomyRepository taxonomyRepository;
+  @Autowired private ProductVariantRepository productVariantRepository;
 
   /** Creates a product and returns it with its location in the {@code Location} header. */
   @PostMapping
@@ -36,6 +38,13 @@ public class ProductController {
     Product n = new Product();
     n.setName(request.name());
     n.setDetails(request.details());
+    ProductVariant v = new ProductVariant();
+    v.setPrice(List<ProductVariant>().price());
+    v.setQuantity(List<ProductVariant>().quantity());
+    v.setColor(List<ProductVariant>().color());
+    v.setSize(List<ProductVariant>().size());
+    ProductVariant savedVariant = productVariantRepository.save(v);
+    n.addVariant(v);
     if (request.taxonomyIds() != null) {
       taxonomyRepository.findAllById(request.taxonomyIds()).forEach(n::addTaxonomy);
     }

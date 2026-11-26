@@ -26,6 +26,8 @@ public class ProductVariant {
 
     private Double price;
     private Integer quantity;
+    private String color;
+    private String size;
 
     @CreationTimestamp
     private Instant createdAt;
@@ -40,9 +42,11 @@ public class ProductVariant {
     public Product getProduct() {
         return product;
     }
+
     public void setProduct(Product product) {
         this.product = product;
     }
+
     public Double getPrice() {
         return price;
     }
@@ -58,6 +62,14 @@ public class ProductVariant {
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
+
+    public String getColor() { return color; }
+
+    public void setColor(String color) { this.color = color; }
+
+    public String getSize() { return size; }
+
+    public void setSize(String size) { this.size = size; }
 
     public Instant getCreatedAt() {
         return createdAt;
