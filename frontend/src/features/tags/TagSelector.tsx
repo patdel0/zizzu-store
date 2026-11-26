@@ -20,6 +20,8 @@ export const TagSelector: FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (typed.length == 0) return setSuggestionList([]);
+
       const response = await fetch(`${import.meta.env.VITE_API_URL}/taxonomies?size=${SUGGESTION_COUNT}&name=${typed}`);
       const data = await response.json();
       setSuggestionList(data);
@@ -32,8 +34,7 @@ export const TagSelector: FC = () => {
     <div>
       <input type="text" onChange={handleChange} />
       <ol>
-        {typed.length > 0 &&
-          suggestionList.map((tag: Tag) => <li key={tag.id}>{tag.name}</li>)}
+        {suggestionList.map((tag: Tag) => <li key={tag.id}>{tag.name}</li>)}
       </ol>
     </div>
   )
