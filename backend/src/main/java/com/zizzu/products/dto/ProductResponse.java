@@ -18,7 +18,7 @@ public record ProductResponse(
         Integer id, String name, String details, Set<TaxonomyList> taxonomies, Set<ProductVariantList> productVariants) {
   /** The ID and name of a taxonomy assigned to the product. */
   public record TaxonomyList(Integer id, String name) {}
-  public record ProductVariantList(Integer id, Double price, Integer quantity) {}
+  public record ProductVariantList(Integer id, Double price, Integer quantity, String color, String size) {}
 
   /** Creates a response from a {@link Product} entity. */
   public static ProductResponse from(Product product) {
@@ -30,7 +30,7 @@ public record ProductResponse(
             .map(taxonomy -> new TaxonomyList(taxonomy.getId(), taxonomy.getName()))
             .collect(Collectors.toSet()),
         product.getVariants().stream()
-                .map(variant -> new ProductVariantList(variant.getId(), variant.getPrice(), variant.getQuantity()))
+                .map(variant -> new ProductVariantList(variant.getId(), variant.getPrice(), variant.getQuantity(), variant.getColor(), variant.getSize()))
                 .collect(Collectors.toSet()));
   }
 }

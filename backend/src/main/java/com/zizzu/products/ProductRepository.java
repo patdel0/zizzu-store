@@ -9,4 +9,5 @@ public interface ProductRepository
     extends ListCrudRepository<Product, Integer>, ListPagingAndSortingRepository<Product, Integer> {
   /** Finds all products assigned to the taxonomy with the given ID. */
   List<Product> findByTaxonomiesId(Integer taxonomyId);
+  List<Product> findByVariantsId(Integer variantId);
 }
