@@ -7,11 +7,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.zizzu.products.dto.ProductRequest;
 import com.zizzu.products.dto.ProductResponse;
+import com.zizzu.products.dto.ProductVariantRequest;
 import com.zizzu.taxonomies.Taxonomy;
 import com.zizzu.taxonomies.TaxonomyRepository;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,27 +43,31 @@ public class ProductControllerTest {
   @Autowired private TaxonomyRepository taxonomyRepository;
 
   public EntityExchangeResult<ProductResponse> createProduct(String name, String details) {
-    return createProduct(name, details, null);
+    return createProduct(name, details, null, null);
+  }
+
+  public EntityExchangeResult<ProductResponse> createProduct(String name, String details, List<Integer> taxonomies) {
+    return createProduct(name, details, taxonomies, null);
   }
 
   public EntityExchangeResult<ProductResponse> createProduct(
-      String name, String details, List<Integer> taxonomyIds) {
+      String name, String details, List<Integer> taxonomyIds, List<ProductVariantRequest> variants) {
     return client
         .post()
         .uri("/products")
         .header("Content-Type", "application/json")
-        .body(new ProductRequest(name, details, taxonomyIds))
+        .body(new ProductRequest(name, details, taxonomyIds, variants))
         .exchange()
         .returnResult(ProductResponse.class);
   }
 
   public EntityExchangeResult<ProductResponse> updateProduct(
-      Integer id, String name, String details, List<Integer> taxonomyIds) {
+      Integer id, String name, String details, List<Integer> taxonomyIds, List<ProductVariantRequest> variants) {
     return client
         .put()
         .uri("/products/" + id)
         .header("Content-Type", "application/json")
-        .body(new ProductRequest(name, details, taxonomyIds))
+        .body(new ProductRequest(name, details, taxonomyIds, variants))
         .exchange()
         .returnResult(ProductResponse.class);
   }
@@ -183,7 +189,7 @@ public class ProductControllerTest {
             .put()
             .uri("/products/" + id)
             .header("Content-Type", "application/json")
-            .body(new ProductRequest("T-shirt M", "Nike", null))
+            .body(new ProductRequest("T-shirt M", "Nike", null, null))
             .exchange()
             .returnResult(ProductResponse.class);
 
@@ -237,7 +243,7 @@ public class ProductControllerTest {
     assertEquals(1, productCreated.getResponseBody().taxonomies().size());
 
     EntityExchangeResult<ProductResponse> updatedProduct =
-        updateProduct(id, "T-shirt M", "Nike", new ArrayList<>());
+        updateProduct(id, "T-shirt M", "Nike", new ArrayList<>(), null);
 
     assertEquals(HttpStatus.OK, updatedProduct.getStatus());
     assertEquals(0, updatedProduct.getResponseBody().taxonomies().size());
@@ -255,7 +261,7 @@ public class ProductControllerTest {
     assertEquals(0, productCreated.getResponseBody().taxonomies().size());
 
     EntityExchangeResult<ProductResponse> updatedProduct =
-        updateProduct(id, "Victoria Secrets", "Malevola", List.of(savedTaxonomy.getId()));
+        updateProduct(id, "Victoria Secrets", "Malevola", List.of(savedTaxonomy.getId()), null);
 
     assertEquals(HttpStatus.OK, updatedProduct.getStatus());
     assertEquals(1, updatedProduct.getResponseBody().taxonomies().size());
