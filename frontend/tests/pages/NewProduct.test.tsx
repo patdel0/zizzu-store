@@ -9,6 +9,7 @@ import type { UserEvent } from '@testing-library/user-event';
 
 describe('feature: add a product', () => {
   beforeEach(() => {
+    server.use(http.get(`${import.meta.env.VITE_API_URL}/taxonomies`, () => HttpResponse.json([])));
     render(<NewProduct />);
   });
 
