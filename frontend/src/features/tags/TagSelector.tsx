@@ -19,15 +19,22 @@ export const TagSelector: FC = () => {
   }
 
   useEffect(() => {
+    if (typed.length == 0) return setSuggestionList([]);
+
+    const controller = new AbortController();
     const fetchData = async () => {
-      if (typed.length == 0) return setSuggestionList([]);
 
       const response = await fetch(`${import.meta.env.VITE_API_URL}/taxonomies?size=${SUGGESTION_COUNT}&name=${typed}`);
       const data = await response.json();
+
       setSuggestionList(data);
     }
 
-    fetchData();
+    const timeoutId = setTimeout(fetchData, 300);
+
+    return () => {
+      clearTimeout(timeoutId);
+    }
   }, [typed]);
 
   return (
