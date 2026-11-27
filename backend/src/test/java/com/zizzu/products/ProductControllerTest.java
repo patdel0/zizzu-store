@@ -42,6 +42,8 @@ public class ProductControllerTest {
 
   @Autowired private TaxonomyRepository taxonomyRepository;
 
+  @Autowired private ProductVariantRepository productVariantRepository;
+
   public EntityExchangeResult<ProductResponse> createProduct(String name, String details) {
     return createProduct(name, details, null, null);
   }
@@ -266,5 +268,38 @@ public class ProductControllerTest {
     assertEquals(HttpStatus.OK, updatedProduct.getStatus());
     assertEquals(1, updatedProduct.getResponseBody().taxonomies().size());
     assertEquals("Nylon", updatedProduct.getResponseBody().taxonomies().iterator().next().name());
+  }
+
+  @Nested
+  class ListVariants {
+    @BeforeEach
+    void setUp() {
+      Taxonomy taxonomy = new Taxonomy();
+      taxonomy.setName("Setin");
+      Taxonomy savedTaxonomy = taxonomyRepository.save(taxonomy);
+
+      List<ProductVariantRequest> variants = List.of(
+              new ProductVariantRequest(21.99, 4, "Black", "Extra Small"),
+              new ProductVariantRequest(11.40, 2, "Red", "Medium"),
+              new ProductVariantRequest(45.89, 11, "Nude", "Small")
+      );
+      EntityExchangeResult<ProductResponse> productCreated = createProduct("Victoria Secrets", "Lingerie", List.of(savedTaxonomy.getId()), variants);
+
+    }
+    @Test
+    void shouldGetAllProductVariants() {
+      List<ProductResponse> response =
+              client
+                      .get()
+                      .uri("/products")
+                      .exchange()
+                      .returnResult(new ParameterizedTypeReference<List<ProductResponse>>() {})
+                      .getResponseBody();
+
+      List<ProductVariant> variants = productVariantRepository.findAll();
+
+      assertEquals(3, variants.size());
+      assertEquals(variants.size(),response.get(0).productVariants().size());
+    }
   }
 }
